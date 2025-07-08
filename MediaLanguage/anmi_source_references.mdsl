@@ -1,0 +1,16 @@
+VOCABULARY anmi_source_references {
+  SOURCE_CODES {
+    1: "Statistik Austria",
+    2: "Media-Analyse",
+    3: "Österreichische Webanalyse (ÖWA)",
+    4: "Radiotest",
+    5: "Österreichische Auflagenkontrolle (ÖAK)",
+    6: "Massenmedien in Österreich – Medienbericht",x
+    7: "ORF-Jahresbericht/Geschäftsbericht/Website",
+    8: "Melischek & Seethaler",
+    9: "Auskunft des Medienunternehmens",
+    10: "In einem verbundenen Medienangebot inkludiert",
+    99: "n.v."
+  }
+}
+

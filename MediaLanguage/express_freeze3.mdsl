@@ -1,0 +1,176 @@
+IMPORT "anmi_common_codes.mdsl";
+IMPORT "anmi_media_sectors.mdsl";
+IMPORT "anmi_mandate_types.mdsl";
+IMPORT "anmi_source_references.mdsl";
+IMPORT "anmi_market_data_schemas.mdsl";
+IMPORT "Medienangebot.mdsl";
+IMPORT "MedienangeboteDiachroneBeziehungen.mdsl";
+IMPORT "MedienangeboteSynchroneBeziehungen.mdsl";
+IMPORT "sources.mdsl";
+
+LET austria_region = "Österreich gesamt";
+LET founding_note = "Founded non-party affiliated";
+
+TEMPLATE OUTLET "AustrianNewspaper" {
+    CHARACTERISTICS {
+        language = "de";
+        mandate = "Privat-kommerziell";
+        distribution = {
+            local = FALSE;
+            dachangebot = FALSE;
+            kombination = FALSE;
+        };
+    };
+    METADATA {
+        steward = "js";
+    };
+};
+
+FAMILY "Express FAMILY" {
+    @comment "Independent newspaper UNTIL 1971";
+    @comment "Acquired by Kronen Zeitung in 1971";
+
+    OUTLET "Express" EXTENDS TEMPLATE "AustrianNewspaper" {
+        ID = 300001;
+        IDENTITY {
+            title = "Express";
+            historical_titles = [
+                {
+                    title = "Express Daily";
+                    PERIOD = "1950-01-01" TO "1955-12-31";
+                }
+            ];
+        };
+        LIFECYCLE {
+            STATUS "active_independent" FROM "1950-01-01" TO "1970-12-31" {
+                precision_start = "known";
+                precision_end = "known";
+            };
+            STATUS "acquired" FROM "1971-01-01" TO "1971-12-31" {
+                precision_start = "known";
+                precision_end = "known";
+                @comment "Acquisition by Kronen Zeitung";
+            };
+            STATUS "integrated" FROM "1972-01-01" TO "1980-12-31" {
+                precision_start = "known";
+                precision_end = "known";
+                @comment "Integrated into Kronen Zeitung operations";
+            };
+            STATUS "ceased" FROM "1981-01-01" {
+                precision_start = "known";
+                @comment "Publication ceased";
+            };
+        };
+        CHARACTERISTICS {
+            sector = "Tageszeitung";
+            distribution = {
+                primary_area = $austria_region;
+            };
+            editorial_office = "Wien";
+            editorial_stance = {
+                self = "Independent daily news";
+                external = "Neutral" {
+                    attribution = "Media Analysis, 1970";
+                };
+            };
+        };
+        METADATA {
+            verified = "2024-10-15";
+            notes = $founding_note;
+        };
+    };
+
+    DATA FOR 300001 {
+        @maps_to "MedienangebotMarktdaten";
+        AGGREGATION = {
+            circulation = "national";
+            reach = "none";
+        };
+        
+        YEAR 1970 {
+            METRICS {
+                circulation = {
+                    value = 50000;
+                    UNIT = "copies";
+                    source = "oeak";
+                    comment = "Pre-acquisition";
+                };
+                unique_users = {
+                    value = 99;
+                    UNIT = "individuals";
+                    source = "owa";
+                    comment = "N/A";
+                };
+                reach_national = {
+                    value = 2.0;
+                    UNIT = "percent";
+                    source = "media_analyse";
+                    comment = "Estimated";
+                };
+                market_share_national = {
+                    value = 1.5;
+                    UNIT = "percent";
+                    source = "media_analyse";
+                    comment = "Estimated";
+                };
+            };
+            comment = "Pre-acquisition DATA";
+        };
+        
+        YEAR 1971 {
+            METRICS {
+                circulation = {
+                    value = 48000;
+                    UNIT = "copies";
+                    source = "oeak";
+                    comment = "Acquisition YEAR";
+                };
+                unique_users = {
+                    value = 99;
+                    UNIT = "individuals";
+                    source = "owa";
+                    comment = "N/A";
+                };
+                reach_national = {
+                    value = 1.9;
+                    UNIT = "percent";
+                    source = "media_analyse";
+                    comment = "Estimated";
+                };
+                market_share_national = {
+                    value = 1.4;
+                    UNIT = "percent";
+                    source = "media_analyse";
+                    comment = "Estimated";
+                };
+            };
+            comment = "Acquisition YEAR DATA";
+        };
+    };
+};
+
+FAMILY "Express explorative digital extension" {
+    @comment "Hypothetical digital express";
+    
+    OUTLET "Express Online" BASED_ON 300001 {
+        ID = 300002;
+        IDENTITY {
+            title = "express.at";
+            url = "https://www.express.at";
+        };
+        LIFECYCLE {
+            STATUS "planned" FROM "1999-01-01" TO "1999-12-31" {
+                precision_start = "known";
+                precision_end = "known";
+                @comment "Digital expansion planned but never realized";
+            };
+        };
+        CHARACTERISTICS {
+            sector = "Online";
+        };
+        METADATA {
+            verified = "2024-10-15";
+            notes = "Planned digital presence of Express (never launched)";
+        };
+    };
+};

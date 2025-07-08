@@ -1,0 +1,9 @@
+[package]
+name = "mdsl-rs"
+version = "0.1.0"
+edition = "2021"
+authors = ["ANMI Tutorial Team"]
+description = "A tutorial-focused Media Description Specification Language (MDSL) parser in Rust"
+
+# Tutorial project - no heavy dependencies, everything hand-crafted
+[dependencies]

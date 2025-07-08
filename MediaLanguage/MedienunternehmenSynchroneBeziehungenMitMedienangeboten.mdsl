@@ -1,0 +1,15 @@
+UNIT MedienunternehmenSynchroneBeziehungenMitMedienangeboten {
+  id_relationship: ID PRIMARY KEY,
+  id_mu: ID,
+  id_mo: ID,
+  RELATIONSHIP_TYPE: CATEGORY(
+    "Eigentum",
+    "Betrieb",
+    "Sonstiges"
+  ),
+  start_year: NUMBER,
+  end_year: NUMBER,
+  comments: TEXT(1000)
+}
+
+//  UNIT MedienangeboteSynchroneBeziehungenOwnership TBD

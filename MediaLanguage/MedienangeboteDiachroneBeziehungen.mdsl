@@ -1,0 +1,18 @@
+UNIT MedienangeboteDiachroneBeziehungen {
+  id_relationship: ID PRIMARY KEY,
+  id_mo_predecessor: ID,
+  id_mo_successor: ID,
+  RELATIONSHIP_TYPE: CATEGORY(
+    "Nachfolge",
+    "Fusionierung",
+    "Neuer Sektor",
+    "Neues Verbreitungsgebiet",
+    "Abspaltung",
+    "Akquisition",
+    "Unterbrechung"
+  ),
+  event_day: NUMBER,
+  event_month: NUMBER,
+  event_year: NUMBER,
+  comments: TEXT(1000)
+}

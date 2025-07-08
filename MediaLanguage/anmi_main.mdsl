@@ -1,0 +1,18 @@
+IMPORT "anmi_common_codes.mdsl";
+IMPORT "anmi_media_sectors.mdsl";
+IMPORT "anmi_mandate_types.mdsl";
+IMPORT "anmi_source_references.mdsl";
+IMPORT "anmi_market_data_schemas.mdsl";
+IMPORT "Medienangebot.mdsl";
+IMPORT "Medienunternehmen.mdsl";
+IMPORT "MedienangeboteDiachroneBeziehungen.mdsl";
+IMPORT "MedienangeboteSynchroneBeziehungen.mdsl";
+IMPORT "MedienunternehmenSynchroneBeziehungenMitMedienangeboten.mdsl";
+IMPORT "MedienunternehmenDiachroneBeziehungen.mdsl";
+IMPORT "MedienunternehmenSynchroneBeziehungenMitAnderenUnternehmen.mdsl";
+IMPORT "sources.mdsl";
+
+IMPORT "media_groups/express.mdsl";
+IMPORT "media_groups/kronen_zeitung.mdsl";
+IMPORT "media_groups/orf.mdsl";
+IMPORT "media_groups/wiener_zeitung.mdsl";

@@ -1,0 +1,7 @@
+UNIT Medienunternehmen {
+  id_mu: ID PRIMARY KEY,
+  mu_title: TEXT(200),
+  foundation_year: NUMBER,
+  closing_year: NUMBER,
+  comments: TEXT(1000)
+}
