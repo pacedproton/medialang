@@ -1,0 +1,214 @@
+IMPORT "anmi_common_codes.mdsl";
+IMPORT "anmi_media_sectors.mdsl";
+IMPORT "anmi_mandate_types.mdsl";
+IMPORT "anmi_source_references.mdsl";
+IMPORT "anmi_market_data_schemas.mdsl";
+IMPORT "Medienangebot.mdsl";
+IMPORT "MedienangeboteDiachroneBeziehungen.mdsl";
+IMPORT "MedienangeboteSynchroneBeziehungen.mdsl";
+IMPORT "sources.mdsl";
+
+LET austria_region = "Österreich gesamt";
+LET wien_region = "Wien";
+LET founding_note = "Founded in ddd, post-war re-established ddd";
+
+TEMPLATE OUTLET "AustrianNewspaper" {
+    characteristics {
+        language = "de";
+        mandate = "Privat-kommerziell";
+        distribution = {
+            local = false;
+            dachangebot = false;
+            kombination = false;
+        };
+    };
+    metadata {
+        steward = "js";
+    };
+};
+
+FAMILY "Kronen Zeitung Family" {
+    @comment "Austria's largest daily newspaper group";
+    @comment "Includes Express post-1971 acquisition";
+
+    OUTLET "Kronen Zeitung" EXTENDS TEMPLATE "AustrianNewspaper" {
+        id = 200001;
+        identity {
+            title = "Kronen Zeitung";
+        };
+        lifecycle {
+            status "active" FROM "1959-01-01" TO CURRENT {
+                precision_start = "known";
+                precision_end = "known";
+            };
+        };
+        characteristics {
+            sector = "Tageszeitung";
+            distribution = {
+                primary_area = $austria_region;
+            };
+            editorial_office = "Wien";
+            editorial_stance = {
+                self = "Popular journalism";
+                external = "Populist-leaning" { 
+                    attribution = "Media Analysis, 2020"; 
+                };
+            };
+        };
+        metadata {
+            verified = "2024-10-15";
+            notes = $founding_note;
+        };
+    };
+
+    OUTLET "krone.at" BASED_ON 200001 {
+        id = 200002;
+        identity {
+            title = "krone.at";
+            url = "https://www.krone.at";
+        };
+        lifecycle {
+            status "active" FROM "1998-01-01" TO CURRENT {
+                precision_start = "known";
+                precision_end = "known";
+            };
+        };
+        characteristics {
+            sector = "Online";
+        };
+        metadata {
+            verified = "2024-10-15";
+            notes = "Digital presence of Kronen Zeitung";
+        };
+    };
+
+    OUTLET_REF 300001 ["Express"] {
+        @comment "Express acquired by Kronen Zeitung in 1971";
+        
+        INHERITS_FROM 300001 UNTIL "1971-01-01";
+        
+        OVERRIDE FROM "1971-01-01" {
+            @family "Kronen Zeitung Family";
+            
+            FOR_PERIOD "1972-01-01" TO "1980-12-31" {
+                lifecycle {
+                    contextual_status = "integrated_ceased";
+                    precision = { 
+                        start = "known"; 
+                        end = "known"; 
+                    };
+                };
+                characteristics {
+                    editorial_stance = {
+                        external = "Aligned with Kronen Zeitung" { 
+                            attribution = "Media Analysis, 1972"; 
+                        };
+                    };
+                };
+            };
+        };
+        metadata {
+            notes = "Integrated into Kronen Zeitung after 1971 acquisition";
+        };
+    };
+
+    DIACHRONIC_LINK acquisition {
+        predecessor = 300001;
+        successor = 200001;
+        event_date = "1971-01-01" TO "1971-12-31";
+        relationship_type = "Akquisition";
+        @comment "Express acquired by Kronen Zeitung in 1971";
+        @maps_to "MedienangeboteDiachroneBeziehungen";
+    };
+
+    SYNCHRONOUS_LINK combination {
+        outlet_1 = {
+            id = 200001;
+            role = "primary";
+        };
+        outlet_2 = {
+            id = 300001;
+            role = "integrated";
+        };
+        relationship_type = "Kombination";
+        period = "1972-01-01" TO "1980-12-31";
+        details = "Express as part of Kronen Zeitung's advertising unit";
+        @maps_to "MedienangeboteSynchroneBeziehungen";
+    };
+
+    DATA FOR 200001 {
+        @maps_to "MedienangebotMarktdaten";
+        aggregation = { 
+            circulation = "national"; 
+            reach = "none"; 
+        };
+        
+        YEAR 2021 {
+            metrics {
+                circulation = { 
+                    value = 700000; 
+                    unit = "copies"; 
+                    source = "oeak"; 
+                    comment = "Verified"; 
+                };
+                unique_users = { 
+                    value = 99; 
+                    unit = "individuals"; 
+                    source = "owa"; 
+                    comment = "N/A"; 
+                };
+                reach_national = { 
+                    value = 25.0; 
+                    unit = "percent"; 
+                    source = "media_analyse"; 
+                    comment = "Verified"; 
+                };
+                market_share_national = { 
+                    value = 30.0; 
+                    unit = "percent"; 
+                    source = "media_analyse"; 
+                    comment = "Verified"; 
+                };
+            };
+            comment = "Circulation data verified";
+        };
+    };
+
+    DATA FOR 300001 {
+        @maps_to "MedienangebotMarktdaten";
+        aggregation = { 
+            circulation = "national"; 
+            reach = "none"; 
+        };
+        
+        YEAR 1972 {
+            metrics {
+                circulation = { 
+                    value = 45000; 
+                    unit = "copies"; 
+                    source = "oeak"; 
+                    comment = "Post-acquisition"; 
+                };
+                unique_users = { 
+                    value = 99; 
+                    unit = "individuals"; 
+                    source = "owa"; 
+                    comment = "N/A"; 
+                };
+                reach_national = { 
+                    value = 1.8; 
+                    unit = "percent"; 
+                    source = "media_analyse"; 
+                    comment = "Estimated"; 
+                };
+                market_share_national = { 
+                    value = 1.2; 
+                    unit = "percent"; 
+                    source = "media_analyse"; 
+                    comment = "Estimated"; 
+                };
+            };
+            comment = "asdf";
+        };
+    };
+};

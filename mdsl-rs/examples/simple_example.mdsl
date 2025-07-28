@@ -1,0 +1,142 @@
+// Simple MDSL Example: Kronen Zeitung and Express
+// Demonstrates core DSL features
+
+IMPORT "anmi_common_codes.mdsl";
+IMPORT "anmi_media_sectors.mdsl";
+
+// Variable declarations
+LET austria_region = "Österreich gesamt";
+LET founding_note = "Founded in 1900, re-established in 1959";
+
+// Media group declaration
+FAMILY "Kronen Zeitung Family" {
+    @comment = "Includes Express post-1971 acquisition"
+
+    // Main outlet declaration
+    OUTLET "Kronen Zeitung" {
+        id = 200001;
+        
+        identity {
+            title = "Kronen Zeitung";
+        }
+        
+        lifecycle {
+            status "active" FROM "1959-01-01" TO current {
+                precision_start = "known";
+                precision_end = "known";
+            };
+        }
+        
+        characteristics {
+            sector = "Tageszeitung";
+            mandate = "Privat-kommerziell";
+            distribution = {
+                primary_area = $austria_region;
+                local = false;
+            };
+            language = "de";
+            editorial_office = "Wien";
+            editorial_stance = {
+                self = "Popular journalism";
+                external = "Populist-leaning" { attribution = "Media Analysis, 2020" };
+            };
+        }
+        
+        metadata {
+            steward = "js";
+            verified = "2024-10-15";
+            notes = $founding_note;
+        }
+    }
+
+    // Outlet reference (graph reference)
+    OUTLET_REF 300001 ["Express"] {
+        @comment = "Express acquired by Kronen Zeitung in 1971"
+        
+        override for_period "1972-01-01 TO 1980-12-31" {
+            characteristics {
+                editorial_stance = {
+                    external = "Aligned with Kronen Zeitung" { attribution = "Media Analysis, 1972" };
+                };
+            };
+        }
+        
+        metadata {
+            notes = "Integrated into Kronen Zeitung after 1971 acquisition";
+        }
+    }
+
+    // Relationship declarations
+    DIACHRONIC_LINK acquisition {
+        predecessor = 300001; // Express
+        successor = 200001;   // Kronen Zeitung
+        event_date = "1971-01-01 TO 1971-12-31";
+        @comment = "Express acquired by Kronen Zeitung in 1971"
+    }
+
+    SYNCHRONOUS_LINKS combination {
+        link type = "Kombination";
+        outlet_1 {
+            ma_id = 200001;
+            type = 0;
+        }
+        outlet_2 {
+            ma_id = 300001;
+            type = 0;
+        }
+        period = "1972-01-01 TO 1980-12-31";
+        details = "Express as part of Kronen Zeitung's advertising unit";
+    }
+
+    // Market data
+    DATA FOR 200001 {
+        aggregation = { circulation = "national", reach = "none" };
+        year 2021 {
+            metrics {
+                circulation = { value = 700000, unit = "copies", source = "oeak", comment = "Verified" };
+                reach_national = { value = 25.0, unit = "percent", source = "media_analyse", comment = "Verified" };
+                market_share_national = { value = 30.0, unit = "percent", source = "media_analyse", comment = "Verified" };
+            };
+            comment = "Circulation data verified";
+        }
+    }
+}
+
+// Unit declarations (schema definitions)
+UNIT Medienangebot {
+    id_mo: ID PRIMARY KEY;
+    mo_title: TEXT(120);
+    id_sector: NUMBER;
+    mandate: CATEGORY(
+        "Öffentlich-rechtlich",
+        "Privat-kommerziell", 
+        "privat-nichtkommerziell",
+        "Partei",
+        "Verband",
+        "Amtlich",
+        "Besatzungsmacht",
+        "Sonstiges",
+        "n.v."
+    );
+    location: TEXT(25);
+    primary_distr_area: NUMBER;
+    local_offering: BOOLEAN;
+    language: TEXT(50);
+    start_year: NUMBER;
+    end_year: NUMBER;
+    comments: TEXT(1000);
+}
+
+// Vocabulary declarations
+VOCABULARY anmi_media_sectors {
+    SECTOR_CODES {
+        1: "Tageszeitung",
+        2: "Wochenzeitung", 
+        3: "Magazin",
+        4: "Radio",
+        5: "Fernsehen",
+        6: "Online",
+        7: "Podcast",
+        99: "n.v."
+    }
+} 

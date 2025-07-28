@@ -1,0 +1,150 @@
+// MDSL Test File - Based on kronen_zeitung_freeze3.mdsl
+IMPORT "anmi_common_codes.mdsl";
+IMPORT "anmi_media_sectors.mdsl";
+
+LET austria_region = "Österreich gesamt";
+LET founding_note = "Founded non-party affiliated";
+
+TEMPLATE OUTLET "AustrianNewspaper" {
+    characteristics {
+        language = "de";
+        mandate = "Privat-kommerziell";
+        distribution = {
+            local = false;
+            dachangebot = false;
+        };
+    };
+    metadata {
+        steward = "js";
+    };
+};
+
+FAMILY "Kronen Zeitung Family" {
+    @comment "Austria's largest daily newspaper group";
+    @comment "Includes Express post-1971 acquisition";
+
+    OUTLET "Kronen Zeitung" EXTENDS TEMPLATE "AustrianNewspaper" {
+        id = 200001;
+        identity {
+            title = "Kronen Zeitung";
+        };
+        lifecycle {
+            status "active" FROM "1959-01-01" TO CURRENT {
+                precision_start = "known";
+                precision_end = "known";
+            };
+        };
+        characteristics {
+            sector = "Tageszeitung";
+            distribution = {
+                primary_area = $austria_region;
+            };
+            editorial_stance = {
+                self = "Popular journalism";
+                external = "Populist-leaning" { 
+                    attribution = "Media Analysis, 2020"; 
+                };
+            };
+        };
+        metadata {
+            verified = "2024-10-15";
+            notes = $founding_note;
+        };
+    };
+
+    OUTLET_REF 300001 ["Express"] {
+        @comment "Express acquired by Kronen Zeitung in 1971";
+        
+        OVERRIDE FROM "1971-01-01" {
+            FOR_PERIOD "1972-01-01" TO "1980-12-31" {
+                characteristics {
+                    editorial_stance = {
+                        external = "Aligned with Kronen Zeitung";
+                    };
+                };
+            };
+        };
+    };
+
+    DIACHRONIC_LINK acquisition {
+        predecessor = 300001;
+        successor = 200001;
+        event_date = "1971-01-01" TO "1971-12-31";
+        relationship_type = "Akquisition";
+        @maps_to "MedienangeboteDiachroneBeziehungen";
+    };
+
+    DATA FOR 200001 {
+        @maps_to "MedienangebotMarktdaten";
+        aggregation = { 
+            circulation = "national"; 
+            reach = "none"; 
+        };
+        
+        YEAR 2021 {
+            metrics {
+                circulation = { 
+                    value = 700000; 
+                    unit = "copies"; 
+                    source = "oeak"; 
+                    comment = "Verified"; 
+                };
+                reach_national = { 
+                    value = 25.0; 
+                    unit = "percent"; 
+                    source = "media_analyse"; 
+                };
+            };
+            comment = "Circulation data verified";
+        };
+    };
+};
+
+UNIT MediaOutlet {
+  id: ID PRIMARY KEY,
+  name: TEXT(120),
+  sector: NUMBER,
+  mandate: CATEGORY(
+    "Öffentlich-rechtlich",
+    "Privat-kommerziell",
+    "privat-nichtkommerziell"
+  )
+}
+
+VOCABULARY MediaSectors {
+  SECTOR_CODES {
+    1: "Tageszeitung",
+    2: "Wochenzeitung", 
+    3: "Magazin",
+    4: "Radio"
+  }
+}
+
+family "Express Family" {
+  @comment "Independent newspaper until 1971"
+  
+  outlet "Express" {
+    id = 300001;
+    identity {
+      title = "Express";
+    }
+    lifecycle {
+      status "active" from "1950-01-01" to "1970-12-31" {
+        precision_start = "known";
+        precision_end = "known";
+      };
+    }
+    characteristics {
+      sector = "Tageszeitung";
+      mandate = "Privat-kommerziell";
+      distribution = {
+        primary_area = $austria_region;
+        local = false;
+      };
+    }
+    metadata {
+      steward = "js";
+      notes = $founding_note;
+    }
+  }
+} 

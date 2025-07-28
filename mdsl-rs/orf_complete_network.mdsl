@@ -1,0 +1,2357 @@
+// Generated MDSL from ANMI SQL database
+// Database: 100.77.115.86:5432/cmc
+// Generated at: 2025-07-28 00:28:38 UTC
+
+IMPORT "anmi_common_codes.mdsl";
+IMPORT "anmi_media_sectors.mdsl";
+IMPORT "anmi_mandate_types.mdsl";
+IMPORT "anmi_source_references.mdsl";
+
+VOCABULARY DataSources {
+    TYPES {
+        1: "In_Angabe_zu__Dach___Kombi__oder__Hauptausgabe_inkludiert_im_Jahr_2021",
+        2: "In_Angabe_zu__Dach___Kombi__oder__Hauptausgabe_inkludiert_im_Jahr_2022",
+        3: "In_Angabe_zu__Dach___Kombi__oder__Hauptausgabe_inkludiert_im_Jahr_2023",
+        4: "Massenmedien_in_Oesterreich___Medienbericht_Bd__4__1993",
+        5: "Media_Analyse_1993",
+        6: "Media_Analyse_1994",
+        7: "Media_Analyse_1995",
+        8: "Media_Analyse_1996",
+        9: "Media_Analyse_1997",
+        10: "Media_Analyse_1998",
+        11: "Media_Analyse_1999",
+        12: "Media_Analyse_2000",
+        13: "Media_Analyse_2001",
+        14: "Media_Analyse_2002",
+        15: "Media_Analyse_2003",
+        16: "Media_Analyse_2004_zitiert_nach_derstandart_at_23_03_2005",
+        17: "Media_Analyse_2005_zitiert_nach_derstandart_at_29_03_2006",
+        18: "Media_Analyse_2006_zitiert_nach_derstandart_at_27_03_2007",
+        19: "Media_Analyse_2007_zitiert_nach_derstandart_at_28_03_2008",
+        20: "Media_Analyse_2008_zitiert_nach_derstandart_at_01_04_2009",
+        21: "ORF_Bericht_2012",
+        22: "ORF_Bericht_2022",
+        23: "ORF_Bericht_2023",
+        24: "Oesterreichische_Auflagenkontrolle_Jahresbericht_2021",
+        25: "Oesterreichische_Auflagenkontrolle_Jahresbericht_2022",
+        26: "Oesterreichische_Auflagenkontrolle_Jahresbericht_2023",
+        27: "OeWA_4__Quartal_2008",
+        28: "OeWA_4__Quartal_2009",
+        29: "OeWA_4__Quartal_2010",
+        30: "OeWA_4__Quartal_2011",
+        31: "OeWA_4__Quartal_2012",
+        32: "OeWA_4__Quartal_2013",
+        33: "OeWA_4__Quartal_2014",
+        34: "OeWA_4__Quartal_2015",
+        35: "OeWA_4__Quartal_2016",
+        36: "OeWA_4__Quartal_2017",
+        37: "OeWA_4__Quartal_2018",
+        38: "OeWA_4__Quartal_2019",
+        39: "OeWA_Jahresbericht_2020",
+        40: "OeWA_Jahresbericht_2021",
+        41: "OeWA_Jahresbericht_2022",
+        42: "Statistik_Austria__Kulturstatistik__BJ_2003",
+        43: "Statistik_Austria__Kulturstatistik__BJ_2004",
+        44: "Statistik_Austria__Kulturstatistik__BJ_2006",
+        45: "Statistik_Austria__Kulturstatistik__BJ_2008_2009",
+        46: "Statistik_Austria__Kulturstatistik__BJ_2010",
+        47: "Statistik_Austria__Kulturstatistik__BJ_2011",
+        48: "Statistik_Austria__Kulturstatistik__BJ_2016",
+        49: "Statistik_Austria__Kulturstatistik__BJ_2018",
+        50: "Statistik_Austria__Kulturstatistik__BJ_2019",
+        51: "Statistik_Austria__Kulturstatistik__BJ_2021",
+        52: "TBA_2021",
+        53: "TBA_2022",
+        54: "TBA_2023"
+    }
+}
+
+// Media Outlet Schema
+// ===================
+
+UNIT MediaOutlet {
+    id_mo: ID PRIMARY KEY,
+    mo_title: TEXT(200),
+    id_sector: NUMBER,
+    mandate: NUMBER,
+    location: TEXT(100),
+    primary_distr_area: NUMBER,
+    local: NUMBER,
+    language: TEXT(50),
+    start_date: TEXT(20),
+    start_fake_date: NUMBER,
+    end_date: TEXT(20),
+    end_fake_date: NUMBER,
+    editorial_line_s: TEXT(50),
+    editorial_line_e: TEXT(50),
+    comments: TEXT(1000)
+}
+
+// Sample Media Outlets:
+// - 3sat: KA (1984-12-01 - 9999-01-01)
+// - ARD alpha: KA (2014-06-29 - 9999-01-01)
+// - arte: KA (1998-01-01 - 9999-01-01)
+// - Blue Danube Radio: Wien (1979-08-23 - 2000-01-31)
+// - BR alpha: KA (2000-06-01 - 2014-06-28)
+// ... and 26 more
+
+// Generated Media Outlets
+// =======================
+
+FAMILY "ORF Media Group" {
+    @comment "Österreichischer Rundfunk and related outlets"
+
+    OUTLET "Dorf tv" {
+        identity {
+            id = 300110;
+            title = "Dorf tv";
+        };
+        lifecycle {
+            status "active" FROM "2010-06-22" TO CURRENT {
+                precision_start = "known";
+                precision_end = "known";
+            };
+        };
+        characteristics {
+            sector = "30";
+            mandate = "3";
+            distribution = {
+                primary_area = "15";
+                local = false;
+            };
+            language = "mehrsprachig";
+        };
+        metadata {
+            steward = "imported";
+            verified = "2024-01-01";
+            comment = "KA";
+        };
+    };
+
+    OUTLET "Ö1 Campus - https://oe1.orf.at/campus" {
+        identity {
+            id = 200082;
+            title = "Ö1 Campus - https://oe1.orf.at/campus";
+        };
+        lifecycle {
+            status "active" FROM "2009-01-01" TO CURRENT {
+                precision_start = "known";
+                precision_end = "known";
+            };
+        };
+        characteristics {
+            sector = "40";
+            mandate = "1";
+            distribution = {
+                primary_area = "20";
+                local = false;
+            };
+            language = "mehrsprachig";
+        };
+        metadata {
+            steward = "imported";
+            verified = "2024-01-01";
+            comment = "Internetradio";
+        };
+    };
+
+    OUTLET "Ö1 Inforadio - https://oe1.orf.at/inforadio" {
+        identity {
+            id = 200090;
+            title = "Ö1 Inforadio - https://oe1.orf.at/inforadio";
+        };
+        lifecycle {
+            status "inactive" FROM "2003-01-01" TO "2011-04-30" {
+                precision_start = "known";
+                precision_end = "known";
+            };
+        };
+        characteristics {
+            sector = "40";
+            mandate = "1";
+            distribution = {
+                primary_area = "20";
+                local = false;
+            };
+            language = "deutsch";
+        };
+        metadata {
+            steward = "imported";
+            verified = "2024-01-01";
+            comment = "Internetradio";
+        };
+    };
+
+    OUTLET "ORF 1" {
+        identity {
+            id = 300013;
+            title = "ORF 1";
+        };
+        lifecycle {
+            status "active" FROM "1992-10-26" TO CURRENT {
+                precision_start = "known";
+                precision_end = "known";
+            };
+        };
+        characteristics {
+            sector = "30";
+            mandate = "1";
+            distribution = {
+                primary_area = "20";
+                local = false;
+            };
+            language = "deutsch";
+        };
+        metadata {
+            steward = "imported";
+            verified = "2024-01-01";
+            comment = "01.2011 - 04.2018 ORF eins";
+        };
+    };
+
+    OUTLET "ORF 2" {
+        identity {
+            id = 300022;
+            title = "ORF 2";
+        };
+        lifecycle {
+            status "active" FROM "1992-10-26" TO CURRENT {
+                precision_start = "known";
+                precision_end = "known";
+            };
+        };
+        characteristics {
+            sector = "30";
+            mandate = "1";
+            distribution = {
+                primary_area = "20";
+                local = false;
+            };
+            language = "deutsch";
+        };
+        metadata {
+            steward = "imported";
+            verified = "2024-01-01";
+            comment = "KA";
+        };
+    };
+
+    OUTLET "ORF 2 Europe" {
+        identity {
+            id = 300080;
+            title = "ORF 2 Europe";
+        };
+        lifecycle {
+            status "active" FROM "2004-07-05" TO CURRENT {
+                precision_start = "known";
+                precision_end = "known";
+            };
+        };
+        characteristics {
+            sector = "30";
+            mandate = "1";
+            distribution = {
+                primary_area = "20";
+                local = false;
+            };
+            language = "deutsch";
+        };
+        metadata {
+            steward = "imported";
+            verified = "2024-01-01";
+            comment = "Europaweit ausgestrahlte Sendungen von ORF2";
+        };
+    };
+
+    OUTLET "orf.at" {
+        identity {
+            id = 400013;
+            title = "orf.at";
+        };
+        lifecycle {
+            status "active" FROM "1997-07-24" TO CURRENT {
+                precision_start = "known";
+                precision_end = "known";
+            };
+        };
+        characteristics {
+            sector = "40";
+            mandate = "1";
+            distribution = {
+                primary_area = "20";
+                local = false;
+            };
+            language = "mehrsprachig";
+        };
+        metadata {
+            steward = "imported";
+            verified = "2024-01-01";
+            comment = "KA";
+        };
+    };
+
+    OUTLET "ORF III" {
+        identity {
+            id = 300040;
+            title = "ORF III";
+        };
+        lifecycle {
+            status "active" FROM "2011-10-26" TO CURRENT {
+                precision_start = "known";
+                precision_end = "known";
+            };
+        };
+        characteristics {
+            sector = "30";
+            mandate = "1";
+            distribution = {
+                primary_area = "20";
+                local = false;
+            };
+            language = "deutsch";
+        };
+        metadata {
+            steward = "imported";
+            verified = "2024-01-01";
+            comment = "KA";
+        };
+    };
+
+    OUTLET "ORF Radio [[Dach]]" {
+        identity {
+            id = 200018;
+            title = "ORF Radio [[Dach]]";
+        };
+        lifecycle {
+            status "active" FROM "1967-10-01" TO CURRENT {
+                precision_start = "known";
+                precision_end = "known";
+            };
+        };
+        characteristics {
+            sector = "20";
+            mandate = "1";
+            distribution = {
+                primary_area = "20";
+                local = false;
+            };
+            language = "deutsch";
+        };
+        metadata {
+            steward = "imported";
+            verified = "2024-01-01";
+            comment = "KA";
+        };
+    };
+
+    OUTLET "ORF Sat" {
+        identity {
+            id = 300070;
+            title = "ORF Sat";
+        };
+        lifecycle {
+            status "inactive" FROM "1997-01-01" TO "2000-12-31" {
+                precision_start = "known";
+                precision_end = "known";
+            };
+        };
+        characteristics {
+            sector = "30";
+            mandate = "1";
+            distribution = {
+                primary_area = "20";
+                local = false;
+            };
+            language = "deutsch";
+        };
+        metadata {
+            steward = "imported";
+            verified = "2024-01-01";
+            comment = "Europaweit ausgestrahlte Sendungen von ORF 2 und TW1";
+        };
+    };
+
+    OUTLET "ORF Sport+" {
+        identity {
+            id = 300050;
+            title = "ORF Sport+";
+        };
+        lifecycle {
+            status "active" FROM "2011-10-26" TO CURRENT {
+                precision_start = "known";
+                precision_end = "known";
+            };
+        };
+        characteristics {
+            sector = "30";
+            mandate = "8";
+            distribution = {
+                primary_area = "20";
+                local = false;
+            };
+            language = "deutsch";
+        };
+        metadata {
+            steward = "imported";
+            verified = "2024-01-01";
+            comment = "26.10.2011 SPORT+ zu einem 24-Stunden-Spartenkanal ausgebaut";
+        };
+    };
+
+    OUTLET "ORF Sport Plus" {
+        identity {
+            id = 300049;
+            title = "ORF Sport Plus";
+        };
+        lifecycle {
+            status "inactive" FROM "2006-05-01" TO "2011-10-25" {
+                precision_start = "known";
+                precision_end = "known";
+            };
+        };
+        characteristics {
+            sector = "30";
+            mandate = "8";
+            distribution = {
+                primary_area = "20";
+                local = false;
+            };
+            language = "deutsch";
+        };
+        metadata {
+            steward = "imported";
+            verified = "2024-01-01";
+            comment = "Seit Mai 2000 gab es eine eigene Sportschiene im Programm von TW1 / Bis 25.10.2011 teilte sich der Sender, der kein Vollprogramm ausstrahlte, die Frequenz mit TW1";
+        };
+    };
+
+    OUTLET "Österreichischer Rundfunk - ORF" {
+        identity {
+            id = 923400;
+            title = "Österreichischer Rundfunk - ORF";
+        };
+        lifecycle {
+            status "active" FROM "1955-07-27" TO CURRENT {
+                precision_start = "known";
+                precision_end = "known";
+            };
+        };
+        characteristics {
+            sector = "90";
+            mandate = "1";
+            distribution = {
+                primary_area = "20";
+                local = false;
+            };
+            language = "deutsch";
+        };
+        metadata {
+            steward = "imported";
+            verified = "2024-01-01";
+            comment = "19.01.1952 die öffentliche Verwaltung des Rundfunks bekommt den Namenszusatz „Österreichischer Rundfunk“, 27.07.1955  alle Radiosender offiziell zu einem österreichischen Rundfunk zusammengefasst,  11.12.1957 Gründung Österreichische Rundfunk Ges.m.b.H., die am 01.01.1958 den Hörfunk- und Fernsehbetrieb übernahm, 01.01.1967 Gründung des ORF im Wesentlichen in seiner heutigen Form (https://science.orf.at/stories/3200700/) ";
+        };
+    };
+
+    OUTLET "Österreichischer Rundfunk - ORF Fernsehen [[Dach]]" {
+        identity {
+            id = 300010;
+            title = "Österreichischer Rundfunk - ORF Fernsehen [[Dach]]";
+        };
+        lifecycle {
+            status "active" FROM "1961-09-11" TO CURRENT {
+                precision_start = "known";
+                precision_end = "known";
+            };
+        };
+        characteristics {
+            sector = "30";
+            mandate = "1";
+            distribution = {
+                primary_area = "20";
+                local = false;
+            };
+            language = "deutsch";
+        };
+        metadata {
+            steward = "imported";
+            verified = "2024-01-01";
+            comment = "KA";
+        };
+    };
+
+}
+
+FAMILY "Other Media Outlets" {
+    @comment "Sample of other media outlets from database"
+
+    OUTLET "3sat" {
+        identity {
+            id = 300060;
+            title = "3sat";
+        };
+        lifecycle {
+            status "active" FROM "1984-12-01" TO CURRENT {
+                precision_start = "known";
+                precision_end = "known";
+            };
+        };
+        characteristics {
+            sector = "30";
+            mandate = "1";
+            distribution = {
+                primary_area = "20";
+                local = false;
+            };
+            language = "deutsch";
+        };
+        metadata {
+            steward = "imported";
+            verified = "2024-01-01";
+            comment = "Von ARD, ORF, SRG und ZDF gemeinsam betrieben";
+        };
+    };
+
+    OUTLET "ARD alpha" {
+        identity {
+            id = 300501;
+            title = "ARD alpha";
+        };
+        lifecycle {
+            status "active" FROM "2014-06-29" TO CURRENT {
+                precision_start = "known";
+                precision_end = "known";
+            };
+        };
+        characteristics {
+            sector = "30";
+            mandate = "1";
+            distribution = {
+                primary_area = "20";
+                local = false;
+            };
+            language = "deutsch";
+        };
+        metadata {
+            steward = "imported";
+            verified = "2024-01-01";
+            comment = "KA";
+        };
+    };
+
+    OUTLET "arte" {
+        identity {
+            id = 300490;
+            title = "arte";
+        };
+        lifecycle {
+            status "active" FROM "1998-01-01" TO CURRENT {
+                precision_start = "known";
+                precision_end = "known";
+            };
+        };
+        characteristics {
+            sector = "30";
+            mandate = "2";
+            distribution = {
+                primary_area = "20";
+                local = false;
+            };
+            language = "deutsch";
+        };
+        metadata {
+            steward = "imported";
+            verified = "2024-01-01";
+            comment = "ARD (Vertretung durch den SWR), ZDF und France Télévisions, Französischer Staat, Radio France, Institut national de l’audiovisuel";
+        };
+    };
+
+    OUTLET "Blue Danube Radio" {
+        identity {
+            id = 200060;
+            title = "Blue Danube Radio";
+        };
+        lifecycle {
+            status "inactive" FROM "1979-08-23" TO "2000-01-31" {
+                precision_start = "known";
+                precision_end = "known";
+            };
+        };
+        characteristics {
+            sector = "20";
+            mandate = "1";
+            distribution = {
+                primary_area = "20";
+                local = false;
+            };
+            language = "mehrsprachig";
+        };
+        metadata {
+            steward = "imported";
+            verified = "2024-01-01";
+            comment = "KA";
+        };
+    };
+
+    OUTLET "BR alpha" {
+        identity {
+            id = 300601;
+            title = "BR alpha";
+        };
+        lifecycle {
+            status "inactive" FROM "2000-06-01" TO "2014-06-28" {
+                precision_start = "known";
+                precision_end = "known";
+            };
+        };
+        characteristics {
+            sector = "30";
+            mandate = "1";
+            distribution = {
+                primary_area = "20";
+                local = false;
+            };
+            language = "deutsch";
+        };
+        metadata {
+            steward = "imported";
+            verified = "2024-01-01";
+            comment = "Gegründet 07.01.1998, doch alpha Österreich wird erst seit 01.06.2000 ausgestrahlt";
+        };
+    };
+
+    OUTLET "FM4" {
+        identity {
+            id = 200070;
+            title = "FM4";
+        };
+        lifecycle {
+            status "active" FROM "1995-01-16" TO CURRENT {
+                precision_start = "known";
+                precision_end = "known";
+            };
+        };
+        characteristics {
+            sector = "20";
+            mandate = "1";
+            distribution = {
+                primary_area = "20";
+                local = false;
+            };
+            language = "mehrsprachig";
+        };
+        metadata {
+            steward = "imported";
+            verified = "2024-01-01";
+            comment = "KA";
+        };
+    };
+
+    OUTLET "FS 1" {
+        identity {
+            id = 300012;
+            title = "FS 1";
+        };
+        lifecycle {
+            status "inactive" FROM "1961-09-11" TO "1992-10-25" {
+                precision_start = "known";
+                precision_end = "known";
+            };
+        };
+        characteristics {
+            sector = "30";
+            mandate = "1";
+            distribution = {
+                primary_area = "20";
+                local = false;
+            };
+            language = "deutsch";
+        };
+        metadata {
+            steward = "imported";
+            verified = "2024-01-01";
+            comment = "KA";
+        };
+    };
+
+    OUTLET "FS 2" {
+        identity {
+            id = 300021;
+            title = "FS 2";
+        };
+        lifecycle {
+            status "inactive" FROM "1961-09-11" TO "1992-10-25" {
+                precision_start = "known";
+                precision_end = "known";
+            };
+        };
+        characteristics {
+            sector = "30";
+            mandate = "1";
+            distribution = {
+                primary_area = "20";
+                local = false;
+            };
+            language = "deutsch";
+        };
+        metadata {
+            steward = "imported";
+            verified = "2024-01-01";
+            comment = "3 mal wöchentlich, ab ???? 5 mal wöchentlich, ab 01.09.1970 täglich, ab 02.04.1989 mit Informationsangebot in Kroatisch und Serbisch und der mehrsprachigen Sendung Heimat, fremde Heimat";
+        };
+    };
+
+    OUTLET "Kurzwellendienst des Österreichischen Rundfunks" {
+        identity {
+            id = 200051;
+            title = "Kurzwellendienst des Österreichischen Rundfunks";
+        };
+        lifecycle {
+            status "inactive" FROM "1955-01-01" TO "1985-12-31" {
+                precision_start = "known";
+                precision_end = "known";
+            };
+        };
+        characteristics {
+            sector = "20";
+            mandate = "1";
+            distribution = {
+                primary_area = "20";
+                local = false;
+            };
+            language = "mehrsprachig";
+        };
+        metadata {
+            steward = "imported";
+            verified = "2024-01-01";
+            comment = "KA";
+        };
+    };
+
+    OUTLET "Ö3 - Hitradio Ö3" {
+        identity {
+            id = 200041;
+            title = "Ö3 - Hitradio Ö3";
+        };
+        lifecycle {
+            status "active" FROM "1967-10-01" TO CURRENT {
+                precision_start = "known";
+                precision_end = "known";
+            };
+        };
+        characteristics {
+            sector = "20";
+            mandate = "1";
+            distribution = {
+                primary_area = "20";
+                local = false;
+            };
+            language = "deutsch";
+        };
+        metadata {
+            steward = "imported";
+            verified = "2024-01-01";
+            comment = "KA";
+        };
+    };
+
+    OUTLET "Österreich 1 (Ö1)" {
+        identity {
+            id = 200020;
+            title = "Österreich 1 (Ö1)";
+        };
+        lifecycle {
+            status "active" FROM "1967-10-01" TO CURRENT {
+                precision_start = "known";
+                precision_end = "known";
+            };
+        };
+        characteristics {
+            sector = "20";
+            mandate = "1";
+            distribution = {
+                primary_area = "20";
+                local = false;
+            };
+            language = "deutsch";
+        };
+        metadata {
+            steward = "imported";
+            verified = "2024-01-01";
+            comment = "Nachrichten in deutscher und englischer Sprache";
+        };
+    };
+
+    OUTLET "Österreich 2 (Ö2)  [[Dach]]" {
+        identity {
+            id = 200036;
+            title = "Österreich 2 (Ö2)  [[Dach]]";
+        };
+        lifecycle {
+            status "active" FROM "1990-05-02" TO CURRENT {
+                precision_start = "known";
+                precision_end = "known";
+            };
+        };
+        characteristics {
+            sector = "20";
+            mandate = "1";
+            distribution = {
+                primary_area = "20";
+                local = false;
+            };
+            language = "deutsch";
+        };
+        metadata {
+            steward = "imported";
+            verified = "2024-01-01";
+            comment = "Bis Mitte der 1990er Jahre bestand noch ein gemeinsames Rahmenprogramm, das nur stundenweise durch Regionalfenster unterbrochen wurde.";
+        };
+    };
+
+    OUTLET "Österreichisches Fernsehen" {
+        identity {
+            id = 300011;
+            title = "Österreichisches Fernsehen";
+        };
+        lifecycle {
+            status "inactive" FROM "1955-08-01" TO "1961-09-10" {
+                precision_start = "known";
+                precision_end = "known";
+            };
+        };
+        characteristics {
+            sector = "30";
+            mandate = "1";
+            distribution = {
+                primary_area = "20";
+                local = false;
+            };
+            language = "deutsch";
+        };
+        metadata {
+            steward = "imported";
+            verified = "2024-01-01";
+            comment = "3 mal wöchentlich, ab 01.01.1957 6 mal wöchentlich, ab 10.1959 täglich (https://der.orf.at/unternehmen/chronik/index.html)";
+        };
+    };
+
+    OUTLET "Österreich Regional" {
+        identity {
+            id = 200035;
+            title = "Österreich Regional";
+        };
+        lifecycle {
+            status "inactive" FROM "1967-10-01" TO "1990-05-01" {
+                precision_start = "known";
+                precision_end = "known";
+            };
+        };
+        characteristics {
+            sector = "20";
+            mandate = "1";
+            distribution = {
+                primary_area = "20";
+                local = false;
+            };
+            language = "deutsch";
+        };
+        metadata {
+            steward = "imported";
+            verified = "2024-01-01";
+            comment = "Gemeinsames Rahmenprogramm der ORF-Regionalradios, das nur stundenweise durch Regionalfenster unterbrochen wurde";
+        };
+    };
+
+    OUTLET "Radio 1476" {
+        identity {
+            id = 200081;
+            title = "Radio 1476";
+        };
+        lifecycle {
+            status "inactive" FROM "1997-03-21" TO "2008-12-31" {
+                precision_start = "known";
+                precision_end = "known";
+            };
+        };
+        characteristics {
+            sector = "20";
+            mandate = "1";
+            distribution = {
+                primary_area = "20";
+                local = false;
+            };
+            language = "mehrsprachig";
+        };
+        metadata {
+            steward = "imported";
+            verified = "2024-01-01";
+            comment = "KA";
+        };
+    };
+
+    OUTLET "Radio Österreich International " {
+        identity {
+            id = 200052;
+            title = "Radio Österreich International ";
+        };
+        lifecycle {
+            status "inactive" FROM "1985-01-01" TO "2003-06-30" {
+                precision_start = "known";
+                precision_end = "known";
+            };
+        };
+        characteristics {
+            sector = "20";
+            mandate = "1";
+            distribution = {
+                primary_area = "20";
+                local = false;
+            };
+            language = "mehrsprachig";
+        };
+        metadata {
+            steward = "imported";
+            verified = "2024-01-01";
+            comment = "KA";
+        };
+    };
+
+    OUTLET "TW1" {
+        identity {
+            id = 300030;
+            title = "TW1";
+        };
+        lifecycle {
+            status "inactive" FROM "1997-10-01" TO "2011-10-25" {
+                precision_start = "known";
+                precision_end = "known";
+            };
+        };
+        characteristics {
+            sector = "30";
+            mandate = "1";
+            distribution = {
+                primary_area = "20";
+                local = false;
+            };
+            language = "deutsch";
+        };
+        metadata {
+            steward = "imported";
+            verified = "2024-01-01";
+            comment = "TW1 war zwar seit Oktober 2005 zu 100 % im Besitz des ORF (zuvor 50%) und der rechtliche Rahmen war nach § 9 des ORF-Gesetzes vorgegeben, für die Finanzierung des Senders durften jedoch keine Mittel aus den Rundfunkgebühren verwendet werden. TW1 galt daher nicht als öffentlich-rechtlicher Sender. / Die inhaltliche Nachfolge wird eher durch Sport+ erfüllt, die Frequenz bekam jedoch ORF III";
+        };
+    };
+
+}
+
+// Relationships
+// =============
+
+SYNCHRONOUS_LINK link_200090_main_media_outlet {
+    outlet_1 = {
+        id = 200090;
+        role = "source";
+    };
+    outlet_2 = {
+        id = 200020;
+        role = "target";
+    };
+    relationship_type = "main_media_outlet";
+    period_start = "2003-01-01";
+    period_end = "2011-04-30";
+};
+
+SYNCHRONOUS_LINK link_200082_main_media_outlet {
+    outlet_1 = {
+        id = 200082;
+        role = "source";
+    };
+    outlet_2 = {
+        id = 200020;
+        role = "target";
+    };
+    relationship_type = "main_media_outlet";
+    period_start = "2009-01-01";
+    period_end = "9999-01-01";
+};
+
+SYNCHRONOUS_LINK link_300070_main_media_outlet {
+    outlet_1 = {
+        id = 300070;
+        role = "source";
+    };
+    outlet_2 = {
+        id = 300030;
+        role = "target";
+    };
+    relationship_type = "main_media_outlet";
+    period_start = "1997-01-01";
+    period_end = "2000-12-31";
+};
+
+SYNCHRONOUS_LINK link_300080_main_media_outlet {
+    outlet_1 = {
+        id = 300080;
+        role = "source";
+    };
+    outlet_2 = {
+        id = 300022;
+        role = "target";
+    };
+    relationship_type = "main_media_outlet";
+    period_start = "2004-07-05";
+    period_end = "9999-01-01";
+};
+
+SYNCHRONOUS_LINK link_300070_main_media_outlet {
+    outlet_1 = {
+        id = 300070;
+        role = "source";
+    };
+    outlet_2 = {
+        id = 300022;
+        role = "target";
+    };
+    relationship_type = "main_media_outlet";
+    period_start = "1997-01-01";
+    period_end = "2008-06-07";
+};
+
+SYNCHRONOUS_LINK link_200081_umbrella {
+    outlet_1 = {
+        id = 200081;
+        role = "source";
+    };
+    outlet_2 = {
+        id = 200018;
+        role = "target";
+    };
+    relationship_type = "umbrella";
+    period_start = "1997-03-21";
+    period_end = "2008-12-31";
+};
+
+SYNCHRONOUS_LINK link_200070_umbrella {
+    outlet_1 = {
+        id = 200070;
+        role = "source";
+    };
+    outlet_2 = {
+        id = 200018;
+        role = "target";
+    };
+    relationship_type = "umbrella";
+    period_start = "1995-01-16";
+    period_end = "9999-01-01";
+};
+
+SYNCHRONOUS_LINK link_200060_umbrella {
+    outlet_1 = {
+        id = 200060;
+        role = "source";
+    };
+    outlet_2 = {
+        id = 200018;
+        role = "target";
+    };
+    relationship_type = "umbrella";
+    period_start = "1979-08-23";
+    period_end = "2000-01-31";
+};
+
+SYNCHRONOUS_LINK link_200052_umbrella {
+    outlet_1 = {
+        id = 200052;
+        role = "source";
+    };
+    outlet_2 = {
+        id = 200018;
+        role = "target";
+    };
+    relationship_type = "umbrella";
+    period_start = "1985-01-01";
+    period_end = "2003-06-30";
+};
+
+SYNCHRONOUS_LINK link_200051_umbrella {
+    outlet_1 = {
+        id = 200051;
+        role = "source";
+    };
+    outlet_2 = {
+        id = 200018;
+        role = "target";
+    };
+    relationship_type = "umbrella";
+    period_start = "1955-01-01";
+    period_end = "1985-12-31";
+};
+
+SYNCHRONOUS_LINK link_200041_umbrella {
+    outlet_1 = {
+        id = 200041;
+        role = "source";
+    };
+    outlet_2 = {
+        id = 200018;
+        role = "target";
+    };
+    relationship_type = "umbrella";
+    period_start = "1967-10-01";
+    period_end = "9999-01-01";
+};
+
+SYNCHRONOUS_LINK link_200036_umbrella {
+    outlet_1 = {
+        id = 200036;
+        role = "source";
+    };
+    outlet_2 = {
+        id = 200018;
+        role = "target";
+    };
+    relationship_type = "umbrella";
+    period_start = "1990-05-02";
+    period_end = "9999-01-01";
+};
+
+SYNCHRONOUS_LINK link_200035_umbrella {
+    outlet_1 = {
+        id = 200035;
+        role = "source";
+    };
+    outlet_2 = {
+        id = 200018;
+        role = "target";
+    };
+    relationship_type = "umbrella";
+    period_start = "1967-10-01";
+    period_end = "1990-05-01";
+};
+
+SYNCHRONOUS_LINK link_200020_umbrella {
+    outlet_1 = {
+        id = 200020;
+        role = "source";
+    };
+    outlet_2 = {
+        id = 200018;
+        role = "target";
+    };
+    relationship_type = "umbrella";
+    period_start = "1967-10-01";
+    period_end = "9999-01-01";
+};
+
+SYNCHRONOUS_LINK link_300050_umbrella {
+    outlet_1 = {
+        id = 300050;
+        role = "source";
+    };
+    outlet_2 = {
+        id = 300010;
+        role = "target";
+    };
+    relationship_type = "umbrella";
+    period_start = "2011-10-26";
+    period_end = "9999-01-01";
+};
+
+SYNCHRONOUS_LINK link_300049_umbrella {
+    outlet_1 = {
+        id = 300049;
+        role = "source";
+    };
+    outlet_2 = {
+        id = 300010;
+        role = "target";
+    };
+    relationship_type = "umbrella";
+    period_start = "2006-05-01";
+    period_end = "2011-10-25";
+};
+
+SYNCHRONOUS_LINK link_300040_umbrella {
+    outlet_1 = {
+        id = 300040;
+        role = "source";
+    };
+    outlet_2 = {
+        id = 300010;
+        role = "target";
+    };
+    relationship_type = "umbrella";
+    period_start = "2011-10-26";
+    period_end = "9999-01-01";
+};
+
+SYNCHRONOUS_LINK link_300030_umbrella {
+    outlet_1 = {
+        id = 300030;
+        role = "source";
+    };
+    outlet_2 = {
+        id = 300010;
+        role = "target";
+    };
+    relationship_type = "umbrella";
+    period_start = "1997-10-01";
+    period_end = "2011-10-25";
+};
+
+SYNCHRONOUS_LINK link_300022_umbrella {
+    outlet_1 = {
+        id = 300022;
+        role = "source";
+    };
+    outlet_2 = {
+        id = 300010;
+        role = "target";
+    };
+    relationship_type = "umbrella";
+    period_start = "1992-10-26";
+    period_end = "9999-01-01";
+};
+
+SYNCHRONOUS_LINK link_300021_umbrella {
+    outlet_1 = {
+        id = 300021;
+        role = "source";
+    };
+    outlet_2 = {
+        id = 300010;
+        role = "target";
+    };
+    relationship_type = "umbrella";
+    period_start = "1961-09-11";
+    period_end = "1992-10-25";
+};
+
+SYNCHRONOUS_LINK link_300013_umbrella {
+    outlet_1 = {
+        id = 300013;
+        role = "source";
+    };
+    outlet_2 = {
+        id = 300010;
+        role = "target";
+    };
+    relationship_type = "umbrella";
+    period_start = "1992-10-26";
+    period_end = "9999-01-01";
+};
+
+SYNCHRONOUS_LINK link_300012_umbrella {
+    outlet_1 = {
+        id = 300012;
+        role = "source";
+    };
+    outlet_2 = {
+        id = 300010;
+        role = "target";
+    };
+    relationship_type = "umbrella";
+    period_start = "1961-09-11";
+    period_end = "1992-10-25";
+};
+
+SYNCHRONOUS_LINK link_200018_umbrella {
+    outlet_1 = {
+        id = 200018;
+        role = "source";
+    };
+    outlet_2 = {
+        id = 923400;
+        role = "target";
+    };
+    relationship_type = "umbrella";
+    period_start = "1967-10-01";
+    period_end = "9999-01-01";
+};
+
+SYNCHRONOUS_LINK link_400013_umbrella {
+    outlet_1 = {
+        id = 400013;
+        role = "source";
+    };
+    outlet_2 = {
+        id = 923400;
+        role = "target";
+    };
+    relationship_type = "umbrella";
+    period_start = "1997-07-24";
+    period_end = "9999-01-01";
+};
+
+SYNCHRONOUS_LINK link_300011_umbrella {
+    outlet_1 = {
+        id = 300011;
+        role = "source";
+    };
+    outlet_2 = {
+        id = 923400;
+        role = "target";
+    };
+    relationship_type = "umbrella";
+    period_start = "1955-08-01";
+    period_end = "1961-09-10";
+};
+
+SYNCHRONOUS_LINK link_300010_umbrella {
+    outlet_1 = {
+        id = 300010;
+        role = "source";
+    };
+    outlet_2 = {
+        id = 923400;
+        role = "target";
+    };
+    relationship_type = "umbrella";
+    period_start = "1961-09-11";
+    period_end = "9999-01-01";
+};
+
+SYNCHRONOUS_LINK link_300010_collaboration {
+    outlet_1 = {
+        id = 300010;
+        role = "source";
+    };
+    outlet_2 = {
+        id = 300490;
+        role = "target";
+    };
+    relationship_type = "collaboration";
+    period_start = "1984-12-01";
+    period_end = "9999-01-01";
+};
+
+SYNCHRONOUS_LINK link_300010_collaboration {
+    outlet_1 = {
+        id = 300010;
+        role = "source";
+    };
+    outlet_2 = {
+        id = 300601;
+        role = "target";
+    };
+    relationship_type = "collaboration";
+    period_start = "2000-06-01";
+    period_end = "2014-06-28";
+};
+
+SYNCHRONOUS_LINK link_200052_collaboration {
+    outlet_1 = {
+        id = 200052;
+        role = "source";
+    };
+    outlet_2 = {
+        id = 200081;
+        role = "target";
+    };
+    relationship_type = "collaboration";
+    period_start = "1999-04-26";
+    period_end = "2002-12-31";
+};
+
+SYNCHRONOUS_LINK link_200020_collaboration {
+    outlet_1 = {
+        id = 200020;
+        role = "source";
+    };
+    outlet_2 = {
+        id = 200081;
+        role = "target";
+    };
+    relationship_type = "collaboration";
+    period_start = "2009-01-01";
+    period_end = "9999-01-01";
+};
+
+SYNCHRONOUS_LINK link_300010_collaboration {
+    outlet_1 = {
+        id = 300010;
+        role = "source";
+    };
+    outlet_2 = {
+        id = 300501;
+        role = "target";
+    };
+    relationship_type = "collaboration";
+    period_start = "2014-06-29";
+    period_end = "9999-01-01";
+};
+
+DIACHRONIC_LINK evolution_300011_succession {
+    predecessor = 300011;
+    successor = 300012;
+    relationship_type = "succession";
+};
+
+DIACHRONIC_LINK evolution_300012_succession {
+    predecessor = 300012;
+    successor = 300013;
+    relationship_type = "succession";
+};
+
+DIACHRONIC_LINK evolution_300021_succession {
+    predecessor = 300021;
+    successor = 300022;
+    relationship_type = "succession";
+};
+
+DIACHRONIC_LINK evolution_300030_succession {
+    predecessor = 300030;
+    successor = 300040;
+    relationship_type = "succession";
+};
+
+DIACHRONIC_LINK evolution_300030_succession {
+    predecessor = 300030;
+    successor = 300050;
+    relationship_type = "succession";
+};
+
+DIACHRONIC_LINK evolution_300049_succession {
+    predecessor = 300049;
+    successor = 300050;
+    relationship_type = "succession";
+};
+
+DIACHRONIC_LINK evolution_200035_succession {
+    predecessor = 200035;
+    successor = 200036;
+    relationship_type = "succession";
+};
+
+DIACHRONIC_LINK evolution_200051_succession {
+    predecessor = 200051;
+    successor = 200052;
+    relationship_type = "succession";
+};
+
+DIACHRONIC_LINK evolution_200081_new_sector {
+    predecessor = 200081;
+    successor = 200082;
+    relationship_type = "new_sector";
+};
+
+DIACHRONIC_LINK evolution_300070_interruption {
+    predecessor = 300070;
+    successor = 300080;
+    relationship_type = "interruption";
+};
+
+DIACHRONIC_LINK evolution_300010_offshoot {
+    predecessor = 300010;
+    successor = 300060;
+    relationship_type = "offshoot";
+};
+
+DIACHRONIC_LINK evolution_200060_merger {
+    predecessor = 200060;
+    successor = 200070;
+    relationship_type = "merger";
+};
+
+// Market Data & Time Series
+// =========================
+// Comprehensive time series data from mo_year table
+// Shows data availability patterns and calculation methods by year
+
+// Time Series Data Summary
+// Total records: 1613
+// Records with outlet ID: 1613
+// Records with data: 1613
+// Years covered: 33
+
+DATA FOR 300080 {
+    // Time series data for outlet 300080
+    total_records: 20
+    years {
+        2004 {
+        };
+        2005 {
+        };
+        2006 {
+        };
+        2007 {
+        };
+        2008 {
+        };
+        2009 {
+        };
+        2010 {
+        };
+        2011 {
+        };
+        2012 {
+        };
+        2013 {
+        };
+        2014 {
+        };
+        2015 {
+        };
+        2016 {
+        };
+        2017 {
+        };
+        2018 {
+        };
+        2019 {
+        };
+        2020 {
+        };
+        2021 {
+        };
+        2022 {
+        };
+        2023 {
+        };
+    };
+}
+
+DATA FOR 300011 {
+    // Time series data for outlet 300011
+    total_records: 33
+    years {
+        1991 {
+            reach_national = 69.0;
+        };
+        1992 {
+            reach_national = 65.1;
+        };
+        1993 {
+            reach_national = 63.8;
+            market_share = 66.0;
+        };
+        1994 {
+            reach_national = 62.3;
+            market_share = 62.0;
+        };
+        1995 {
+            reach_national = 61.9;
+            market_share = 63.0;
+        };
+        1996 {
+            reach_national = 60.9;
+            market_share = 62.0;
+        };
+        1997 {
+            reach_national = 60.3;
+            market_share = 62.0;
+        };
+        1998 {
+            reach_national = 60.8;
+            market_share = 61.0;
+        };
+        1999 {
+            reach_national = 59.9;
+            market_share = 58.0;
+        };
+        2000 {
+            reach_national = 59.8;
+            market_share = 56.0;
+        };
+        2001 {
+            reach_national = 60.0;
+            market_share = 55.0;
+        };
+        2002 {
+            reach_national = 61.9;
+            market_share = 54.0;
+        };
+        2003 {
+            reach_national = 60.3;
+            market_share = 51.7;
+        };
+        2004 {
+            reach_national = 60.6;
+            market_share = 51.3;
+        };
+        2005 {
+            reach_national = 59.1;
+            market_share = 48.2;
+        };
+        2006 {
+            reach_national = 57.3;
+            market_share = 47.6;
+        };
+        2007 {
+            reach_national = 52.9;
+            market_share = 43.1;
+        };
+        2008 {
+            reach_national = 51.8;
+            market_share = 41.9;
+        };
+        2009 {
+            reach_national = 49.8;
+            market_share = 39.1;
+        };
+        2010 {
+            reach_national = 50.7;
+            market_share = 37.8;
+        };
+        2011 {
+            reach_national = 50.9;
+            market_share = 36.4;
+        };
+        2012 {
+            reach_national = 51.0;
+            market_share = 36.0;
+        };
+        2013 {
+            reach_national = 48.5;
+            market_share = 35.4;
+        };
+        2014 {
+            reach_national = 49.0;
+            market_share = 35.1;
+        };
+        2015 {
+            reach_national = 48.2;
+            market_share = 35.3;
+        };
+        2016 {
+            reach_national = 48.1;
+            market_share = 35.1;
+        };
+        2017 {
+            reach_national = 48.6;
+            market_share = 33.9;
+        };
+        2018 {
+            reach_national = 48.1;
+            market_share = 32.9;
+        };
+        2019 {
+            reach_national = 48.1;
+            market_share = 31.8;
+        };
+        2020 {
+            reach_national = 52.4;
+            market_share = 33.2;
+        };
+        2021 {
+            reach_national = 51.9;
+            market_share = 35.5;
+        };
+        2022 {
+            reach_national = 48.8;
+            market_share = 34.6;
+        };
+        2023 {
+            reach_national = 46.0;
+            market_share = 33.8;
+        };
+    };
+}
+
+DATA FOR 300013 {
+    // Time series data for outlet 300013
+    total_records: 32
+    years {
+        1992 {
+            reach_national = 56.4;
+        };
+        1993 {
+            reach_national = 55.0;
+            market_share = 36.0;
+        };
+        1994 {
+            reach_national = 52.7;
+            market_share = 32.0;
+        };
+        1995 {
+            reach_national = 48.0;
+            market_share = 27.0;
+        };
+        1996 {
+            reach_national = 45.5;
+            market_share = 25.0;
+        };
+        1997 {
+            reach_national = 43.8;
+            market_share = 24.0;
+        };
+        1998 {
+            reach_national = 42.9;
+            market_share = 26.0;
+        };
+        1999 {
+            reach_national = 44.1;
+            market_share = 24.0;
+        };
+        2000 {
+            reach_national = 43.3;
+            market_share = 24.0;
+        };
+        2001 {
+            reach_national = 42.9;
+            market_share = 23.0;
+        };
+        2002 {
+            reach_national = 44.1;
+            market_share = 22.0;
+        };
+        2003 {
+            reach_national = 43.3;
+            market_share = 22.0;
+        };
+        2004 {
+            reach_national = 43.7;
+            market_share = 22.0;
+        };
+        2005 {
+            reach_national = 41.6;
+            market_share = 20.0;
+        };
+        2006 {
+            reach_national = 39.7;
+            market_share = 20.0;
+        };
+        2007 {
+            reach_national = 34.7;
+            market_share = 18.0;
+        };
+        2008 {
+            reach_national = 32.6;
+            market_share = 17.0;
+        };
+        2009 {
+            reach_national = 30.4;
+            market_share = 15.0;
+        };
+        2010 {
+            reach_national = 31.3;
+            market_share = 15.0;
+        };
+        2011 {
+            reach_national = 31.0;
+            market_share = 14.0;
+        };
+        2012 {
+            reach_national = 30.9;
+            market_share = 14.0;
+        };
+        2013 {
+            reach_national = 28.0;
+            market_share = 12.0;
+        };
+        2014 {
+            reach_national = 29.1;
+            market_share = 13.0;
+        };
+        2015 {
+            reach_national = 27.6;
+            market_share = 12.0;
+        };
+        2016 {
+            reach_national = 27.4;
+            market_share = 12.0;
+        };
+        2017 {
+            reach_national = 27.2;
+            market_share = 10.8;
+        };
+        2018 {
+            reach_national = 27.4;
+            market_share = 10.9;
+        };
+        2019 {
+            reach_national = 25.4;
+            market_share = 9.1;
+        };
+        2020 {
+            reach_national = 26.1;
+            market_share = 8.2;
+        };
+        2021 {
+            reach_national = 27.2;
+            market_share = 10.2;
+        };
+        2022 {
+            reach_national = 24.8;
+            market_share = 9.8;
+        };
+        2023 {
+            reach_national = 23.3;
+            market_share = 9.5;
+        };
+    };
+}
+
+DATA FOR 300490 {
+    // Time series data for outlet 300490
+    total_records: 26
+    years {
+        1998 {
+        };
+        1999 {
+        };
+        2000 {
+        };
+        2001 {
+        };
+        2002 {
+        };
+        2003 {
+        };
+        2004 {
+        };
+        2005 {
+        };
+        2006 {
+        };
+        2007 {
+        };
+        2008 {
+        };
+        2009 {
+        };
+        2010 {
+        };
+        2011 {
+        };
+        2012 {
+        };
+        2013 {
+        };
+        2014 {
+        };
+        2015 {
+        };
+        2016 {
+        };
+        2017 {
+        };
+        2018 {
+        };
+        2019 {
+        };
+        2020 {
+        };
+        2021 {
+        };
+        2022 {
+        };
+        2023 {
+        };
+    };
+}
+
+DATA FOR 300501 {
+    // Time series data for outlet 300501
+    total_records: 10
+    years {
+        2014 {
+        };
+        2015 {
+        };
+        2016 {
+        };
+        2017 {
+        };
+        2018 {
+        };
+        2019 {
+        };
+        2020 {
+        };
+        2021 {
+        };
+        2022 {
+        };
+        2023 {
+        };
+    };
+}
+
+DATA FOR 300040 {
+    // Time series data for outlet 300040
+    total_records: 13
+    years {
+        2006 {
+        };
+        2011 {
+            market_share = 0.0;
+        };
+        2012 {
+            reach_national = 4.9;
+        };
+        2013 {
+            market_share = 1.0;
+        };
+        2014 {
+            market_share = 1.0;
+        };
+        2015 {
+            market_share = 2.0;
+        };
+        2016 {
+            market_share = 2.0;
+        };
+        2017 {
+            market_share = 2.0;
+        };
+        2018 {
+            market_share = 2.2;
+        };
+        2019 {
+            market_share = 2.3;
+        };
+        2020 {
+            market_share = 2.3;
+        };
+        2021 {
+        };
+        2022 {
+            market_share = 2.9;
+        };
+    };
+}
+
+DATA FOR 300022 {
+    // Time series data for outlet 300022
+    total_records: 32
+    years {
+        1992 {
+            reach_national = 50.8;
+        };
+        1993 {
+            reach_national = 50.6;
+            market_share = 30.0;
+        };
+        1994 {
+            reach_national = 50.3;
+            market_share = 31.0;
+        };
+        1995 {
+            reach_national = 51.3;
+            market_share = 36.0;
+        };
+        1996 {
+            reach_national = 49.2;
+            market_share = 36.0;
+        };
+        1997 {
+            reach_national = 48.7;
+            market_share = 37.0;
+        };
+        1998 {
+            reach_national = 48.4;
+            market_share = 36.0;
+        };
+        1999 {
+            reach_national = 47.5;
+            market_share = 34.0;
+        };
+        2000 {
+            reach_national = 47.0;
+            market_share = 33.0;
+        };
+        2001 {
+            reach_national = 46.7;
+            market_share = 32.0;
+        };
+        2002 {
+            reach_national = 48.4;
+            market_share = 32.0;
+        };
+        2003 {
+            reach_national = 46.7;
+            market_share = 30.0;
+        };
+        2004 {
+            reach_national = 46.5;
+            market_share = 30.0;
+        };
+        2005 {
+            reach_national = 45.1;
+            market_share = 28.0;
+        };
+        2006 {
+            reach_national = 43.3;
+            market_share = 27.0;
+        };
+        2007 {
+            reach_national = 40.1;
+            market_share = 26.0;
+        };
+        2008 {
+            reach_national = 39.7;
+            market_share = 25.0;
+        };
+        2009 {
+            reach_national = 38.4;
+            market_share = 24.0;
+        };
+        2010 {
+            reach_national = 38.8;
+            market_share = 23.0;
+        };
+        2011 {
+            reach_national = 39.1;
+            market_share = 23.0;
+        };
+        2012 {
+            reach_national = 39.0;
+            market_share = 22.0;
+        };
+        2013 {
+            reach_national = 38.0;
+            market_share = 22.0;
+        };
+        2014 {
+            reach_national = 37.5;
+            market_share = 20.0;
+        };
+        2015 {
+            reach_national = 37.6;
+            market_share = 21.0;
+        };
+        2016 {
+            reach_national = 37.9;
+            market_share = 21.0;
+        };
+        2017 {
+            reach_national = 38.7;
+            market_share = 20.6;
+        };
+        2018 {
+            reach_national = 37.8;
+            market_share = 19.3;
+        };
+        2019 {
+            reach_national = 39.1;
+            market_share = 19.8;
+        };
+        2020 {
+            reach_national = 43.7;
+            market_share = 22.0;
+        };
+        2021 {
+            reach_national = 43.1;
+            market_share = 22.1;
+        };
+        2022 {
+            reach_national = 40.2;
+            market_share = 21.4;
+        };
+        2023 {
+            reach_national = 37.6;
+            market_share = 21.0;
+        };
+    };
+}
+
+DATA FOR 300030 {
+    // Time series data for outlet 300030
+    total_records: 14
+    years {
+        1997 {
+        };
+        1998 {
+        };
+        1999 {
+        };
+        2000 {
+        };
+        2001 {
+        };
+        2002 {
+        };
+        2003 {
+        };
+        2004 {
+        };
+        2005 {
+        };
+        2006 {
+        };
+        2007 {
+        };
+        2008 {
+        };
+        2009 {
+        };
+        2010 {
+        };
+    };
+}
+
+DATA FOR 300060 {
+    // Time series data for outlet 300060
+    total_records: 33
+    years {
+        1991 {
+            reach_national = 0.9;
+        };
+        1992 {
+            reach_national = 1.0;
+        };
+        1993 {
+            market_share = 1.0;
+        };
+        1994 {
+            market_share = 1.0;
+        };
+        1995 {
+            market_share = 1.0;
+        };
+        1996 {
+            market_share = 1.0;
+        };
+        1997 {
+            market_share = 1.0;
+        };
+        1998 {
+            reach_national = 0.8;
+            market_share = 1.0;
+        };
+        1999 {
+            reach_national = 1.0;
+            market_share = 1.0;
+        };
+        2000 {
+            reach_national = 1.1;
+            market_share = 1.0;
+        };
+        2001 {
+            market_share = 1.0;
+        };
+        2002 {
+            market_share = 1.0;
+        };
+        2003 {
+            market_share = 1.0;
+        };
+        2004 {
+            market_share = 1.0;
+        };
+        2005 {
+            market_share = 1.0;
+        };
+        2006 {
+            market_share = 1.0;
+        };
+        2007 {
+            market_share = 2.0;
+        };
+        2008 {
+            market_share = 2.0;
+        };
+        2009 {
+            market_share = 2.0;
+        };
+        2010 {
+            market_share = 2.0;
+        };
+        2011 {
+            market_share = 2.0;
+        };
+        2012 {
+            market_share = 2.0;
+        };
+        2013 {
+            market_share = 2.0;
+        };
+        2014 {
+            market_share = 2.0;
+        };
+        2015 {
+            market_share = 2.0;
+        };
+        2016 {
+            market_share = 2.0;
+        };
+        2017 {
+            market_share = 1.7;
+        };
+        2018 {
+            market_share = 1.6;
+        };
+        2019 {
+            market_share = 1.5;
+        };
+        2020 {
+            market_share = 1.5;
+        };
+        2021 {
+            market_share = 1.4;
+        };
+        2022 {
+        };
+        2023 {
+        };
+    };
+}
+
+DATA FOR 300012 {
+    // Time series data for outlet 300012
+    total_records: 1
+    years {
+        1991 {
+            reach_national = 61.7;
+        };
+    };
+}
+
+DATA FOR 300049 {
+    // Time series data for outlet 300049
+    total_records: 1
+    years {
+        2006 {
+        };
+    };
+}
+
+DATA FOR 300050 {
+    // Time series data for outlet 300050
+    total_records: 16
+    years {
+        2007 {
+        };
+        2008 {
+        };
+        2009 {
+        };
+        2010 {
+        };
+        2011 {
+        };
+        2012 {
+            reach_national = 1.7;
+            market_share = 0.3;
+        };
+        2013 {
+            market_share = 0.4;
+        };
+        2014 {
+            market_share = 0.4;
+        };
+        2015 {
+            market_share = 0.5;
+        };
+        2016 {
+            market_share = 0.6;
+        };
+        2017 {
+            market_share = 0.4;
+        };
+        2018 {
+            market_share = 0.5;
+        };
+        2019 {
+            market_share = 0.6;
+        };
+        2020 {
+            market_share = 0.7;
+        };
+        2021 {
+        };
+        2022 {
+            market_share = 0.5;
+        };
+    };
+}
+
+DATA FOR 300021 {
+    // Time series data for outlet 300021
+    total_records: 1
+    years {
+        1991 {
+            reach_national = 54.8;
+        };
+    };
+}
+
+DATA FOR 300110 {
+    // Time series data for outlet 300110
+    total_records: 14
+    years {
+        2010 {
+        };
+        2011 {
+        };
+        2012 {
+        };
+        2013 {
+        };
+        2014 {
+        };
+        2015 {
+        };
+        2016 {
+        };
+        2017 {
+        };
+        2018 {
+        };
+        2019 {
+        };
+        2020 {
+        };
+        2021 {
+        };
+        2022 {
+        };
+        2023 {
+        };
+    };
+}
+
+DATA FOR 300070 {
+    // Time series data for outlet 300070
+    total_records: 4
+    years {
+        1997 {
+        };
+        1998 {
+        };
+        1999 {
+        };
+        2000 {
+        };
+    };
+}
+
+DATA FOR 300601 {
+    // Time series data for outlet 300601
+    total_records: 15
+    years {
+        2000 {
+        };
+        2001 {
+        };
+        2002 {
+        };
+        2003 {
+        };
+        2004 {
+        };
+        2005 {
+        };
+        2006 {
+        };
+        2007 {
+        };
+        2008 {
+        };
+        2009 {
+        };
+        2010 {
+        };
+        2011 {
+        };
+        2012 {
+        };
+        2013 {
+        };
+        2014 {
+        };
+    };
+}
+

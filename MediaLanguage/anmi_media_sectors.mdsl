@@ -1,0 +1,12 @@
+VOCABULARY anmi_media_sectors {
+  SECTOR_CODES {
+    1: "Tageszeitung",
+    2: "Wochenzeitung",
+    3: "Magazin",
+    4: "Radio",
+    5: "Fernsehen",
+    6: "Online",
+    7: "Podcast",
+    99: "n.v."
+  }
+}

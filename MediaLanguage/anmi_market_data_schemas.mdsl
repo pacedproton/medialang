@@ -1,0 +1,62 @@
+IMPORT "anmi_source_references.mdsl";
+IMPORT "anmi_media_sectors.mdsl";
+
+UNIT MedienangebotMarktdaten {  // TBD UNIT
+  id_mo: ID,
+  YEAR: NUMBER,
+  calc_additive: CATEGORY(
+    "nein",
+    "ja, immer",
+    "nur in Additionen, die auf einzelne Bundesländer bezogen sind",
+    "nur in Additionen, die auf einzelne Bundesländer und Österreich gesamt bezogen sind",
+    "nur in Additionen, die auf den überregionalen Markt und Österreich gesamt bezogen sind"
+  ),
+  circulation: NUMBER,
+  circulation_source_id: NUMBER,
+  unique_users: NUMBER,
+  unique_users_source_id: NUMBER,
+  reach_national: NUMBER,
+  reach_national_source_id: NUMBER,
+  reach_regional: NUMBER,
+  reach_regional_source_id: NUMBER,
+  market_share_national: NUMBER,
+  market_share_national_source_id: NUMBER,
+  market_share_regional: NUMBER,
+  market_share_regional_source_text: TEXT(200),
+  comments: TEXT(1000)
+}
+
+UNIT MedienunternehmenMarktdaten {
+  id_mu: ID,
+  YEAR: NUMBER,
+  market_revenue: NUMBER,
+  market_revenue_source_id: NUMBER,
+  group_revenue: NUMBER,
+  group_revenue_source_id: NUMBER,
+  comments: TEXT(1000)
+}
+
+UNIT MediensektorNutzungsdaten {
+  id_sector: NUMBER,
+  YEAR: NUMBER,
+  total_reach: NUMBER,
+  total_reach_source_id: NUMBER,
+  info_use_reach: NUMBER,
+  info_use_source_id: NUMBER,
+  comments: TEXT(1000)
+}
+
+// delta aus file
+VOCABULARY anmi_mandate_types {
+MANDATE_CODES { // Medienangebot.mandate
+  1: "Öffentlich-rechtlich",
+  2: "Privat-kommerziell",
+  3: "privat-nichtkommerziell",
+  4: "Partei",
+  5: "Verband", // Verband, Interessensvertretung
+  6: "Amtlich", // Amtlich, staatlich
+  7: "Besatzungsmacht",
+  8: "Sonstiges",
+  99: "n.v."
+  }
+}

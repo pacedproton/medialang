@@ -1,0 +1,45 @@
+
+// Generated MDSL from ANMI SQL database
+// Database: 100.77.115.86:5432/cmc
+// Generated at: 2025-07-16 08:13:29 UTC
+
+IMPORT "anmi_common_codes.mdsl";
+IMPORT "anmi_media_sectors.mdsl";
+IMPORT "anmi_mandate_types.mdsl";
+IMPORT "anmi_source_references.mdsl";
+
+VOCABULARY DataSources {
+    TYPES {
+        In_Angabe_zu__Dach___Kombi__oder__Hauptausgabe_inkludiert_im_Jahr_2021 = "In Angabe zu \"Dach\", \"Kombi\" oder \"Hauptausgabe inkludiert im Jahr 2021",
+        In_Angabe_zu__Dach___Kombi__oder__Hauptausgabe_inkludiert_im_Jahr_2022 = "In Angabe zu \"Dach\", \"Kombi\" oder \"Hauptausgabe inkludiert im Jahr 2022",
+        In_Angabe_zu__Dach___Kombi__oder__Hauptausgabe_inkludiert_im_Jahr_2023 = "In Angabe zu \"Dach\", \"Kombi\" oder \"Hauptausgabe inkludiert im Jahr 2023",
+        Massenmedien_in_Oesterreich___Medienbericht_Bd__4__1993 = "Massenmedien in Österreich - Medienbericht Bd. 4 (1993)",
+        Media_Analyse_1993 = "Media-Analyse 1993",
+        Media_Analyse_1994 = "Media-Analyse 1994",
+        Media_Analyse_1995 = "Media-Analyse 1995",
+        Media_Analyse_1996 = "Media-Analyse 1996",
+        Media_Analyse_1997 = "Media-Analyse 1997",
+        Media_Analyse_1998 = "Media-Analyse 1998",
+        Media_Analyse_1999 = "Media-Analyse 1999",
+        Media_Analyse_2000 = "Media-Analyse 2000",
+        Media_Analyse_2001 = "Media-Analyse 2001",
+        Media_Analyse_2002 = "Media-Analyse 2002",
+        Media_Analyse_2003 = "Media-Analyse 2003",
+        Media_Analyse_2004_zitiert_nach_derstandart_at_23_03_2005 = "Media-Analyse 2004, zitiert nach derstandart.at, 23.03.2005",
+        Media_Analyse_2005_zitiert_nach_derstandart_at_29_03_2006 = "Media-Analyse 2005, zitiert nach derstandart.at, 29.03.2006",
+        Media_Analyse_2006_zitiert_nach_derstandart_at_27_03_2007 = "Media-Analyse 2006, zitiert nach derstandart.at, 27.03.2007",
+        Media_Analyse_2007_zitiert_nach_derstandart_at_28_03_2008 = "Media-Analyse 2007, zitiert nach derstandart.at, 28.03.2008",
+        Media_Analyse_2008_zitiert_nach_derstandart_at_01_04_2009 = "Media-Analyse 2008, zitiert nach derstandart.at, 01.04.2009",
+        ORF_Bericht_2012 = "ORF-Bericht 2012",
+        ORF_Bericht_2022 = "ORF-Bericht 2022",
+        ORF_Bericht_2023 = "ORF-Bericht 2023",
+        Oesterreichische_Auflagenkontrolle_Jahresbericht_2021 = "Österreichische Auflagenkontrolle Jahresbericht 2021",
+        Oesterreichische_Auflagenkontrolle_Jahresbericht_2022 = "Österreichische Auflagenkontrolle Jahresbericht 2022",
+        Oesterreichische_Auflagenkontrolle_Jahresbericht_2023 = "Österreichische Auflagenkontrolle Jahresbericht 2023",
+        OeWA_4__Quartal_2008 = "ÖWA 4. Quartal 2008",
+        OeWA_4__Quartal_2009 = "ÖWA 4. Quartal 2009",
+        OeWA_4__Quartal_2010 = "ÖWA 4. Quartal 2010",
+        OeWA_4__Quartal_2011 = "ÖWA 4. Quartal 2011",
+        OeWA_4__Quartal_2012 = "ÖWA 4. Quartal 2012",
+        OeWA_4__Quartal_2013 = "ÖWA 4. Quartal 2013",
+        OeWA_4__Quartal_2014 = "ÖWA 4. Quartal 2014",

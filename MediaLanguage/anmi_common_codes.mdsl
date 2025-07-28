@@ -1,0 +1,44 @@
+VOCABULARY anmi_common_codes {   // von: VOCABULARY
+  // Languages (used in Medienangebot.language)
+  LANGUAGE_CODES {
+    "Deutsch": "de",
+    "Englisch": "en",
+    "Andere": "other",
+    "KA": "n.v."
+  },
+  // Regions (used in Medienangebot.primary_distr_area)
+  REGION_CODES {
+    1: "Wien",
+    2: "Niederösterreich",
+    3: "Oberösterreich",
+    4: "Salzburg",
+    5: "Tirol",
+    6: "Vorarlberg",
+    7: "Kärnten",
+    8: "Steiermark",
+    9: "Burgenland",
+    10: "Österreich gesamt",
+    99: "n.v."
+  }
+}
+
+// neu last delta
+DatePrecisionTypes {
+  "Known Date": "n.a.", // FROM ANMI start_fake_date_type
+  "Day Substituted": "Tag substituiert",
+  "Month Substituted": "Monat substituiert",
+  "YEAR Substituted": "Jahr substituiert",
+  "Day and Month Substituted": "Tag und Monat substituiert",
+  "Day and YEAR Substituted": "Tag und Jahr substituiert",
+  "Month and YEAR Substituted": "Monat und Jahr substituiert",
+  "Day, Month and YEAR Substituted": "Tag, Monat und Jahr substituiert"
+}
+
+// neu last delta additive
+AdditiveCalculationTypes {
+  "No": "nein",
+  "Yes Always": "ja, immer",
+  "Only Länder": "nur in Additionen, die auf einzelne Bundesländer bezogen sind",
+  "Only Länder and Gesamt": "nur in Additionen, die auf einzelne Bundesländer und Österreich gesamt bezogen sind",
+  "Only Überregional and Gesamt": "nur in Additionen, die auf den überregionalen Markt und Österreich gesamt bezogen sind"
+}

@@ -1,0 +1,1 @@
+//! Type checker implementation (stub)

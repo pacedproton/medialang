@@ -1,0 +1,50 @@
+🚀 Starting complete MDSL generation from ANMI database...
+🔄 Starting comprehensive MDSL generation from ANMI database...
+✅ Connected to ANMI database
+✅ Extracted 657 media outlets, 1613 market data records, 54 sources, 627 relationships
+🎉 Generated complete MDSL file
+
+// Generated MDSL from ANMI SQL database
+// Database: 100.77.115.86:5432/cmc
+// Generated at: 2025-07-16 08:14:36 UTC
+
+IMPORT "anmi_common_codes.mdsl";
+IMPORT "anmi_media_sectors.mdsl";
+IMPORT "anmi_mandate_types.mdsl";
+IMPORT "anmi_source_references.mdsl";
+
+VOCABULARY DataSources {
+    TYPES {
+        1: "In Angabe zu \"Dach\", \"Kombi\" oder \"Hauptausgabe inkludiert im Jahr 2021",
+        2: "In Angabe zu \"Dach\", \"Kombi\" oder \"Hauptausgabe inkludiert im Jahr 2022",
+        3: "In Angabe zu \"Dach\", \"Kombi\" oder \"Hauptausgabe inkludiert im Jahr 2023",
+        4: "Massenmedien in Österreich - Medienbericht Bd. 4 (1993)",
+        5: "Media-Analyse 1993",
+        6: "Media-Analyse 1994",
+        7: "Media-Analyse 1995",
+        8: "Media-Analyse 1996",
+        9: "Media-Analyse 1997",
+        10: "Media-Analyse 1998",
+        11: "Media-Analyse 1999",
+        12: "Media-Analyse 2000",
+        13: "Media-Analyse 2001",
+        14: "Media-Analyse 2002",
+        15: "Media-Analyse 2003",
+        16: "Media-Analyse 2004, zitiert nach derstandart.at, 23.03.2005",
+        17: "Media-Analyse 2005, zitiert nach derstandart.at, 29.03.2006",
+        18: "Media-Analyse 2006, zitiert nach derstandart.at, 27.03.2007",
+        19: "Media-Analyse 2007, zitiert nach derstandart.at, 28.03.2008",
+        20: "Media-Analyse 2008, zitiert nach derstandart.at, 01.04.2009",
+        21: "ORF-Bericht 2012",
+        22: "ORF-Bericht 2022",
+        23: "ORF-Bericht 2023",
+        24: "Österreichische Auflagenkontrolle Jahresbericht 2021",
+        25: "Österreichische Auflagenkontrolle Jahresbericht 2022",
+        26: "Österreichische Auflagenkontrolle Jahresbericht 2023",
+        27: "ÖWA 4. Quartal 2008",
+        28: "ÖWA 4. Quartal 2009",
+        29: "ÖWA 4. Quartal 2010",
+        30: "ÖWA 4. Quartal 2011",
+        31: "ÖWA 4. Quartal 2012",
+        32: "ÖWA 4. Quartal 2013",
+        33: "ÖWA 4. Quartal 2014",

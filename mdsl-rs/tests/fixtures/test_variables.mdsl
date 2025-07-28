@@ -1,0 +1,6 @@
+LET test_var = "hello world";
+
+UNIT TestUnit {
+  name: TEXT(50),
+  value: TEXT(100)
+}

@@ -1,0 +1,68 @@
+[package]
+name = "mdsl-rs"
+version = "0.1.0"
+edition = "2021"
+authors = ["Your Name <your.email@example.com>"]
+description = "A Rust implementation of the MediaLanguage DSL for modeling media outlets and relationships"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/yourusername/mdsl-rs"
+keywords = ["dsl", "media", "parser", "compiler", "tutorial"]
+categories = ["parsing", "database"]
+readme = "README.md"
+
+[dependencies]
+# Minimal dependencies for tutorial purposes
+atty = "0.2"  # For terminal color detection
+
+# Optional dependencies
+serde = { version = "1.0", features = ["derive"], optional = true }
+serde_json = { version = "1.0", optional = true }
+tokio = { version = "1.0", features = ["full"], optional = true }
+toml = { version = "0.8", optional = true }
+clap = { version = "4.0", features = ["derive"], optional = true }
+chrono = { version = "0.4", features = ["serde"], optional = true }
+tokio-postgres = { version = "0.7", features = ["with-chrono-0_4"], optional = true }
+rust_decimal = { version = "1.30", features = ["tokio-pg"], optional = true }
+
+[dev-dependencies]
+# Test dependencies if needed
+
+[[bin]]
+name = "mdsl"
+path = "src/main.rs"
+
+[[bin]]
+name = "test_runner"
+path = "src/bin/test_runner.rs"
+
+[[bin]]
+name = "sql_import"
+path = "src/bin/sql_import.rs"
+required-features = ["import"]
+
+[lib]
+name = "mdsl_rs"
+path = "src/lib.rs"
+
+# Enable optimization for release builds
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+panic = "abort"
+
+# Enable debug info for dev builds
+[profile.dev]
+opt-level = 0
+debug = true
+overflow-checks = true
+
+# Features for different targets
+[features]
+default = ["sql-codegen", "cypher-codegen"]
+sql-codegen = []
+cypher-codegen = []
+repl = []
+visualization = []
+import = ["tokio", "serde", "toml", "clap", "chrono", "tokio-postgres", "rust_decimal"]
+neo4j = ["serde", "serde_json"] 

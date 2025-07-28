@@ -1,0 +1,11 @@
+LET austria_region = "Österreich gesamt";
+LET test_number = 42;
+
+FAMILY "Test Family" {
+  OUTLET "Test Outlet" {
+    identity {
+      title = $austria_region;
+      id = $test_number;
+    }
+  }
+}

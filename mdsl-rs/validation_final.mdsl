@@ -1,0 +1,40 @@
+// Generated MDSL from ANMI SQL database
+// Database: 100.77.115.86:5432/cmc
+// Generated at: 2025-07-16 08:17:00 UTC
+
+IMPORT "anmi_common_codes.mdsl";
+IMPORT "anmi_media_sectors.mdsl";
+IMPORT "anmi_mandate_types.mdsl";
+IMPORT "anmi_source_references.mdsl";
+
+VOCABULARY DataSources {
+    TYPES {
+        1: "Media-Analyse 1993",
+        2: "Media-Analyse 1994",
+        3: "ORF-Bericht 2022",
+        4: "ORF-Bericht 2023"
+    }
+}
+
+// Media Outlet Schema
+// ===================
+
+UNIT MediaOutlet {
+    id_mo: ID PRIMARY KEY,
+    mo_title: TEXT(200),
+    id_sector: NUMBER,
+    mandate: NUMBER,
+    location: TEXT(100),
+    language: TEXT(50),
+    start_date: TEXT(20),
+    end_date: TEXT(20),
+    comments: TEXT(1000)
+}
+
+// Sample Media Outlets:
+// - Abend, Der [1]: Wien (1915-06-14 - 1917-02-20)
+// - Abend, Der [2]: Wien (1917-03-07 - 1918-03-18)
+// - 3sat: KA (1984-12-01 - ongoing)
+// - 6-Uhr-Abendblatt: Wien (1938-10-01 - 1939-05-20)
+// - 7 Uhr-Presse: Wien (1896-02-02 - 1896-10-31)
+// ... and 652 more 
