@@ -10,7 +10,12 @@
       "Bash(cargo build:*)",
       "Bash(ls:*)",
       "Bash(awk:*)",
-      "Bash(sed:*)"
+      "Bash(sed:*)",
+      "Bash(psql:*)",
+      "Bash(chmod:*)",
+      "Bash(./load_to_neo4j.sh:*)",
+      "Bash(./load_cypher_lines.sh:*)",
+      "Bash(./graph_comparison_clean.sh:*)"
     ],
     "deny": []
   }
