@@ -15,8 +15,16 @@
       "Bash(chmod:*)",
       "Bash(./load_to_neo4j.sh:*)",
       "Bash(./load_cypher_lines.sh:*)",
-      "Bash(./graph_comparison_clean.sh:*)"
+      "Bash(./graph_comparison_clean.sh:*)",
+      "Bash(./target/debug/sql_import generate --connection \"postgresql://postgres:,3cF;0^L$=]vc,*bQAf#@100.77.115.86:5432/cmc\" --output complete_anmi_full.mdsl)",
+      "Bash(./target/debug/mdsl validate:*)",
+      "Bash(mv:*)",
+      "Bash(./load_full_graph.sh:*)",
+      "Bash(./automated_graph_comparison.sh:*)",
+      "Bash(rustc:*)",
+      "Bash(./test_ir_debug)"
     ],
     "deny": []
-  }
+  },
+  "$schema": "https://json.schemastore.org/claude-code-settings.json"
 }

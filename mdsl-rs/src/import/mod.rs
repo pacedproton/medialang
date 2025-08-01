@@ -601,10 +601,10 @@ impl SqlImporter {
         println!("✅ Connected to ANMI database");
 
         // Extract and process all data
-        let mo_constant_data = self.extract_media_outlets(&connection).await?;
+        let mo_constant_data = self.extract_media_outlets_full(&connection).await?;
         let mo_year_data = self.extract_market_data(&connection).await?;
         let sources_data = self.extract_sources(&connection).await?;
-        let relationships_data = self.extract_relationships(&connection).await?;
+        let relationships_data = self.extract_relationships_full(&connection).await?;
 
         println!(
             "✅ Extracted {} media outlets, {} market data records, {} sources, {} relationships",
@@ -636,8 +636,8 @@ impl SqlImporter {
         Ok(output)
     }
 
-    /// Extract media outlet data from mo_constant table
-    async fn extract_media_outlets(
+    /// Extract media outlet data from mo_constant table - ORF focused (for GUI)
+    async fn extract_media_outlets_orf_focused(
         &self,
         connection: &connection::DatabaseConnection,
     ) -> Result<Vec<MediaOutletData>> {
@@ -731,7 +731,7 @@ impl SqlImporter {
             WHERE id_mo IN (SELECT id_mo FROM orf_outlets)
                OR merger IN (SELECT id_mo FROM orf_outlets)
         )
-        SELECT mo.id_mo, mo.mo_title, mo.id_sector, mo.mandate, mo.location, mo.primary_distr_area, mo.local, mo.language, mo.start_date, mo.start_fake_date, mo.end_date, mo.end_fake_date, mo.editorial_line_s, mo.editorial_line_e, mo.comments 
+        SELECT mo.id_mo, mo.mo_title, mo.id_sector, mo.mandate, mo.location, mo.primary_distr_area, mo.local, mo.language, mo.start_date, mo.end_date, mo.editorial_line_s, mo.comments 
         FROM graphv3.mo_constant mo
         JOIN connected_outlets co ON mo.id_mo = co.outlet_id
         WHERE mo.mo_title IS NOT NULL
@@ -742,7 +742,7 @@ impl SqlImporter {
         let mut outlets = Vec::new();
 
         for row in rows {
-            if row.len() >= 15 {
+            if row.len() >= 12 {
                 outlets.push(MediaOutletData {
                     id_mo: row[0].clone(),
                     title: row[1].clone(),
@@ -753,17 +753,77 @@ impl SqlImporter {
                     local: row[6].clone(),
                     language: row[7].clone(),
                     start_date: row[8].clone(),
-                    start_fake_date: row[9].clone(),
-                    end_date: row[10].clone(),
-                    end_fake_date: row[11].clone(),
-                    editorial_line_start: row[12].clone(),
-                    editorial_line_end: row[13].clone(),
-                    comments: row[14].clone(),
+                    start_fake_date: "".to_string(),
+                    end_date: row[9].clone(),
+                    end_fake_date: "".to_string(),
+                    editorial_line_start: row[10].clone(),
+                    editorial_line_end: "".to_string(),
+                    comments: row[11].clone(),
                 });
             }
         }
 
         Ok(outlets)
+    }
+
+    /// Extract ALL media outlets from database (full conversion)
+    async fn extract_media_outlets_full(
+        &self,
+        connection: &connection::DatabaseConnection,
+    ) -> Result<Vec<MediaOutletData>> {
+        // Query to extract ALL media outlets from the database
+        let query = r#"
+        SELECT 
+            id_mo,
+            mo_title,
+            id_sector,
+            mandate,
+            location,
+            primary_distr_area,
+            local,
+            language,
+            start_date,
+            end_date,
+            editorial_line_s,
+            comments
+        FROM graphv3.mo_constant 
+        WHERE id_mo IS NOT NULL 
+        ORDER BY id_mo"#;
+
+        let rows = connection.execute_query(query).await?;
+        let mut outlets = Vec::new();
+
+        for row in rows {
+            if row.len() >= 12 {
+                outlets.push(MediaOutletData {
+                    id_mo: row[0].clone(),
+                    title: row[1].clone(),
+                    sector: row[2].clone(),
+                    mandate: row[3].clone(),
+                    location: row[4].clone(),
+                    distribution_area: row[5].clone(),
+                    local: row[6].clone(),
+                    language: row[7].clone(),
+                    start_date: row[8].clone(),
+                    start_fake_date: "".to_string(),
+                    end_date: row[9].clone(),
+                    end_fake_date: "".to_string(),
+                    editorial_line_start: row[10].clone(),
+                    editorial_line_end: "".to_string(),
+                    comments: row[11].clone(),
+                });
+            }
+        }
+
+        Ok(outlets)
+    }
+
+    /// Alias for backward compatibility (GUI uses this)
+    async fn extract_media_outlets(
+        &self,
+        connection: &connection::DatabaseConnection,
+    ) -> Result<Vec<MediaOutletData>> {
+        self.extract_media_outlets_orf_focused(connection).await
     }
 
     /// Extract market data from mo_year table (include all records to show data patterns)
@@ -823,8 +883,83 @@ impl SqlImporter {
         Ok(sources)
     }
 
-    /// Extract relationship data from all relationship tables
-    async fn extract_relationships(
+    /// Extract ALL relationship data from all relationship tables (full conversion)
+    async fn extract_relationships_full(
+        &self,
+        connection: &connection::DatabaseConnection,
+    ) -> Result<Vec<RelationshipData>> {
+        let mut relationships = Vec::new();
+
+        // Contemporary relationships (with temporal bounds) - ALL outlets
+        let contemporary_tables = vec![
+            ("31_main_media_outlet", "main_media_outlet"),
+            ("33_umbrella", "umbrella"),
+            ("34_collaboration", "collaboration"),
+        ];
+
+        for (table_name, relation_type) in contemporary_tables {
+            let query = format!(
+                r#"SELECT id_mo, {}, start_rel, end_rel 
+                FROM graphv3."{}" 
+                WHERE {} IS NOT NULL AND id_mo IS NOT NULL"#,
+                relation_type, table_name, relation_type
+            );
+            let rows = connection.execute_query(&query).await?;
+
+            for row in rows {
+                if row.len() >= 4 {
+                    relationships.push(RelationshipData {
+                        source_id: row[0].clone(),
+                        target_id: row[1].clone(),
+                        relationship_type: relation_type.to_string(),
+                        start_date: row[2].clone(),
+                        end_date: row[3].clone(),
+                        is_temporal: true,
+                    });
+                }
+            }
+        }
+
+        // Historical relationships (without temporal bounds) - ALL outlets
+        let historical_tables = vec![
+            ("11_succession", "succession"),
+            ("12_amalgamation", "amalgamation"),
+            ("13_new_distribution_area", "new_distribution_area"),
+            ("14_new_sector", "new_sector"),
+            ("19_interruption", "interruption"),
+            ("21_split_off", "split_off"),
+            ("22_offshoot", "offshoot"),
+            ("23_merger", "merger"),
+        ];
+
+        for (table_name, relation_type) in historical_tables {
+            let query = format!(
+                r#"SELECT id_mo, {}, NULL as start_rel, NULL as end_rel 
+                FROM graphv3."{}" 
+                WHERE {} IS NOT NULL AND id_mo IS NOT NULL"#,
+                relation_type, table_name, relation_type
+            );
+            let rows = connection.execute_query(&query).await?;
+
+            for row in rows {
+                if row.len() >= 2 {
+                    relationships.push(RelationshipData {
+                        source_id: row[0].clone(),
+                        target_id: row[1].clone(),
+                        relationship_type: relation_type.to_string(),
+                        start_date: "NULL".to_string(),
+                        end_date: "NULL".to_string(),
+                        is_temporal: false,
+                    });
+                }
+            }
+        }
+
+        Ok(relationships)
+    }
+
+    /// Extract relationship data from all relationship tables (ORF-focused for GUI)
+    async fn extract_relationships_orf_focused(
         &self,
         connection: &connection::DatabaseConnection,
     ) -> Result<Vec<RelationshipData>> {
@@ -1008,6 +1143,14 @@ impl SqlImporter {
         Ok(relationships)
     }
 
+    /// Alias for backward compatibility (GUI uses this)
+    async fn extract_relationships(
+        &self,
+        connection: &connection::DatabaseConnection,
+    ) -> Result<Vec<RelationshipData>> {
+        self.extract_relationships_orf_focused(connection).await
+    }
+
     /// Generate MDSL file header and imports
     fn generate_mdsl_header(&self, output: &mut String) -> Result<()> {
         use std::fmt::Write;
@@ -1148,18 +1291,17 @@ impl SqlImporter {
             writeln!(output)?;
         }
 
-        // Generate other outlets as standalone (non-ORF)
+        // Generate ALL remaining outlets (non-ORF)
         let other_outlets: Vec<_> = outlets
             .iter()
             .filter(|outlet| !outlet.title.to_lowercase().contains("orf"))
-            .take(20) // Limit to first 20 non-ORF outlets for demo
             .collect();
 
         if !other_outlets.is_empty() {
-            writeln!(output, "FAMILY \"Other Media Outlets\" {{")?;
+            writeln!(output, "FAMILY \"All Media Outlets\" {{")?;
             writeln!(
                 output,
-                "    @comment \"Sample of other media outlets from database\""
+                "    @comment \"Complete media outlets from database (excluding ORF group)\""
             )?;
             writeln!(output)?;
 
@@ -1200,7 +1342,12 @@ impl SqlImporter {
         writeln!(
             output,
             "            title = \"{}\";",
-            outlet.title.replace("\"", "\\\"")
+            outlet.title
+                .replace("\\", "\\\\")
+                .replace("\"", "\\\"")
+                .replace("\n", "\\n")
+                .replace("\r", "\\r")
+                .replace("\t", "\\t")
         )?;
         writeln!(output, "        }};")?;
 
@@ -1249,7 +1396,12 @@ impl SqlImporter {
             writeln!(
                 output,
                 "            comment = \"{}\";",
-                outlet.comments.replace("\"", "\\\"")
+                outlet.comments
+                    .replace("\\", "\\\\")
+                    .replace("\"", "\\\"")
+                    .replace("\n", "\\n")
+                    .replace("\r", "\\r")
+                    .replace("\t", "\\t")
             )?;
         }
         writeln!(output, "        }};")?;

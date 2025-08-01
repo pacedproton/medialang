@@ -29,6 +29,7 @@ impl Transformer {
         let mut families = Vec::new();
         let mut events = Vec::new();
         let mut top_level_relationships = Vec::new();
+        let mut top_level_data_blocks = Vec::new();
 
         for statement in &program.statements {
             match statement {
@@ -57,6 +58,9 @@ impl Transformer {
                 Statement::Event(event) => {
                     events.push(self.transform_event(event)?);
                 }
+                Statement::Data(data) => {
+                    top_level_data_blocks.push(self.transform_data_declaration(data)?);
+                }
                 _ => {
                     // Skip other statements for now
                 }
@@ -76,6 +80,33 @@ impl Transformer {
                     relationships: top_level_relationships,
                     data_blocks: Vec::new(),
                     comment: Some("Auto-generated family for top-level relationships".to_string()),
+                });
+            }
+        }
+
+        // If we have top-level data blocks, assign them to the appropriate family
+        // based on the target outlet ID
+        for data_block in top_level_data_blocks {
+            let target_id = data_block.outlet_id as u32;
+            
+            // Find the family index that contains the target outlet
+            let family_index = families
+                .iter()
+                .position(|family| family.outlets.iter().any(|outlet| outlet.id == Some(target_id)));
+            
+            if let Some(index) = family_index {
+                families[index].data_blocks.push(data_block);
+            } else if !families.is_empty() {
+                // Add to the first family if target outlet not found
+                families[0].data_blocks.push(data_block);
+            } else {
+                // Create a default family for orphaned data blocks
+                families.push(IRFamily {
+                    name: "Global Data".to_string(),
+                    outlets: Vec::new(),
+                    relationships: Vec::new(),
+                    data_blocks: vec![data_block],
+                    comment: Some("Auto-generated family for top-level data blocks".to_string()),
                 });
             }
         }

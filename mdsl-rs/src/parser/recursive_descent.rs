@@ -1043,7 +1043,6 @@ impl Parser {
     }
 
     fn parse_data(&mut self) -> Result<DataDeclaration> {
-        // TODO: Implement data declaration parsing
         let position = self.current_position();
         self.consume_keyword(Keyword::Data, "Expected 'data'")?;
         self.consume_keyword(Keyword::For, "Expected 'for'")?;
@@ -1051,20 +1050,113 @@ impl Parser {
 
         self.consume_token(TokenKind::LeftBrace, "Expected '{'")?;
 
-        // Skip to end of block for now
-        let mut depth = 1;
-        while depth > 0 && !self.is_at_end() {
-            match &self.current_token().kind {
-                TokenKind::LeftBrace => depth += 1,
-                TokenKind::RightBrace => depth -= 1,
-                _ => {}
+        let mut blocks = Vec::new();
+
+        while !self.check(&TokenKind::RightBrace) && !self.is_at_end() {
+            if matches!(self.current_token().kind, TokenKind::Newline) {
+                self.advance();
+                continue;
             }
-            self.advance();
+
+            match &self.current_token().kind {
+                TokenKind::Comment(_) => {
+                    blocks.push(DataBlock::Comment(self.parse_comment()?));
+                }
+                TokenKind::Identifier(_) => {
+                    // Parse aggregation or other identifier-based blocks
+                    let identifier = self.consume_identifier("Expected identifier")?;
+                    
+                    if self.check(&TokenKind::Colon) {
+                        // Aggregation field: identifier: value
+                        self.advance(); // consume ':'
+                        let value = self.consume_number("Expected aggregation value")?.to_string();
+                        
+                        blocks.push(DataBlock::Aggregation(AggregationDeclaration {
+                            fields: vec![AggregationField {
+                                name: identifier,
+                                value,
+                                position,
+                            }],
+                            position,
+                        }));
+                    } else if identifier == "years" {
+                        // years block
+                        self.consume_token(TokenKind::LeftBrace, "Expected '{' after 'years'")?;
+                        
+                        while !self.check(&TokenKind::RightBrace) && !self.is_at_end() {
+                            if matches!(self.current_token().kind, TokenKind::Newline) {
+                                self.advance();
+                                continue;
+                            }
+                            
+                            if let TokenKind::Number(year_num) = &self.current_token().kind {
+                                let year = *year_num;
+                                self.advance();
+                                
+                                self.consume_token(TokenKind::LeftBrace, "Expected '{' after year")?;
+                                
+                                let mut year_blocks = Vec::new();
+                                
+                                while !self.check(&TokenKind::RightBrace) && !self.is_at_end() {
+                                    if matches!(self.current_token().kind, TokenKind::Newline) {
+                                        self.advance();
+                                        continue;
+                                    }
+                                    
+                                    if let TokenKind::Identifier(metric_name) = &self.current_token().kind {
+                                        let name = metric_name.clone();
+                                        self.advance();
+                                        
+                                        self.consume_token(TokenKind::Assign, "Expected '=' after metric name")?;
+                                        
+                                        let value = self.consume_number("Expected metric value")?;
+                                        
+                                        self.consume_token(TokenKind::Semicolon, "Expected ';' after metric value")?;
+                                        
+                                        year_blocks.push(YearBlock::Metrics(MetricsBlock {
+                                            fields: vec![MetricField {
+                                                name,
+                                                attributes: vec![MetricAttribute {
+                                                    name: "value".to_string(),
+                                                    value: Expression::Number(value),
+                                                    position,
+                                                }],
+                                                position,
+                                            }],
+                                            position,
+                                        }));
+                                    } else {
+                                        self.advance(); // Skip unexpected tokens
+                                    }
+                                }
+                                
+                                self.consume_token(TokenKind::RightBrace, "Expected '}' after year content")?;
+                                self.consume_token(TokenKind::Semicolon, "Expected ';' after year block")?;
+                                
+                                blocks.push(DataBlock::Year(YearDeclaration {
+                                    year,
+                                    blocks: year_blocks,
+                                    position,
+                                }));
+                            } else {
+                                self.advance(); // Skip unexpected tokens
+                            }
+                        }
+                        
+                        self.consume_token(TokenKind::RightBrace, "Expected '}' after years block")?;
+                    }
+                }
+                _ => {
+                    self.advance(); // Skip unexpected tokens
+                }
+            }
         }
+
+        self.consume_token(TokenKind::RightBrace, "Expected '}'")?;
 
         Ok(DataDeclaration {
             target_id,
-            blocks: Vec::new(),
+            blocks,
             position,
         })
     }

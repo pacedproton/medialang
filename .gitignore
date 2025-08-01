@@ -55,7 +55,45 @@ MediaLanguage/deprecated
 standardize_mdsl.py
 mdsl-rs/presentations
 /aml/
-mdsl-rs/graph_analysis_report.md
+
+# Generated files (session artifacts)
+*.sql
+*.cypher
+*.sh
+*.diff
+*.txt
+test_*.mdsl
+test_*.rs
+*_debug
+*_debug.rs
+
+# Generated MDSL files (keep source MDSL in MediaLanguage/ directory)
+complete_anmi_full.mdsl
+*_complete_network.mdsl
+syntax_corrected.mdsl
+
+# Analysis and comparison files
+*_analysis_report.md
+*_comparison.*
+graph_analysis_report.md
+full_conversion_report.md
+full_database_summary.md
+
+# Generated executables
+test_ir_debug
+sql_comparison.diff
+original_results.txt
+generated_results.txt
+
+# Claude artifacts
 CLAUDE.md
-mdsl-rs/orf_complete_network.cypher
-mdsl-rs/orf_complete_network_new.cypher
+ROADMAP.md
+
+# Output directories with generated content
+output/
+scripts/test_*.sh
+
+# Database comparison and validation files
+validate_*.sql
+*_validation.*
+*_equivalence.*

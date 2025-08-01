@@ -24,6 +24,7 @@ fn main() {
         eprintln!("  lex <file>                                            - Tokenize a MediaLanguage file");
         eprintln!("  parse <file>                                          - Parse a MediaLanguage file to AST");
         eprintln!("  sql <file>                                            - Generate SQL from MediaLanguage file");
+        eprintln!("  sql-anmi <file>                                      - Generate ANMI-compatible SQL from MediaLanguage file");
         eprintln!("  cypher <file>                                         - Generate Cypher from MediaLanguage file");
         eprintln!("  neo4j-test <file> [--url=URL]                        - Test Cypher generation against Neo4j");
         eprintln!(
@@ -66,6 +67,13 @@ fn main() {
                 process::exit(1);
             }
             generate_sql(&args[2]);
+        }
+        "sql-anmi" => {
+            if args.len() < 3 {
+                eprintln!("Error: sql-anmi command requires a file argument");
+                process::exit(1);
+            }
+            generate_sql_anmi(&args[2]);
         }
         "cypher" => {
             if args.len() < 3 {
@@ -290,6 +298,68 @@ fn generate_sql(filename: &str) {
     }
 }
 
+/// Generate ANMI-compatible SQL from a file
+fn generate_sql_anmi(filename: &str) {
+    let source = match fs::read_to_string(filename) {
+        Ok(content) => content,
+        Err(err) => {
+            eprintln!("Error reading file '{}': {}", filename, err);
+            process::exit(1);
+        }
+    };
+
+    println!("Generating ANMI-compatible SQL from file: {}", filename);
+
+    #[cfg(feature = "sql-codegen")]
+    {
+        use mdsl_rs::{codegen::sql_anmi::AnmiSqlGenerator, ir::transformer};
+
+        let mut scanner = Scanner::new(&source);
+        let tokens = match scanner.scan_tokens() {
+            Ok(tokens) => tokens,
+            Err(err) => {
+                eprintln!("Lexer error: {}", err);
+                process::exit(1);
+            }
+        };
+
+        let mut parser = Parser::new(tokens);
+        let ast = match parser.parse() {
+            Ok(ast) => ast,
+            Err(err) => {
+                eprintln!("Parse error: {}", err);
+                process::exit(1);
+            }
+        };
+
+        let ir = match transformer::transform(&ast) {
+            Ok(ir) => ir,
+            Err(err) => {
+                eprintln!("IR transformation error: {}", err);
+                process::exit(1);
+            }
+        };
+
+        let generator = AnmiSqlGenerator::new();
+        match generator.generate(&ir) {
+            Ok(sql) => {
+                println!("Generated ANMI SQL:");
+                println!("{}", sql);
+            }
+            Err(err) => {
+                eprintln!("ANMI SQL generation error: {}", err);
+                process::exit(1);
+            }
+        }
+    }
+
+    #[cfg(not(feature = "sql-codegen"))]
+    {
+        eprintln!("SQL code generation not enabled (requires 'sql-codegen' feature)");
+        process::exit(1);
+    }
+}
+
 /// Generate Cypher from a file
 fn generate_cypher(filename: &str) {
     let source = match fs::read_to_string(filename) {
@@ -332,7 +402,7 @@ fn generate_cypher(filename: &str) {
             }
         };
 
-        let generator = CypherGenerator::new();
+        let generator = CypherGenerator::with_prefix("mdsl2");
         match generator.generate(&ir) {
             Ok(cypher) => {
                 println!("Generated Cypher:");

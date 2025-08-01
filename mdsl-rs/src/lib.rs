@@ -155,6 +155,6 @@ pub fn compile_to_sql(source: &str) -> Result<String> {
 pub fn compile_to_cypher(source: &str) -> Result<String> {
     let ast = parse(source)?;
     let ir = ir::transform(&ast)?;
-    let cypher_generator = codegen::CypherGenerator::new();
+    let cypher_generator = codegen::CypherGenerator::with_prefix("mdsl2");
     cypher_generator.generate(&ir)
 }

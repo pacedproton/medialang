@@ -257,9 +257,8 @@ impl CypherGenerator {
         // Create template relationship if exists
         if let Some(template_ref) = &outlet.template_ref {
             cypher.push_str(&format!(
-                "MATCH (t:Template {{name: '{}'}}), (o:{}_media_outlet {{id_mo: {}}}) CREATE (o)-[:EXTENDS_TEMPLATE]->(t);\n",
+                "MATCH (t:Template {{name: '{}'}}), (o:mdsl_media_outlet {{id_mo: {}}}) CREATE (o)-[:EXTENDS_TEMPLATE]->(t);\n",
                 template_ref.replace("'", "\\'"),
-                self.prefix,
                 outlet.id.unwrap_or(0)
             ));
         }
@@ -267,26 +266,23 @@ impl CypherGenerator {
         // Create base relationship if exists
         if let Some(base_ref) = outlet.base_ref {
             cypher.push_str(&format!(
-                "MATCH (base:{}_media_outlet {{id_mo: {}}}), (o:{}_media_outlet {{id_mo: {}}}) CREATE (o)-[:BASED_ON]->(base);\n",
-                self.prefix,
+                "MATCH (base:mdsl_media_outlet {{id_mo: {}}}), (o:mdsl_media_outlet {{id_mo: {}}}) CREATE (o)-[:BASED_ON]->(base);\n",
                 base_ref,
-                self.prefix,
                 outlet.id.unwrap_or(0)
             ));
         }
 
-        // Process outlet blocks - simplified for {}_media_outlet compatibility
+        // Process outlet blocks - simplified for mdsl_media_outlet compatibility
         for block in &outlet.blocks {
             match block {
                 IROutletBlock::Identity(fields) => {
-                    // Add identity fields as properties to the {}_media_outlet node
+                    // Add identity fields as properties to the mdsl_media_outlet node
                     for field in fields {
                         match field.name.as_str() {
                             "title" => {
                                 // Update mo_title if specified
                                 cypher.push_str(&format!(
-                                    "MATCH (o:{}_media_outlet {{id_mo: {}}}) SET o.mo_title = '{}';\n",
-                                    self.prefix,
+                                    "MATCH (o:mdsl_media_outlet {{id_mo: {}}}) SET o.mo_title = '{}';\n",
                                     outlet.id.unwrap_or(0),
                                     self.expression_to_cypher_value(&field.value)
                                         .replace("'", "\\'")
@@ -295,8 +291,7 @@ impl CypherGenerator {
                             "url" => {
                                 // Add as comment if it's a URL
                                 cypher.push_str(&format!(
-                                    "MATCH (o:{}_media_outlet {{id_mo: {}}}) SET o.comments = COALESCE(o.comments, '') + ' URL: {}';\n",
-                                    self.prefix,
+                                    "MATCH (o:mdsl_media_outlet {{id_mo: {}}}) SET o.comments = COALESCE(o.comments, '') + ' URL: {}';\n",
                                     outlet.id.unwrap_or(0),
                                     self.expression_to_cypher_value(&field.value).replace("'", "\\'")
                                 ));
@@ -304,8 +299,7 @@ impl CypherGenerator {
                             _ => {
                                 // Add other identity fields as comments
                                 cypher.push_str(&format!(
-                                    "MATCH (o:{}_media_outlet {{id_mo: {}}}) SET o.comments = COALESCE(o.comments, '') + ' {}: {}';\n",
-                                    self.prefix,
+                                    "MATCH (o:mdsl_media_outlet {{id_mo: {}}}) SET o.comments = COALESCE(o.comments, '') + ' {}: {}';\n",
                                     outlet.id.unwrap_or(0),
                                     field.name.replace("'", "\\'"),
                                     self.expression_to_cypher_value(&field.value).replace("'", "\\'")
@@ -315,7 +309,7 @@ impl CypherGenerator {
                     }
                 }
                 IROutletBlock::Characteristics(fields) => {
-                    // Map characteristics to {}_media_outlet schema
+                    // Map characteristics to mdsl_media_outlet schema
                     for field in fields {
                         match field.name.as_str() {
                             "sector" => {
@@ -323,8 +317,7 @@ impl CypherGenerator {
                                     self.extract_number_from_expression(&field.value)
                                 {
                                     cypher.push_str(&format!(
-                                        "MATCH (o:{}_media_outlet {{id_mo: {}}}) SET o.id_sector = {};\n",
-                                        self.prefix,
+                                        "MATCH (o:mdsl_media_outlet {{id_mo: {}}}) SET o.id_sector = {};\n",
                                         outlet.id.unwrap_or(0),
                                         sector_val
                                     ));
@@ -335,8 +328,7 @@ impl CypherGenerator {
                                     self.extract_number_from_expression(&field.value)
                                 {
                                     cypher.push_str(&format!(
-                                        "MATCH (o:{}_media_outlet {{id_mo: {}}}) SET o.mandate = {};\n",
-                                        self.prefix,
+                                        "MATCH (o:mdsl_media_outlet {{id_mo: {}}}) SET o.mandate = {};\n",
                                         outlet.id.unwrap_or(0),
                                         mandate_val
                                     ));
@@ -344,8 +336,7 @@ impl CypherGenerator {
                             }
                             "language" => {
                                 cypher.push_str(&format!(
-                                    "MATCH (o:{}_media_outlet {{id_mo: {}}}) SET o.language = '{}';\n",
-                                    self.prefix,
+                                    "MATCH (o:mdsl_media_outlet {{id_mo: {}}}) SET o.language = '{}';\n",
                                     outlet.id.unwrap_or(0),
                                     self.expression_to_cypher_value(&field.value)
                                         .replace("'", "\\'")
@@ -354,8 +345,7 @@ impl CypherGenerator {
                             _ => {
                                 // Add other characteristics as comments
                                 cypher.push_str(&format!(
-                                    "MATCH (o:{}_media_outlet {{id_mo: {}}}) SET o.comments = COALESCE(o.comments, '') + ' {}: {}';\n",
-                                    self.prefix,
+                                    "MATCH (o:mdsl_media_outlet {{id_mo: {}}}) SET o.comments = COALESCE(o.comments, '') + ' {}: {}';\n",
                                     outlet.id.unwrap_or(0),
                                     field.name.replace("'", "\\'"),
                                     self.expression_to_cypher_value(&field.value).replace("'", "\\'")
@@ -369,8 +359,7 @@ impl CypherGenerator {
                     for entry in entries {
                         if let Some(start_date) = &entry.start_date {
                             cypher.push_str(&format!(
-                                "MATCH (o:{}_media_outlet {{id_mo: {}}}) SET o.start_date = datetime('{}');\n",
-                                self.prefix,
+                                "MATCH (o:mdsl_media_outlet {{id_mo: {}}}) SET o.start_date = datetime('{}');\n",
                                 outlet.id.unwrap_or(0),
                                 start_date
                             ));
@@ -382,8 +371,7 @@ impl CypherGenerator {
                                 end_date.clone()
                             };
                             cypher.push_str(&format!(
-                                "MATCH (o:{}_media_outlet {{id_mo: {}}}) SET o.end_date = datetime('{}');\n",
-                                self.prefix,
+                                "MATCH (o:mdsl_media_outlet {{id_mo: {}}}) SET o.end_date = datetime('{}');\n",
                                 outlet.id.unwrap_or(0),
                                 end_date_str
                             ));
@@ -395,8 +383,7 @@ impl CypherGenerator {
                     for field in fields {
                         if field.name == "comment" {
                             cypher.push_str(&format!(
-                                "MATCH (o:{}_media_outlet {{id_mo: {}}}) SET o.comments = '{}';\n",
-                                self.prefix,
+                                "MATCH (o:mdsl_media_outlet {{id_mo: {}}}) SET o.comments = '{}';\n",
                                 outlet.id.unwrap_or(0),
                                 self.expression_to_cypher_value(&field.value)
                                     .replace("'", "\\'")
@@ -431,12 +418,9 @@ impl CypherGenerator {
                             diachronic.relationship_type.replace("'", "").replace("-", "_")
                         };
                         cypher.push_str(&format!(
-                            "MATCH (pred:{}_media_outlet {{id_mo: {}}}), (succ:{}_media_outlet {{id_mo: {}}}) MERGE (pred)-[r:{}_{}]->(succ) SET r.event_rel = datetime('{}');\n",
-                            self.prefix,
+                            "MATCH (pred:mdsl_media_outlet {{id_mo: {}}}), (succ:mdsl_media_outlet {{id_mo: {}}}) MERGE (pred)-[r:mdsl_{}]->(succ) SET r.event_rel = datetime('{}');\n",
                             diachronic.predecessor,
-                            self.prefix,
                             diachronic.successor,
-                            self.prefix,
                             rel_type,
                             diachronic.event_start_date.as_ref().unwrap_or(&"1900-01-01".to_string())
                         ));
@@ -450,12 +434,9 @@ impl CypherGenerator {
                             sync.relationship_type.replace("'", "").replace("-", "_")
                         };
                         cypher.push_str(&format!(
-                            "MATCH (o1:{}_media_outlet {{id_mo: {}}}), (o2:{}_media_outlet {{id_mo: {}}}) MERGE (o1)-[r:{}_{}]->(o2) SET r.start_rel = datetime('{}'), r.end_rel = datetime('{}');\n",
-                            self.prefix,
+                            "MATCH (o1:mdsl_media_outlet {{id_mo: {}}}), (o2:mdsl_media_outlet {{id_mo: {}}}) MERGE (o1)-[r:mdsl_{}]->(o2) SET r.start_rel = datetime('{}'), r.end_rel = datetime('{}');\n",
                             sync.outlet_1.id,
-                            self.prefix,
                             sync.outlet_2.id,
-                            self.prefix,
                             rel_type,
                             sync.period_start.as_ref().unwrap_or(&"1900-01-01".to_string()),
                             sync.period_end.as_ref().unwrap_or(&"9999-01-01".to_string())
@@ -629,8 +610,7 @@ impl CypherGenerator {
 
                     // Connect event entity to media outlet if possible
                     cypher.push_str(&format!(
-                        "MATCH (mo:{}_media_outlet {{id_mo: {}}}), (ee:EventEntity {{entity_id: {}, event_name: '{}'}}) CREATE (ee)-[:INVOLVES]->(mo);\n",
-                        self.prefix,
+                        "MATCH (mo:mdsl_media_outlet {{id_mo: {}}}), (ee:EventEntity {{entity_id: {}, event_name: '{}'}}) CREATE (ee)-[:INVOLVES]->(mo);\n",
                         entity.id,
                         entity.id,
                         event.name.replace("'", "\\'")
