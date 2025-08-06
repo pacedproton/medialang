@@ -623,6 +623,9 @@ impl SqlImporter {
         // Generate vocabulary from sources
         self.generate_vocabulary_from_sources(&mut output, &sources_data)?;
 
+        // Generate sector vocabulary from actual outlet data
+        self.generate_sector_vocabulary(&mut output, &mo_constant_data)?;
+
         // Generate media outlet units and families
         self.generate_media_outlets_mdsl(&mut output, &mo_constant_data)?;
 
@@ -1214,6 +1217,57 @@ impl SqlImporter {
         Ok(())
     }
 
+    /// Generate sector vocabulary from actual outlet data
+    fn generate_sector_vocabulary(
+        &self,
+        output: &mut String,
+        outlets: &[MediaOutletData],
+    ) -> Result<()> {
+        use std::fmt::Write;
+        use std::collections::HashMap;
+
+        // Collect unique sectors from outlet data
+        let mut sectors: HashMap<String, u32> = HashMap::new();
+        for outlet in outlets {
+            if !outlet.sector.is_empty() && outlet.sector != "NULL" {
+                *sectors.entry(outlet.sector.clone()).or_insert(0) += 1;
+            }
+        }
+
+        // Convert to sorted vector
+        let mut sector_list: Vec<(String, u32)> = sectors.into_iter().collect();
+        sector_list.sort_by_key(|(sector, _)| sector.parse::<u32>().unwrap_or(999));
+
+        writeln!(output, "VOCABULARY SECTOR {{")?;
+        writeln!(output, "    TYPES {{")?;
+
+        for (i, (sector_id, count)) in sector_list.iter().enumerate() {
+            let comma = if i < sector_list.len() - 1 { "," } else { "" };
+            let sector_name = match sector_id.as_str() {
+                "11" => "Print - Newspapers",
+                "12" => "Print - Magazines",
+                "14" => "Print - Other",
+                "20" => "Radio",
+                "30" => "Television",
+                "40" => "Online/Digital",
+                "90" => "Multimedia/Conglomerate",
+                _ => "Unknown Sector",
+            };
+            
+            writeln!(
+                output,
+                "        {}: \"{}\" // {} outlets{}",
+                sector_id, sector_name, count, comma
+            )?;
+        }
+
+        writeln!(output, "    }}")?;
+        writeln!(output, "}}")?;
+        writeln!(output)?;
+
+        Ok(())
+    }
+
     /// Generate media outlets MDSL with actual outlets and families
     fn generate_media_outlets_mdsl(
         &self,
@@ -1375,7 +1429,7 @@ impl SqlImporter {
         writeln!(output, "        }};")?;
 
         writeln!(output, "        characteristics {{")?;
-        writeln!(output, "            sector = \"{}\";", outlet.sector)?;
+        writeln!(output, "            sector = {};", outlet.sector)?;
         writeln!(output, "            mandate = \"{}\";", outlet.mandate)?;
         writeln!(output, "            distribution = {{")?;
         writeln!(

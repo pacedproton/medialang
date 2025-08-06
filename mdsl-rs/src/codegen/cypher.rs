@@ -238,10 +238,17 @@ impl CypherGenerator {
         // Create media_outlet node with proper schema and configurable prefix
         let outlet_id = outlet.id.unwrap_or(0);
         cypher.push_str(&format!(
-            "CREATE (o:{}_media_outlet {{id_mo: {}, mo_title: '{}', id_sector: 2, mandate: 1, location: 'Wien', primary_distr_area: 1, local: 0, language: 'deutsch', start_date: datetime('1955-01-01'), end_date: datetime('9999-01-01'), editorial_line_s: 'Öffentlich-rechtlich', comments: 'Generated from MDSL'}});\n",
+            "CREATE (o:{}_media_outlet {{id_mo: {}, mo_title: '{}', id_sector: 2, mandate: 1, location: 'Wien', primary_distr_area: 1, local: 0, language: 'deutsch', editorial_line_s: 'Öffentlich-rechtlich', comments: 'Generated from MDSL'}});\n",
             self.prefix,
             outlet_id,
             outlet.name.replace("'", "\\'")
+        ));
+
+        // Set default dates for all outlets - these will be overridden by lifecycle data if present
+        cypher.push_str(&format!(
+            "MATCH (o:{}_media_outlet {{id_mo: {}}}) SET o.start_date = datetime('1955-01-01'), o.end_date = datetime('9999-01-01');\n",
+            self.prefix,
+            outlet_id
         ));
 
         // Connect to family (keeping family structure for organization)

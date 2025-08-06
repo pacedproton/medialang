@@ -1,0 +1,62 @@
+// Generated MDSL from ANMI SQL database
+// Database: 100.77.115.86:5432/cmc
+// Generated at: 2025-07-31 19:32:00 UTC
+
+IMPORT "anmi_common_codes.mdsl";
+IMPORT "anmi_media_sectors.mdsl";
+IMPORT "anmi_mandate_types.mdsl";
+IMPORT "anmi_source_references.mdsl";
+
+VOCABULARY SECTOR {
+    TYPES {
+        11: "Print - Newspapers", // 386 outlets
+        12: "Print - Magazines", // 74 outlets
+        14: "Print - Other", // 1 outlet
+        20: "Radio", // 23 outlets
+        30: "Television", // 107 outlets
+        40: "Online/Digital", // 65 outlets
+        90: "Multimedia/Conglomerate" // 1 outlet
+    }
+}
+
+VOCABULARY DataSources {
+    TYPES {
+        1: "In_Angabe_zu__Dach___Kombi__oder__Hauptausgabe_inkludiert_im_Jahr_2021",
+        2: "In_Angabe_zu__Dach___Kombi__oder__Hauptausgabe_inkludiert_im_Jahr_2022",
+        3: "In_Angabe_zu__Dach___Kombi__oder__Hauptausgabe_inkludiert_im_Jahr_2023",
+        4: "Massenmedien_in_Oesterreich___Medienbericht_Bd__4__1993",
+        5: "Media_Analyse_1993",
+        6: "Media_Analyse_1994",
+        7: "Media_Analyse_1995",
+        8: "Media_Analyse_1996",
+        9: "Media_Analyse_1997",
+        10: "Media_Analyse_1998",
+        11: "Media_Analyse_1999",
+        12: "Media_Analyse_2000",
+        13: "Media_Analyse_2001",
+        14: "Media_Analyse_2002",
+        15: "Media_Analyse_2003",
+        16: "Media_Analyse_2004_zitiert_nach_derstandart_at_23_03_2005",
+        17: "Media_Analyse_2005_zitiert_nach_derstandart_at_29_03_2006",
+        18: "Media_Analyse_2006_zitiert_nach_derstandart_at_27_03_2007",
+        19: "Media_Analyse_2007_zitiert_nach_derstandart_at_28_03_2008",
+        20: "Media_Analyse_2008_zitiert_nach_derstandart_at_01_04_2009",
+        21: "ORF_Bericht_2012",
+        22: "ORF_Bericht_2022",
+        23: "ORF_Bericht_2023",
+        24: "Oesterreichische_Auflagenkontrolle_Jahresbericht_2021",
+        25: "Oesterreichische_Auflagenkontrolle_Jahresbericht_2022",
+        26: "Oesterreichische_Auflagenkontrolle_Jahresbericht_2023",
+        27: "OeWA_4__Quartal_2008",
+        28: "OeWA_4__Quartal_2009",
+        29: "OeWA_4__Quartal_2010",
+        30: "OeWA_4__Quartal_2011",
+        31: "OeWA_4__Quartal_2012",
+        32: "OeWA_4__Quartal_2013",
+        33: "OeWA_4__Quartal_2014",
+        34: "OeWA_4__Quartal_2015",
+        35: "OeWA_4__Quartal_2016",
+        36: "OeWA_4__Quartal_2017",
+        37: "OeWA_4__Quartal_2018",
+        38: "OeWA_4__Quartal_2019",
+        39: "OeWA_Jahresbericht_2020",
