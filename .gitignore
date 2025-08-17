@@ -71,6 +71,7 @@ test_*.rs
 complete_anmi_full.mdsl
 *_complete_network.mdsl
 syntax_corrected.mdsl
+mdsl-rs/gui_generated/
 
 # Analysis and comparison files
 *_analysis_report.md
@@ -97,3 +98,11 @@ scripts/test_*.sh
 validate_*.sql
 *_validation.*
 *_equivalence.*
+
+
+
+
+# other
+
+mdsl-rs/mdsl_full_with_stubs.mdsl
+teamcomms-handover/
