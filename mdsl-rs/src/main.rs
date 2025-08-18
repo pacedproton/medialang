@@ -26,6 +26,7 @@ fn main() {
         eprintln!("  sql <file>                                            - Generate SQL from MediaLanguage file");
         eprintln!("  sql-anmi <file>                                      - Generate ANMI-compatible SQL from MediaLanguage file");
         eprintln!("  cypher <file>                                         - Generate Cypher from MediaLanguage file");
+        eprintln!("  cypher-split <file>                                  - Generate split Cypher (schema + data) files");
         eprintln!("  neo4j-test <file> [--url=URL]                        - Test Cypher generation against Neo4j");
         eprintln!(
             "  test                                                  - Run tests on sample input"
@@ -81,6 +82,13 @@ fn main() {
                 process::exit(1);
             }
             generate_cypher(&args[2]);
+        }
+        "cypher-split" => {
+            if args.len() < 3 {
+                eprintln!("Error: cypher-split command requires a file argument");
+                process::exit(1);
+            }
+            generate_cypher_split(&args[2]);
         }
         "neo4j-test" => {
             if args.len() < 3 {
@@ -246,7 +254,8 @@ fn generate_sql(filename: &str) {
         }
     };
 
-    println!("Generating SQL from file: {}", filename);
+    // Remove banner text to avoid polluting SQL output
+    // println!("Generating SQL from file: {}", filename);
 
     #[cfg(feature = "sql-codegen")]
     {
@@ -281,8 +290,7 @@ fn generate_sql(filename: &str) {
         let generator = SqlGenerator::new();
         match generator.generate(&ir) {
             Ok(sql) => {
-                println!("Generated SQL:");
-                println!("{}", sql);
+                println!("{}", sql); // Remove banner text - just output the SQL directly
             }
             Err(err) => {
                 eprintln!("SQL generation error: {}", err);
@@ -308,7 +316,8 @@ fn generate_sql_anmi(filename: &str) {
         }
     };
 
-    println!("Generating ANMI-compatible SQL from file: {}", filename);
+    // Remove banner text to avoid polluting SQL output
+    // println!("Generating ANMI-compatible SQL from file: {}", filename);
 
     #[cfg(feature = "sql-codegen")]
     {
@@ -343,8 +352,7 @@ fn generate_sql_anmi(filename: &str) {
         let generator = AnmiSqlGenerator::new();
         match generator.generate(&ir) {
             Ok(sql) => {
-                println!("Generated ANMI SQL:");
-                println!("{}", sql);
+                println!("{}", sql); // Remove banner text - just output the SQL directly
             }
             Err(err) => {
                 eprintln!("ANMI SQL generation error: {}", err);
@@ -370,7 +378,8 @@ fn generate_cypher(filename: &str) {
         }
     };
 
-    println!("Generating Cypher from file: {}", filename);
+    // Remove banner text to avoid polluting Cypher output
+    // println!("Generating Cypher from file: {}", filename);
 
     #[cfg(feature = "cypher-codegen")]
     {
@@ -402,11 +411,94 @@ fn generate_cypher(filename: &str) {
             }
         };
 
-        let generator = CypherGenerator::with_prefix("mdsl2");
+        let generator = CypherGenerator::with_prefix(""); // Use empty prefix so labels are just "media_outlet" to match existing Neo4j schema
         match generator.generate(&ir) {
             Ok(cypher) => {
-                println!("Generated Cypher:");
-                println!("{}", cypher);
+                println!("{}", cypher); // Remove banner text - just output the Cypher directly
+            }
+            Err(err) => {
+                eprintln!("Cypher generation error: {}", err);
+                process::exit(1);
+            }
+        }
+    }
+
+    #[cfg(not(feature = "cypher-codegen"))]
+    {
+        eprintln!("Cypher code generation not enabled (requires 'cypher-codegen' feature)");
+        process::exit(1);
+    }
+}
+
+/// Generate split Cypher (schema and data) from a file
+fn generate_cypher_split(filename: &str) {
+    let source = match fs::read_to_string(filename) {
+        Ok(content) => content,
+        Err(err) => {
+            eprintln!("Error reading file '{}': {}", filename, err);
+            process::exit(1);
+        }
+    };
+
+    #[cfg(feature = "cypher-codegen")]
+    {
+        use mdsl_rs::{codegen::cypher::CypherGenerator, ir::transformer};
+
+        let mut scanner = Scanner::new(&source);
+        let tokens = match scanner.scan_tokens() {
+            Ok(tokens) => tokens,
+            Err(err) => {
+                eprintln!("Lexer error: {}", err);
+                process::exit(1);
+            }
+        };
+
+        let mut parser = Parser::new(tokens);
+        let ast = match parser.parse() {
+            Ok(ast) => ast,
+            Err(err) => {
+                eprintln!("Parse error: {}", err);
+                process::exit(1);
+            }
+        };
+
+        let ir = match transformer::transform(&ast) {
+            Ok(ir) => ir,
+            Err(err) => {
+                eprintln!("IR transformation error: {}", err);
+                process::exit(1);
+            }
+        };
+
+        let generator = CypherGenerator::with_prefix(""); // Use empty prefix so labels are just "media_outlet" to match existing Neo4j schema
+        match generator.generate_split(&ir) {
+            Ok((schema, data)) => {
+                // Create output filenames based on input
+                let base_name = filename.trim_end_matches(".mdsl");
+                let schema_file = format!("{}.schema.cypher", base_name);
+                let data_file = format!("{}.data.cypher", base_name);
+                
+                // Write schema file
+                match fs::write(&schema_file, schema) {
+                    Ok(_) => println!("✓ Schema written to: {}", schema_file),
+                    Err(err) => {
+                        eprintln!("Error writing schema file: {}", err);
+                        process::exit(1);
+                    }
+                }
+                
+                // Write data file
+                match fs::write(&data_file, data) {
+                    Ok(_) => println!("✓ Data written to: {}", data_file),
+                    Err(err) => {
+                        eprintln!("Error writing data file: {}", err);
+                        process::exit(1);
+                    }
+                }
+                
+                println!("\nApply in order:");
+                println!("1. First:  {}", schema_file);
+                println!("2. Second: {}", data_file);
             }
             Err(err) => {
                 eprintln!("Cypher generation error: {}", err);
