@@ -1,4 +1,5 @@
 {
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
   "permissions": {
     "allow": [
       "Bash(cargo test:*)",
@@ -22,9 +23,12 @@
       "Bash(./load_full_graph.sh:*)",
       "Bash(./automated_graph_comparison.sh:*)",
       "Bash(rustc:*)",
-      "Bash(./test_ir_debug)"
+      "Bash(./test_ir_debug)",
+      "Bash(./target/release/sql_import generate --connection \"postgresql://postgres:,3cF;0^L$=]vc,*bQAf#@100.77.115.86:5432/cmc\" --output test_contract.mdsl)",
+      "Bash(./target/release/mdsl validate:*)",
+      "Bash(./target/release/mdsl:*)",
+      "Bash(./mdsl-rs/target/release/mdsl:*)"
     ],
     "deny": []
-  },
-  "$schema": "https://json.schemastore.org/claude-code-settings.json"
+  }
 }

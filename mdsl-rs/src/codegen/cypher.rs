@@ -187,25 +187,27 @@ impl CypherGenerator {
     /// Generate only schema (constraints and indexes) Cypher
     pub fn generate_schema_only(&self, _ir: &IRProgram) -> Result<String> {
         let mut cypher = String::new();
-        
+
         // Add header comment
         cypher.push_str("// Generated Cypher Schema from MediaLanguage DSL\n");
         cypher.push_str("// This file contains ONLY constraint and index definitions\n");
         cypher.push_str("// Must be run before the data file in a separate transaction\n\n");
-        
+
         // Generate only constraints and indexes
         cypher.push_str(&self.generate_constraints()?);
-        
+
         Ok(cypher)
     }
 
     /// Generate only data (nodes and relationships) Cypher
     pub fn generate_data_only(&self, ir: &IRProgram) -> Result<String> {
         let mut cypher = String::new();
-        
+
         // Add header comment
         cypher.push_str("// Generated Cypher Data from MediaLanguage DSL\n");
-        cypher.push_str("// This file contains CREATE/MERGE statements for nodes and relationships\n");
+        cypher.push_str(
+            "// This file contains CREATE/MERGE statements for nodes and relationships\n",
+        );
         cypher.push_str("// Must be run AFTER the schema file in a separate transaction\n\n");
 
         // Generate imports as comments
@@ -251,8 +253,10 @@ impl CypherGenerator {
         // Generate relationships
         cypher.push_str(&self.generate_relationships(ir)?);
 
-        // Generate data nodes
-        cypher.push_str(&self.generate_data_nodes(ir)?);
+        // FIXED MDSL-002: Disable separate data nodes generation for Web GUI compatibility
+        // The Web GUI expects only :media_outlet nodes for visualization
+        // Market data should be integrated into outlet properties instead of separate nodes
+        // cypher.push_str(&self.generate_data_nodes(ir)?);
 
         // Generate event nodes
         cypher.push_str(&self.generate_event_nodes(ir)?);
@@ -315,8 +319,10 @@ impl CypherGenerator {
         // Generate relationships
         cypher.push_str(&self.generate_relationships(ir)?);
 
-        // Generate data nodes
-        cypher.push_str(&self.generate_data_nodes(ir)?);
+        // FIXED MDSL-002: Disable separate data nodes generation for Web GUI compatibility
+        // The Web GUI expects only :media_outlet nodes for visualization
+        // Market data should be integrated into outlet properties instead of separate nodes
+        // cypher.push_str(&self.generate_data_nodes(ir)?);
 
         // Generate event nodes
         cypher.push_str(&self.generate_event_nodes(ir)?);
@@ -338,10 +344,26 @@ impl CypherGenerator {
         cypher.push_str(&format!("CREATE CONSTRAINT {}vocab_name_unique IF NOT EXISTS FOR (v:{}) REQUIRE v.name IS UNIQUE;\n\n", self.constraint_prefix(), self.vocabulary_label()));
 
         // Indexes - updated for media_outlet schema with configurable prefix
-        cypher.push_str(&format!("CREATE INDEX {}media_outlet_title_index IF NOT EXISTS FOR (o:{}) ON (o.mo_title);\n", self.constraint_prefix(), self.media_outlet_label()));
-        cypher.push_str(&format!("CREATE INDEX {}family_name_index IF NOT EXISTS FOR (f:{}) ON (f.name);\n", self.constraint_prefix(), self.family_label()));
-        cypher.push_str(&format!("CREATE INDEX {}data_year_index IF NOT EXISTS FOR (d:{}) ON (d.year);\n", self.constraint_prefix(), self.market_data_label()));
-        cypher.push_str(&format!("CREATE INDEX {}metric_name_index IF NOT EXISTS FOR (m:{}) ON (m.name);\n\n", self.constraint_prefix(), self.metric_label()));
+        cypher.push_str(&format!(
+            "CREATE INDEX {}media_outlet_title_index IF NOT EXISTS FOR (o:{}) ON (o.mo_title);\n",
+            self.constraint_prefix(),
+            self.media_outlet_label()
+        ));
+        cypher.push_str(&format!(
+            "CREATE INDEX {}family_name_index IF NOT EXISTS FOR (f:{}) ON (f.name);\n",
+            self.constraint_prefix(),
+            self.family_label()
+        ));
+        cypher.push_str(&format!(
+            "CREATE INDEX {}data_year_index IF NOT EXISTS FOR (d:{}) ON (d.year);\n",
+            self.constraint_prefix(),
+            self.market_data_label()
+        ));
+        cypher.push_str(&format!(
+            "CREATE INDEX {}metric_name_index IF NOT EXISTS FOR (m:{}) ON (m.name);\n\n",
+            self.constraint_prefix(),
+            self.metric_label()
+        ));
 
         Ok(cypher)
     }
@@ -426,7 +448,8 @@ impl CypherGenerator {
                             "CREATE (c:{} {{name: '{}', value: '{}', template_name: '{}'}});\n",
                             self.characteristic_label(),
                             char.name.replace("'", "\\'"),
-                            self.expression_to_cypher_value(&char.value).replace("'", "\\'"),
+                            self.expression_to_cypher_value(&char.value)
+                                .replace("'", "\\'"),
                             template.name.replace("'", "\\'")
                         ));
 
@@ -447,7 +470,8 @@ impl CypherGenerator {
                             "CREATE (m:{} {{name: '{}', value: '{}', template_name: '{}'}});\n",
                             self.metadata_label(),
                             m.name.replace("'", "\\'"),
-                            self.expression_to_cypher_value(&m.value).replace("'", "\\'"),
+                            self.expression_to_cypher_value(&m.value)
+                                .replace("'", "\\'"),
                             template.name.replace("'", "\\'")
                         ));
 
@@ -659,12 +683,15 @@ impl CypherGenerator {
                     // Handle lifecycle entries - extract dates
                     for entry in entries {
                         if let Some(start_date) = &entry.start_date {
-                            cypher.push_str(&format!(
-                                "MATCH (o:{} {{id_mo: {}}}) SET o.start_date = datetime('{}');\n",
-                                self.media_outlet_label(),
-                                outlet.id.unwrap_or(0),
-                                start_date
-                            ));
+                            // Only create datetime() call if date string is not empty
+                            if !start_date.trim().is_empty() && start_date != "NULL" {
+                                cypher.push_str(&format!(
+                                    "MATCH (o:{} {{id_mo: {}}}) SET o.start_date = datetime('{}');\n",
+                                    self.media_outlet_label(),
+                                    outlet.id.unwrap_or(0),
+                                    start_date
+                                ));
+                            }
                         }
                         if let Some(end_date) = &entry.end_date {
                             let end_date_str = if end_date.to_lowercase() == "current" {
@@ -672,12 +699,15 @@ impl CypherGenerator {
                             } else {
                                 end_date.clone()
                             };
-                            cypher.push_str(&format!(
-                                "MATCH (o:{} {{id_mo: {}}}) SET o.end_date = datetime('{}');\n",
-                                self.media_outlet_label(),
-                                outlet.id.unwrap_or(0),
-                                end_date_str
-                            ));
+                            // Only create datetime() call if date string is not empty
+                            if !end_date_str.trim().is_empty() && end_date_str != "NULL" {
+                                cypher.push_str(&format!(
+                                    "MATCH (o:{} {{id_mo: {}}}) SET o.end_date = datetime('{}');\n",
+                                    self.media_outlet_label(),
+                                    outlet.id.unwrap_or(0),
+                                    end_date_str
+                                ));
+                            }
                         }
                     }
                 }
@@ -719,7 +749,10 @@ impl CypherGenerator {
                         let rel_type = if diachronic.relationship_type.is_empty() {
                             "RELATED_TO".to_string()
                         } else {
-                            diachronic.relationship_type.replace("'", "").replace("-", "_")
+                            diachronic
+                                .relationship_type
+                                .replace("'", "")
+                                .replace("-", "_")
                         };
                         cypher.push_str(&format!(
                             "MATCH (pred:{} {{id_mo: {}}}), (succ:{} {{id_mo: {}}}) MERGE (pred)-[r:{}]->(succ) SET r.event_rel = datetime('{}');\n",
@@ -864,7 +897,6 @@ impl CypherGenerator {
         }
     }
 
-
     /// Helper function to convert optional string to Cypher
     fn optional_string_to_cypher(&self, s: &Option<String>) -> String {
         match s {
@@ -951,7 +983,8 @@ impl CypherGenerator {
                         "CREATE (ei:{} {{name: '{}', value: '{}', event_name: '{}'}});\n",
                         self.event_impact_label(),
                         impact.name.replace("'", "\\'"),
-                        self.expression_to_cypher_value(&impact.value).replace("'", "\\'"),
+                        self.expression_to_cypher_value(&impact.value)
+                            .replace("'", "\\'"),
                         event.name.replace("'", "\\'")
                     ));
 
@@ -972,7 +1005,8 @@ impl CypherGenerator {
                         "CREATE (em:{} {{name: '{}', value: '{}', event_name: '{}'}});\n",
                         self.event_metadata_label(),
                         metadata.name.replace("'", "\\'"),
-                        self.expression_to_cypher_value(&metadata.value).replace("'", "\\'"),
+                        self.expression_to_cypher_value(&metadata.value)
+                            .replace("'", "\\'"),
                         event.name.replace("'", "\\'")
                     ));
 
