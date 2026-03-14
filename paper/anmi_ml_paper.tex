@@ -1,0 +1,458 @@
+\documentclass[11pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{graphicx}
+\usepackage{hyperref}
+
+\title{A longitudinal reference dataset of Austrian news media outlet histories structures and market indicators}
+\author{Michael Alexander \and Josef Seethaler\\
+Austrian Academy of Sciences (OeAW)\\
+Institute for Comparative Media and Communication Studies, Austria\\
+\texttt{[corresponding author email]}}
+\date{2026-03-14}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Research on news systems requires data that can represent continuity and change simultaneously. Media outlets persist over time, but they also change titles, merge, split, migrate across sectors, alter their primary distribution area, and become embedded in changing undertaking structures. Empirical assessment of these processes is often constrained by fragmented reporting, unstable units of observation, and weakly documented transitions between titles, organizations, and market records. To address these gaps, we describe a longitudinal reference dataset for the Austrian political information environment that treats outlet identity as a formal data object rather than as a stable brand label. The dataset links time-bounded outlet identities to diachronic transformations, synchronic structural relations, media undertakings, annual market indicators, sector-level audience indicators, and structured source metadata. Its distinctive contribution is rule-based identity resolution: title changes, amalgamations, new distribution areas, sector changes, and substantial publication interruptions trigger new outlet records instead of being collapsed into a single nominal series. The dataset is curated in a domain-specific language that preserves entity structure, temporality, and provenance while remaining exportable into both relational publication tables and graph-oriented views. The release also preserves date precision, missing-value semantics, annual validity conventions, source provenance, and explicit additivity rules for market indicators. This provides a structured evidence base for longitudinal reconstruction, concentration analysis, territorial comparison, and data linkage across Austrian news media research.
+\end{abstract}
+
+\section{Background \& Summary}
+
+Datasets on news media are often strong on enumeration and weak on temporality. They list currently active brands, current legal entities, or single-year indicators, but they rarely encode the formal transitions by which one outlet succeeds another, two outlets are amalgamated into a new one, a regional title becomes a different territorial unit, or a print publication migrates into another sector. This limitation affects both historical work and contemporary comparative analysis. Where outlet identity is treated as self-evident, downstream research inherits unstable units, opaque continuity assumptions, and misleading aggregation.
+
+The Austrian case makes these problems especially visible. The political information environment has been shaped by long-run discontinuities, sectoral differentiation, territorial segmentation, post-war reorganization, commercialization, and cross-media integration. A dataset that simply counts titles or contemporary organizations cannot capture these transformations. Nor is it sufficient to record only legal entities, because editorially recognizable outlets, market units, and undertaking structures are related but not identical levels of analysis.
+
+The dataset described here was developed within the Austrian News Media Infrastructure project to address that problem for Austria's political information environment. Its conceptual horizon extends from the mid-nineteenth century to the present. The first operational layer concerns media supply: media outlets, their relations, their associated undertakings, and linked market and audience indicators. The design premise is that outlet identity must be made explicit and reproducible. The release therefore models a media outlet as a bounded entity defined jointly by title, period, primary distribution area, and sector, rather than as a name string that passively inherits all historical changes attached to it.
+
+This identity-first design is the principal scientific contribution of the dataset. The release does not simply enumerate outlets; it formalizes the conditions under which a new outlet identity comes into existence. Title change, amalgamation into a new outlet, change in primary distribution area, migration into another sector, and sufficiently long interruption of publication all generate new base units. By contrast, the model also preserves forms of historical linkage that do not collapse distinct units into one, such as split-offs, offshoots, umbrella structures, editorial alliances, and collaboration. The result is a relational dataset in which continuity, succession, co-existence, and hierarchy are analytically distinct rather than conflated.
+
+The public release is therefore structured as a linked set of data objects rather than as a single flat table. It includes outlet identities, diachronic outlet relations, synchronic outlet relations, media undertakings, undertaking-to-outlet relations, undertaking-to-undertaking relations, annual outlet-level market observations, undertaking-level market observations, sector-level audience indicators, source metadata, and lookup tables. This architecture turns the dataset into more than a catalog: it is a reusable historical media graph with a tabular publication layer. In practical terms, it enables users to move between outlet histories, organizational structures, annual market positions, territorial coverage, and source provenance without having to rebuild those links from scratch.
+
+This layered structure is also what makes the dataset attractive for reuse beyond descriptive media history. The same release can support event-history analysis of outlet succession, concentration and ownership research at undertaking level, territorial comparisons of market structure, graph analysis of structural linkage, and linkage to external registries or newspaper corpora. The dataset is therefore designed to be analytically rich at multiple scales rather than optimized for a single canonical use case. The aim of this Data Descriptor is not to interpret those patterns, but to provide a documented and reusable evidence base from which they can be studied.
+
+An important feature of the ANMI design is that the curation layer is neither plain prose nor flat tabular entry. Instead, the source representation is maintained in a domain-specific language that is affine to both relational and graph publication logic. Entities, relations, temporal intervals, observations, and vocabularies can therefore be curated once and rendered into publication tables, graph exports, or other machine-readable derivatives without redefining the underlying semantics each time. For a dataset of this kind, that is not merely a technical convenience. It is part of the data design, because it preserves consistency between a human-curated scholarly representation and the multiple analytical forms in which the released data may be reused.
+
+\begin{table}[t]
+  \centering
+  \small
+  \begin{tabular}{>{\raggedright\arraybackslash}p{0.29\linewidth}>{\raggedright\arraybackslash}p{0.57\linewidth}}
+    \toprule
+    Dataset highlight & Reuse value \\
+    \midrule
+    Identity-resolved outlet layer & Supports historically valid succession analysis instead of title-string matching. \\
+    Explicit diachronic and synchronic relations & Preserves transformation, hierarchy, co-existence, and collaboration as analytically distinct structures. \\
+    Separate undertaking layer & Enables ownership and organizational analysis without collapsing undertakings into outlet titles. \\
+    Source-resolved annual indicators & Allows stratification by evidence source and validation of time-specific market or audience observations. \\
+    Additivity-aware market fields & Prevents double counting in territorial and umbrella-level aggregation workflows. \\
+    DSL-based curation with graph and relational affinity & Preserves one canonical scholarly representation while supporting multiple publication and analysis views. \\
+    Linked publication objects & Supports tabular, graph, historical, and computational reuse from the same deposited release. \\
+    \bottomrule
+  \end{tabular}
+  \caption{Features that make the ANMI release analytically distinctive as a national reference dataset.}
+  \label{tab:highlights}
+\end{table}
+
+\begin{figure}[t]
+  \centering
+  \fbox{\parbox{0.92\linewidth}{
+    \vspace{0.35em}
+    \noindent \textbf{Canonical curation layer:} domain-specific language representation
+
+    \vspace{0.35em}
+    \noindent $\Downarrow$
+
+    \vspace{0.35em}
+    \noindent \textbf{Outlet identities} $\rightarrow$ \textbf{diachronic transitions} $\rightarrow$ \textbf{synchronic structures}
+
+    \vspace{0.35em}
+    \noindent \textbf{Undertakings} $\leftrightarrow$ \textbf{outlets}
+
+    \vspace{0.35em}
+    \noindent \textbf{Annual observations} (market and audience indicators) $+$ \textbf{structured source metadata}
+
+    \vspace{0.35em}
+    \noindent $\Downarrow$
+
+    \vspace{0.35em}
+    \noindent \textbf{Deposited release:} linked tabular objects, graph-oriented views, lookup tables, codebooks, and machine-readable metadata
+    \vspace{0.35em}
+  }}
+  \caption{Schematic overview of the ANMI data product as a linked longitudinal reference dataset.}
+  \label{fig:overview}
+\end{figure}
+
+\section{Methods}
+
+\subsection{Scope of the dataset}
+
+The dataset covers media relevant to political communication in Austria within present-day borders. Within the broader ANMI framework, this release addresses media supply and its links to selected market and audience indicators. The conceptual focus is not all communication media, but those media services that contribute to the political information environment in the sense of regular provision of news and current-affairs content under editorial responsibility. The core publication objects are therefore outlet identities, structural relations between outlets, media undertakings, undertaking relations, source records, and time-varying observations.
+
+\subsection{Data collection and inclusion logic}
+
+The release was designed as a structured reference dataset for Austrian news media rather than as an exhaustively scraped registry. Inclusion follows a substantive rule: a record enters the outlet layer when the available evidence indicates the existence of a regularly and continuously distributed media offer with a specific title, in a specific period, primarily in a specific distribution area, and in a specific media sector. The guiding purpose of this rule is analytical stability. It allows the same release to function both as a historical reconstruction of outlet identities and as a machine-readable basis for market or organizational analysis.
+
+The broader project distinguishes between largely time-constant descriptors, time-varying market observations, and undertaking information. In the current specification, outlet data and outlet relations form the core layer. Undertaking data, undertaking relations, and undertaking-level market observations extend this core where the necessary evidence is available. Source records and sector-level audience observations provide an additional contextual layer for comparative analysis.
+
+To be included in the canonical release, a record must satisfy four conditions. First, the object must fall within the temporal and territorial scope of the dataset, namely Austria within present-day borders and the relevant historical period covered by ANMI. Second, the object must satisfy the outlet or undertaking definition used in the corresponding layer. Third, the available evidence must be sufficient to assign the object to the required identifying dimensions and relation types. Fourth, the record must be representable in a way that preserves provenance and uncertainty rather than obscuring them. Cases that are historically interesting but do not satisfy these conditions should remain outside the canonical release or be retained only with explicit qualification.
+
+\subsection{Observation model and analytical levels}
+
+The release is built around three analytical levels. The first level is the media outlet, defined as an editorially and historically bounded media unit. The second level is the media undertaking, defined as an organizational actor that can own, operate, or otherwise structure one or more outlets. The third level is the observation layer, where annual market or audience values are attached to outlets, undertakings, or sectors. This separation is necessary because the same empirical phenomenon can appear differently depending on analytical level. A publication title may persist as a public brand while the corresponding undertaking changes repeatedly; conversely, one undertaking may control several distinct outlets simultaneously. The dataset preserves these distinctions rather than forcing all evidence into a single table keyed by title.
+
+\subsection{Base unit}
+
+The base unit is a single media outlet that is distributed regularly and continuously under a specific title, in a specific period, primarily in a specific distribution area, and in a specific media sector. This definition is not merely descriptive; it is operational. A record is created only when those four dimensions jointly define a coherent observational unit. The aim is to minimize retrospective ambiguity when outlets are linked across time or aggregated across market data.
+
+\subsection{Operational rules for creating new outlet identities}
+
+New outlet identities are generated by explicit transition rules. A new record is created when the title of an outlet changes, when the outlet is amalgamated with others into a new outlet, when the primary distribution area changes, when the outlet moves into another sector, or when publication is interrupted and later resumed beyond the specified tolerance threshold. Short interruptions are not treated as new identities. In the current specification, interruptions of less than one week, or less than one month for weekly newspapers, are ignored.
+
+These rules distinguish identity change from relational linkage. If an outlet succeeds another because of title change, amalgamation, new distribution area, or new sector, the successor receives a new outlet identifier and the two units are linked diachronically. If an outlet is affected by a split-off, generates an offshoot in another area or sector, or enters a relation with an already continuing outlet, the historical linkage is recorded without collapsing the relevant units into a single record.
+
+This distinction matters because several empirically adjacent transformations are analytically non-equivalent. A title change implies continuity under a new nominal identity. An amalgamation implies the disappearance of earlier units into a new outlet. A split-off implies the persistence of one unit alongside the emergence of another. An offshoot captures lateral derivation across territory or sector. The dataset makes these distinctions explicit so that later users do not have to infer them from comments or secondary literature.
+
+\begin{table}[t]
+  \centering
+  \small
+  \begin{tabular}{>{\raggedright\arraybackslash}p{0.29\linewidth}>{\raggedright\arraybackslash}p{0.25\linewidth}>{\raggedright\arraybackslash}p{0.30\linewidth}}
+    \toprule
+    Triggering condition & New outlet record & Relation type recorded \\
+    \midrule
+    Title change & yes & succession \\
+    Amalgamation into a new outlet & yes & amalgamation \\
+    Change in primary distribution area & yes & new distribution area \\
+    Migration into another media sector & yes & new sector \\
+    Substantial interruption and later resumption & yes & interruption \\
+    Split-off from an existing outlet & yes for the split-off unit & split-off \\
+    Offshoot in another area or sector & yes for the offshoot unit & offshoot \\
+    Co-existing umbrella or collaboration structure & no & synchronic relation \\
+    \bottomrule
+  \end{tabular}
+  \caption{Operational logic used to distinguish new outlet identities from historical or structural relations.}
+  \label{tab:identityrules}
+\end{table}
+
+\subsection{Relation model}
+
+The dataset distinguishes diachronic from synchronic outlet relations. Diachronic relations encode temporally ordered transitions and include succession, amalgamation, new distribution area, new sector, interruption, split-off, offshoot, and merger. Synchronic relations encode co-existing structures and include main media outlet, editorial alliance, umbrella, and collaboration. Because synchronic relations often have validity periods that do not coincide exactly with outlet life spans, relation periods are stored independently from outlet start and end fields.
+
+\begin{table}[t]
+  \centering
+  \small
+  \begin{tabular}{>{\raggedright\arraybackslash}p{0.27\linewidth}>{\raggedright\arraybackslash}p{0.20\linewidth}>{\raggedright\arraybackslash}p{0.33\linewidth}}
+    \toprule
+    Relation family & Relation type & Interpretation \\
+    \midrule
+    Diachronic & succession & later outlet follows earlier outlet because of title change \\
+    Diachronic & amalgamation & earlier outlet is absorbed into a newly formed outlet \\
+    Diachronic & new distribution area & later outlet represents territorial redefinition of earlier outlet \\
+    Diachronic & new sector & later outlet represents sectoral migration of earlier outlet \\
+    Diachronic & interruption & outlet reappears after substantial pause in publication \\
+    Diachronic & split-off & new outlet branches from existing outlet while analytical distinction is preserved \\
+    Diachronic & offshoot & related outlet is founded in another area or sector \\
+    Diachronic & merger & equal or near-equal fusion event represented as a historical relation \\
+    Synchronic & main media outlet & hierarchical relation between differentiated unit and parent outlet \\
+    Synchronic & editorial alliance & concurrent editorial combination or joint structure \\
+    Synchronic & umbrella & umbrella or brand-level aggregation of multiple outlets \\
+    Synchronic & collaboration & looser continuing co-operation not captured by the previous types \\
+    \bottomrule
+  \end{tabular}
+  \caption{Relation families and analytical meaning in the outlet layer.}
+  \label{tab:relations}
+\end{table}
+
+The same logic is extended to media undertakings. Undertakings are modeled separately from outlets because they answer a different analytical question. Outlet identities capture editorially and historically bounded media units; undertaking records capture organizational actors. Undertaking-to-outlet relations capture functions such as legally responsible ownership and other business links. Undertaking-to-undertaking relations capture organizational hierarchy or participation, including sole ownership, shareholder status, limited partnership, general partnership, and related forms. In methodological terms, this separation prevents outlet identity from being overdetermined by the legal history of undertakings and prevents ownership analysis from being reduced to title histories.
+
+\subsection{Data integration and normalization}
+
+The dataset integrates multiple classes of information that differ in granularity, temporal logic, and evidentiary status. Narrative historical information is normalized into bounded outlet identities and relation records. Structured market and audience data are aligned to annual validity fields. Source-specific evidence is transformed into source identifiers and descriptive metadata. Lookup tables normalize sector, mandate, relation, precision, and additivity codes.
+
+This workflow is deliberately conservative. When available information is insufficient to justify a fully formed outlet identity, the record should remain outside the canonical release or enter only with explicit qualification. Likewise, relation types are assigned according to operational rules rather than informal naming similarity. The intention is to privilege reproducibility over apparent completeness.
+
+\subsection{Canonical source representation}
+
+The canonical curation layer of the dataset is maintained in a domain-specific language rather than in CSV alone. This language represents entities, vocabularies, relations, and annual observations as structured objects with explicit semantics. In practice, this means that the same curated record can preserve features that are difficult to express clearly in a single flat table, such as nested outlet structure, typed relation families, temporal intervals, grouped observations, and controlled vocabularies.
+
+The use of a domain-specific language should not be understood as an attempt to replace standard repository formats. Rather, it functions as the canonical scholarly representation from which repository-ready objects are derived. This is especially useful for a dataset that is simultaneously relational and graph-affine. The relational view is needed for archival deposit, tabular analysis, and reproducible joins. The graph view is needed for historically ordered successor chains, synchronic structural linkage, and multi-level exploration of outlets and undertakings. Maintaining a canonical source layer that can generate both views reduces semantic drift between publication formats.
+
+\subsection{Representative DSL excerpts}
+
+Because the source representation is part of the dataset design, a small excerpt is useful to show what the canonical layer preserves that a flat table alone would not. The examples below are illustrative fragments of the ANMI curation language, included to demonstrate how outlet identity, typed relations, and annual observations are represented before normalization into publication tables.
+
+\begin{figure}[t]
+  \centering
+  \fbox{\parbox{0.92\linewidth}{
+  \small\ttfamily
+  OUTLET "Example Outlet" \{\\
+  \hspace*{1em}id = 200001;\\
+  \hspace*{1em}identity \{\\
+  \hspace*{2em}title = "Example Outlet";\\
+  \hspace*{1em}\};\\
+  \hspace*{1em}lifecycle \{\\
+  \hspace*{2em}status "active" FROM "1959-01-01" TO CURRENT \{\\
+  \hspace*{3em}precision\_start = "known";\\
+  \hspace*{3em}precision\_end = "known";\\
+  \hspace*{2em}\};\\
+  \hspace*{1em}\};\\
+  \hspace*{1em}characteristics \{\\
+  \hspace*{2em}sector = "Tageszeitung";\\
+  \hspace*{2em}distribution = \{ primary\_area = "Österreich gesamt"; \};\\
+  \hspace*{1em}\};\\
+  \}
+  }}
+  \caption{Illustrative DSL excerpt showing a canonical outlet representation with identity, lifecycle, and characteristics.}
+  \label{fig:dsloutlet}
+\end{figure}
+
+\begin{figure}[t]
+  \centering
+  \fbox{\parbox{0.92\linewidth}{
+  \small\ttfamily
+  DIACHRONIC\_LINK succession\_example \{\\
+  \hspace*{1em}predecessor = 200001;\\
+  \hspace*{1em}successor = 200002;\\
+  \hspace*{1em}event\_date = "1971-01-01" TO "1971-12-31";\\
+  \hspace*{1em}relationship\_type = "Nachfolge";\\
+  \};\\
+  \\
+  DATA FOR 200001 \{\\
+  \hspace*{1em}YEAR 2021 \{\\
+  \hspace*{2em}metrics \{\\
+  \hspace*{3em}circulation = \{ value = 700000; unit = "copies"; source = "oeak"; \};\\
+  \hspace*{3em}reach\_national = \{ value = 25.0; unit = "percent"; source = "media\_analyse"; \};\\
+  \hspace*{2em}\};\\
+  \hspace*{1em}\};\\
+  \}
+  }}
+  \caption{Illustrative DSL excerpt showing typed diachronic linkage and annual market observations prior to normalization.}
+  \label{fig:dsldata}
+\end{figure}
+
+These fragments show three properties that are central to the published dataset. First, outlet identity is modeled as a structured object rather than as a single row of loosely related fields. Second, relations are typed and temporally bounded at the source level, which supports direct projection into graph edges as well as normalized relation tables. Third, annual observations are grouped with their outlet identity and source provenance before being exported into tabular observation objects. For readers of the deposited release, the important point is not the syntax itself, but that the syntax preserves a canonical representation from which both graph-oriented and relational publication views are generated.
+
+\subsection{Data construction workflow}
+
+The release can be understood as a multi-stage data construction workflow. In the first stage, candidate outlets and undertakings are identified and screened against the inclusion logic. In the second stage, the accepted records are normalized into stable identity objects with standardized identifiers. In the third stage, diachronic and synchronic relations are assigned according to the operational rules described below. In the fourth stage, annual market and audience observations are attached, normalized to validity years, and linked to structured source identifiers. In the fifth stage, all coded values, comments, and uncertainty fields are converted into the publication layer, consisting of linked tabular objects, lookup tables, and accompanying metadata. This staged workflow is intended to make the release auditable and extensible rather than merely descriptive.
+
+\subsection{Identifiers and code systems}
+
+The outlet identifier is a six-digit field. In the conceptual specification, the first digit encodes media type, digits two to five are assigned for structured data entry, and the sixth digit can be used to mark closely related outlet groups. The release also uses identifiers for undertakings, relations, outlet-year observations, and sources. Source identifiers are seven digits long and encode source family, reporting period, and year. This design supports direct record-level provenance tracing for annual indicators.
+
+Controlled vocabularies are used for sectors, mandate types, relation types, date precision, and additivity. Missing data are encoded explicitly rather than left blank. Numeric fields distinguish not applicable from not available values, while text fields use a separate convention for absent information. Historical dates can preserve substituted day or month values through dedicated precision fields.
+
+\begin{table}[t]
+  \centering
+  \small
+  \begin{tabular}{>{\raggedright\arraybackslash}p{0.28\linewidth}>{\raggedright\arraybackslash}p{0.20\linewidth}>{\raggedright\arraybackslash}p{0.30\linewidth}}
+    \toprule
+    Code system & Example values & Function in release \\
+    \midrule
+    Sector codes & daily newspaper, weekly newspaper, radio, television, online, social media & distinguishes analytical media sectors \\
+    Mandate codes & public service, commercial, party, association, official, other & captures outlet mandate or organizational orientation \\
+    Date precision & exact date, substituted day, substituted month, substituted year, combined substitutions & preserves historical uncertainty \\
+    Additivity rules & not additive, always additive, additive only within specified territorial scopes & constrains valid aggregation \\
+    Missing-value rules & not applicable, not available, no textual information provided & distinguishes types of absence \\
+    \bottomrule
+  \end{tabular}
+  \caption{Examples of controlled code systems embedded in the release.}
+  \label{tab:codes}
+\end{table}
+
+\subsection{Time-varying market and audience observations}
+
+The release separates time-constant descriptors from time-varying observations. Outlet-year observations include circulation, unique users, national reach, regional reach, national market share, regional market share, source identifiers, and comments. Undertaking-year observations include market revenue and group revenue. Sector-year observations include total reach and informational use.
+
+The annual observation year is interpreted as the year of validity of the data, not simply the publication year of the cited source. This distinction is necessary because annual reports and audit publications may refer to the previous year. The specification therefore treats the year field as an analytical validity year.
+
+This annualization rule is important for comparability. It makes values align to the period they describe rather than to the bibliographic date of the underlying document. Without that distinction, time-series analysis would mix publication lag with substantive change.
+
+\subsection{Additivity rules}
+
+Additivity is explicitly encoded because market indicators cannot always be aggregated safely across outlets. The model distinguishes values that are never additive, always additive, additive only at the level of individual federal states, additive at the level of federal states and Austria as a whole, or additive only at the level of supraregional markets and Austria as a whole. This is a methodological feature, not ancillary metadata: it prevents invalid reconstruction of market totals from overlapping outlet structures such as umbrellas, combinations, or nested regional variants.
+
+In practice, the additivity field acts as a guardrail against double counting. If a publication belongs simultaneously to a regional structure and an umbrella-level market unit, its values may be analytically visible in both places but should enter aggregate calculations only once and only under the permitted territorial scope.
+
+\subsection{Source model}
+
+The source table serves two functions. First, it documents the provenance of market and audience observations by linking them to annual or period-specific evidence. Second, it makes sources analyzable as metadata in their own right. In the current conceptual specification, source families include official statistics, media audience surveys, web analytics, radio audience data, circulation audits, and media reports. Because source identifiers are structured, users can reconstruct both the institutional origin and the reporting period of a cited value.
+
+This traceability layer is crucial because the dataset combines values with different evidentiary profiles. Circulation, audience reach, market share, and revenue indicators originate in different institutional ecosystems and are not interchangeable. Structured provenance allows later users to stratify analyses by evidence source instead of treating all numeric values as epistemically equivalent.
+
+\subsection{Release architecture}
+
+The curation environment preserves nested entity definitions and relation semantics, but the public release is normalized into linked tabular objects. This separation is intentional. It allows the release to remain accessible to repository users while preserving a reproducible transformation path from curated source records to the deposited tables.
+
+The publication layer should therefore be understood as a normalized derivative of a richer curation environment rather than as the primary site of scholarly judgment. This is one reason why comments, status fields, and lookup tables remain important in the released form: they preserve decisions that would otherwise disappear in a minimal flat export. In the ANMI case, the richer environment is not only an editorial workspace but a canonical data model with graph and relational affinity, from which both linked tables and graph-oriented views can be generated.
+
+\subsection{Data integration workflow}
+
+The release workflow can be understood as a sequence of integration and normalization steps. First, outlet identities are defined according to the operational rules described above. Second, historical and structural relations are attached at outlet and undertaking level. Third, annual market and audience observations are aligned to their analytical validity year and linked to structured source identifiers. Fourth, coded values and uncertainty fields are normalized through the lookup tables. Fifth, the curated objects are exported into publication objects, including tabular release files, graph-oriented views, and associated machine-readable metadata. This workflow is intended to ensure that the publication layer remains faithful to the curation logic while still being easy to reuse outside the original authoring environment.
+
+\subsection{Data attributes and preparation}
+
+Each published object is defined by a stable identifier and a set of fields that describe identity, temporality, structure, observation, or provenance. Outlet records contain the variables needed to delimit a coherent outlet identity. Relation tables contain source and target identifiers, relation type, and time fields. Observation tables contain analytical values together with source identifiers and comments. Lookup tables define the semantic meaning of coded values. In a repository release, these objects should be accompanied by a machine-readable manifest and a human-readable data dictionary that documents the field definitions and coding rules.
+
+\section{Data Records}
+
+The release is organized as a linked set of data objects rather than as a single spreadsheet. Table~\ref{tab:objects} summarizes the core published objects and the principal variables that define them.
+
+\begin{table}[t]
+  \centering
+  \small
+  \begin{tabular}{>{\raggedright\arraybackslash}p{0.25\linewidth}>{\raggedright\arraybackslash}p{0.18\linewidth}>{\raggedright\arraybackslash}p{0.18\linewidth}>{\raggedright\arraybackslash}p{0.29\linewidth}}
+    \toprule
+    Data object & Unit of observation & Primary key & Selected contents \\
+    \midrule
+    Media outlets & One outlet identity & \texttt{id\_mo} & Title, sector, mandate, location, primary distribution area, language, start and end fields, date precision, comments \\
+    Outlet diachronic relations & One time-ordered relation & \texttt{id\_relationship} & Predecessor, successor, relation type, event date, comments \\
+    Outlet synchronic relations & One concurrent relation & \texttt{id\_relationship} & Outlet 1, outlet 2, relation type, start and end fields, comments \\
+    Media undertakings & One undertaking identity & \texttt{id\_mu} & Name, foundation year, closing year, comments \\
+    Undertaking-outlet relations & One undertaking-to-outlet link & \texttt{id\_relationship} & Undertaking, outlet, function or relation type, start and end fields, comments \\
+    Undertaking-undertaking relations & One undertaking-to-undertaking link & \texttt{id\_relationship} & Source undertaking, target undertaking, relation type, share, start and end fields, comments \\
+    Outlet market observations & One outlet-year observation & composite & Annual circulation, users, reach, market share, additivity flag, source identifiers, comments \\
+    Undertaking market observations & One undertaking-year observation & composite & Annual market revenue, group revenue, source identifiers, comments \\
+    Sector audience observations & One sector-year observation & composite & Total reach, use as information source, source identifiers, comments \\
+    Sources & One source record & \texttt{id\_source} & Source family, reporting period, year, title and description metadata \\
+    Lookup tables & One coded value & code & Sector codes, mandate codes, region codes, date precision, additivity, relation types \\
+    \bottomrule
+  \end{tabular}
+  \caption{Core published objects of the ANMI release.}
+  \label{tab:objects}
+\end{table}
+
+The repository deposit should include UTF-8 CSV files for all tabular objects, a manifest describing release version and file inventory, and codebooks that define variable meanings, coded values, and missing-data conventions. A graph-oriented serialization and the domain-specific source representation may additionally be supplied for advanced workflows, but the tabular objects should remain canonical for archival publication and reuse. In combination, the tabular, graph-oriented, and DSL layers allow the same release to function as both a national historical reference dataset and a computational resource for network, market, and longitudinal analysis.
+
+The media outlet table is the key entry point for most reuse, but it should not be treated as self-sufficient. It acquires its analytical meaning only in conjunction with the relation tables, the source table, and the market or audience observation tables. The relation tables are not optional enrichments; they are part of the unit definition. Likewise, the source table is not supplementary metadata. It is required to interpret the observation layer correctly.
+
+At minimum, the deposited release should contain ten core object tables plus lookup tables. Users entering through the outlet table can reconstruct historical chains through the diachronic layer, concurrent structures through the synchronic layer, organizational embedding through the undertaking layer, and annual measurements through the observation layer. This object design is intended to make the release attractive both to qualitative-historical users and to computational users who require joinable, machine-readable tables.
+
+The final manuscript should report exact row counts, release version, and temporal coverage for each deposited object. Those values should be generated directly from the deposited release rather than entered manually.
+
+\section{Technical Validation}
+
+Technical validation addresses whether the release is internally coherent, historically interpretable, and reusable as data. The validation strategy therefore operates on six levels: entity integrity, referential integrity, temporal coherence, domain compliance, source traceability, and aggregation safety.
+
+\subsection{Entity integrity}
+
+Entity integrity validation checks uniqueness of primary identifiers, absence of duplicate records under the same release version, and conformance to schema-level field requirements. Outlet validation additionally checks the presence of the defining dimensions of identity: title, period, primary distribution area, and sector. Undertaking validation checks identifier uniqueness and consistency of foundation and closing fields. Outlet-year, undertaking-year, and sector-year tables are checked for uniqueness of their composite keys.
+
+At this level, validation also serves as an ontological check. A record that lacks one of the defining outlet dimensions may still be historically interesting, but it should not enter the published release as a fully formed outlet identity without explicit qualification.
+
+\subsection{Referential integrity}
+
+Every relation record must resolve against published entity tables. Outlet diachronic relations must resolve both source and target outlet identifiers. Outlet synchronic relations must resolve both linked outlet identifiers. Undertaking-to-outlet relations must resolve both undertaking and outlet identifiers. Undertaking-to-undertaking relations must resolve both undertaking identifiers. Market and audience observations must resolve all attached source identifiers against the source table. Hard referential failures should be zero in the deposited release.
+
+Because the dataset is relational by design, referential integrity is not merely a formatting requirement. Broken identifiers degrade the interpretability of continuity chains, undertaking structures, and provenance claims.
+
+\subsection{Temporal coherence}
+
+Temporal validation checks that start dates do not follow end dates, that ongoing entities follow the documented convention for open-ended validity, and that relation periods do not contradict the life spans of linked entities unless an explicit exception rule is documented. For interruption relations, the interval must bridge the end of the earlier outlet and the beginning of the later outlet according to the specification. For annual observations, the validity year must be interpretable independently from the publication year of the source.
+
+Temporal validation should also identify suspicious boundary patterns, such as apparent successor events without a corresponding relation record, or relation dates that imply impossible overlap or impossible gaps relative to the defining outlet periods.
+
+\subsection{Domain compliance}
+
+All coded fields are validated against the published lookup tables. This includes sector codes, mandate codes, relation types, date-precision types, and additivity rules. Numerical checks screen for impossible values such as negative circulation, impossible shares, or malformed date values. Missing-value conventions are also validated to ensure that not applicable and not available are not conflated.
+
+The preservation of separate missing-data states is particularly important for this dataset. Historical absence, current inapplicability, unavailable evidence, and explicit exclusion from aggregation are analytically distinct conditions.
+
+\subsection{Traceability and auditability}
+
+The release is designed so that every market or audience observation can be traced to a structured source record. Validation therefore checks whether source identifiers are resolvable and whether comments or status fields document cases of estimated, inherited, missing, or non-additive values. This is especially important in historical and market-structure work, where analytically valid reuse depends on knowing whether an absence reflects non-existence, non-observation, or explicit exclusion from aggregation.
+
+\subsection{Aggregation safety}
+
+Aggregation safety checks whether the additivity rules attached to market observations are logically compatible with the outlet structures in which the observations are embedded. This includes nested umbrellas, combinations, regional differentiation, and overregional units. The purpose of this validation layer is to prevent a formally correct table structure from producing analytically invalid market totals.
+
+\subsection{Boundary-case adjudication}
+
+Boundary cases are intrinsic to a historical media dataset. Validation should therefore include explicit review of records that lie close to the identity threshold, such as outlets with highly similar titles, short interruptions, territorial variants, or transformations that could be interpreted either as succession or as co-existing offshoots. The release benefits from documenting these adjudications in comments or release notes, because such cases often carry disproportionate analytical importance in later reuse.
+
+\section{Data Overview}
+
+The scientific value of the release lies less in any single variable than in the way the objects combine. Outlet identities provide the base map of the Austrian news environment. Diachronic relations convert this map into a historical graph of succession and transformation. Synchronic relations capture co-existing structural formations such as umbrella offers and editorial alliances. Undertaking tables connect outlet history to organizational structures, while annual observation tables connect the same entities to circulation, reach, market share, revenue, and sector-level audience exposure.
+
+Taken together, these layers allow at least four broad forms of reuse. First, they support longitudinal reconstruction of the Austrian political information environment, including the explicit modeling of successor chains and interruptions. Second, they support concentration and ownership analysis without collapsing legal actors into outlet titles. Third, they support market analysis that respects territorial and sectoral comparability constraints. Fourth, they support linkage to external datasets that use organizations, brands, years, or source identifiers as their entry points.
+
+The combination of identity resolution, relation modeling, observation layers, and a canonical DSL representation also gives the release a degree of analytical granularity that is often absent from media datasets. Instead of one current outlet list plus separate market tables, the release can be queried as a temporally resolved entity network, as a normalized relational dataset, or as a curated domain model from which both views are derived. That makes it suitable not only for static description, but also for event-based analysis, graph extraction, and historically aware feature engineering in downstream computational workflows.
+
+\begin{figure}[t]
+  \centering
+  \fbox{\parbox{0.92\linewidth}{
+    \vspace{0.35em}
+    \noindent \textbf{Example analytical views supported by the same release}
+
+    \vspace{0.35em}
+    \noindent 1. \textbf{Historical chain view:} outlet $\rightarrow$ successor $\rightarrow$ successor
+
+    \vspace{0.25em}
+    \noindent 2. \textbf{Structural view:} outlet $\leftrightarrow$ umbrella $\leftrightarrow$ collaboration
+
+    \vspace{0.25em}
+    \noindent 3. \textbf{Organizational view:} undertaking $\leftrightarrow$ outlet $\leftrightarrow$ undertaking
+
+    \vspace{0.25em}
+    \noindent 4. \textbf{Observation view:} outlet-year $\rightarrow$ market indicators $\rightarrow$ source record
+    \vspace{0.35em}
+  }}
+  \caption{Illustrative analytical views supported by the same deposited ANMI objects.}
+  \label{fig:views}
+\end{figure}
+
+\section{Usage Notes}
+
+The main analytical choice for reusers concerns the level at which continuity is reconstructed. Outlet identifiers represent bounded outlet identities, not abstract brands. Researchers interested in long-run continuity should therefore reconstruct successor chains rather than assume that repeated titles define a single uninterrupted unit. Researchers interested in cross-sectional market structure may instead work directly with outlet-year observations. Both approaches are valid, but they answer different questions.
+
+Users should also distinguish brand hierarchy from organizational hierarchy. A title nested in an umbrella structure is not necessarily coextensive with an ownership relation, and a legally responsible undertaking is not necessarily the analytically most relevant unit for studying editorial continuity or market segmentation.
+
+Market indicators should never be aggregated without explicit reference to the additivity field and the accompanying codebook. Some values may be summed only within a restricted territorial scope; others should never be aggregated. Likewise, values coded as unavailable or not applicable should not be recoded to zero.
+
+Finally, the comments fields should not be ignored in advanced use. In a dataset of this kind, comments can carry historically specific explanations of causation, exceptional handling, or boundary cases that cannot always be reduced to closed codes without loss of meaning. Users who require richer structural context than a single table can provide should consult the graph-oriented or DSL representations in parallel with the tabular deposit.
+
+\section{Ethics Statement}
+
+The dataset is designed around media outlets, organizational actors, source records, and market and audience indicators. The primary release objects therefore concern institutions and publicly observable media structures rather than human-subject responses. Where source materials contain information about natural persons or historically sensitive cases, publication should follow the applicable legal and institutional rules governing archival and public-interest data in Austria and the European Union. The deposited release should document any exclusions, redactions, or access restrictions introduced for that reason.
+
+\section{Data Availability}
+
+The ANMI dataset described here is intended for deposit in a public repository that provides persistent identifiers, open download access, and long-term preservation. Replace the following placeholder with the final data citation before submission: \texttt{[Authors]. [Dataset title]. [Repository]. [DOI or accession] ([year]).} The deposit should contain the published data objects, lookup tables, codebooks, release manifest, and versioned release notes.
+
+\section{Code Availability}
+
+Code used to transform the curated source records into the published release should be archived alongside the dataset or in a linked public code repository with its own persistent identifier. The final manuscript should cite the exact software release used to generate the deposited data objects.
+
+\section*{Acknowledgements}
+
+This manuscript describes a data resource developed within the Austrian News Media Infrastructure project. Final repository, release, and institutional acknowledgements should be inserted here before submission.
+
+\section*{Author Information}
+
+Authors and Affiliations: Austrian Academy of Sciences (OeAW), Institute for Comparative Media and Communication Studies, Austria.
+
+\section*{Funding}
+
+Funding details should be inserted here before submission.
+
+\section*{Competing Interests}
+
+The authors declare no competing interests.
+
+\section*{Additional Information}
+
+How to cite this article: Alexander, M. \& Seethaler, J. A national reference dataset of Austrian news media outlet identities transformations and market structure. \textit{Sci. Data} [volume], [article number] ([year]).
+
+\section*{Supplementary Information}
+
+The final submission should include supplementary materials describing field-level definitions, lookup tables, example queries, and any additional release notes or validation summaries that exceed the length appropriate for the main text.
+
+\end{document}
+
