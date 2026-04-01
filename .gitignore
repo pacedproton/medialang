@@ -102,6 +102,22 @@ validate_*.sql
 
 
 
+# LaTeX build artifacts (paper/)
+paper/*.aux
+paper/*.bbl
+paper/*.bcf
+paper/*.blg
+paper/*.fdb_latexmk
+paper/*.fls
+paper/*.lof
+paper/*.lot
+paper/*.out
+paper/*.run.xml
+paper/*.synctex.gz
+paper/*.toc
+paper/*.xdv
+
+
 # other
 
 mdsl-rs/mdsl_full_with_stubs.mdsl

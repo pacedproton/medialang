@@ -1,0 +1,57 @@
+\documentclass[11pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{hyperref}
+\usepackage{xurl}
+
+\hypersetup{colorlinks=true, linkcolor=black, urlcolor=blue, citecolor=black}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.65em}
+
+\begin{document}
+
+\noindent Dear Editors of \textit{Scientific Data},
+
+\medskip
+
+We submit for your consideration a Data Descriptor manuscript entitled:
+
+\begin{quote}
+\textit{A longitudinal dataset of Austrian news media outlet identities and their relations, 1780--2024, curated in the MediaLanguage domain-specific language}
+\end{quote}
+
+\noindent\textbf{Authors:} Michael Alexander and Josef Seethaler (corresponding author: \url{josef.seethaler@oeaw.ac.at}), Institute for Comparative Media and Communication Studies, Austrian Academy of Sciences (OeAW), Austria.
+
+\medskip
+
+\noindent\textbf{Context and importance}
+
+Research on news systems, media markets, and the political information environment depends on data that resolve outlet identity over time and document how titles, territories, sectors, and market indicators connect. For Austria, such information has long been scattered across archives, official statistics, audience surveys, and grey literature. Simple title lists or single-year snapshots cannot represent succession, amalgamation, regional editions, umbrella structures, or cross-sector migration without misleading aggregation.
+
+The Austrian News Media Infrastructure (ANMI) media-supply release addresses this gap. It provides 657 identity-resolved outlet records from 1780 to 2024, linked by 337 typed diachronic relations and 290 synchronic structural relations, together with over 1,600 outlet-year market observations tied to 51 structured source records from six evidence families (including Media-Analyse, \"Osterreichische Webanalyse, \"Osterreichische Auflagenkontrolle, ORF reports, and Statistik Austria). The design makes continuity and structural relations explicit rather than inferred from repeated brand names.
+
+The dataset is curated and archived in MediaLanguage (MDSL), a purpose-built domain-specific language with a publicly available Rust compiler. The canonical deposit preserves typed relations, temporal semantics, provenance, and aggregation rules as first-class constructs; relational or graph views can be derived on demand. The modular MDSL package is publicly available on figshare (\url{https://doi.org/10.6084/m9.figshare.31908523}), with root file \texttt{anmi\_main.mdsl}. Compiler source code is available at \url{https://github.com/pacedproton/medialang}.
+
+\medskip
+
+\noindent\textbf{Why \textit{Scientific Data}}
+
+We believe this work fits \textit{Scientific Data} because it offers a documented, persistent, and reusable national resource with clear validation, open data and code, and cross-disciplinary reuse potential (communication research, media history, digital humanities, market structure, and computational linkage workflows). The manuscript follows the Data Descriptor form: we describe what was collected, how it was curated and validated, what files constitute the release, and how others should use the data without over-claiming novel substantive findings.
+
+We confirm that the data and code availability statements in the manuscript reflect the actual deposits. We would be grateful if you could consider the submission for peer review.
+
+\bigskip
+
+\noindent Kind regards,
+
+\medskip
+
+\noindent Josef Seethaler\\
+(on behalf of the authors)\\
+
+\end{document}
