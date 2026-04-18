@@ -1,0 +1,50 @@
+\begin{thebibliography}{5}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Strippel(2021)]{Strippel2021}
+Christian Strippel.
+\newblock Forschungsinfrastrukturen f{\"u}r die kommunikations- und
+  medienforschung im deutschsprachigen raum: Initiativen, bedarfe und
+  perspektiven.
+\newblock \emph{M\&K Medien \& Kommunikationswissenschaft}, 69\penalty0
+  (1):\penalty0 136--157, 2021.
+\newblock \doi{10.5771/1615-634X-2021-1-136}.
+
+\bibitem[Van~Aelst et~al.(2017)Van~Aelst, Str{\"o}mb{\"a}ck, Aalberg, Esser,
+  de~Vreese, Matthes, Hopmann, Salgado, Hub{\'e}, St{\k{e}}pi{\'n}ska,
+  Papathanassopoulos, Berganza, Legnante, Reinemann, Sheafer, and
+  Stanyer]{VanAelst2017}
+Peter Van~Aelst, Jesper Str{\"o}mb{\"a}ck, Toril Aalberg, Frank Esser, Claes~H.
+  de~Vreese, J{\"o}rg Matthes, David~Nicolas Hopmann, Susana Salgado, Nicolas
+  Hub{\'e}, Agnieszka St{\k{e}}pi{\'n}ska, Stylianos Papathanassopoulos, Rosa
+  Berganza, Guido Legnante, Carsten Reinemann, Tamir Sheafer, and James
+  Stanyer.
+\newblock Political communication in a high-choice media environment: A
+  challenge for democracy?
+\newblock \emph{Annals of the International Communication Association},
+  41\penalty0 (1):\penalty0 3--27, 2017.
+\newblock \doi{10.1080/23808985.2017.1288551}.
+
+\bibitem[Williams and Delli~Carpini(2011)]{WilliamsDelliCarpini2011}
+Bruce~A. Williams and Michael~X. Delli~Carpini.
+\newblock \emph{After Broadcast News: Media Regimes, Democracy, and the New
+  Information Environment}.
+\newblock Cambridge University Press, Cambridge, 2011.
+
+\bibitem[Alexander(2025)]{MDSLReference2025}
+Michael Alexander.
+\newblock {MediaLanguage (MDSL) Reference Guide}, version 1.0.
+\newblock Technical report, Vienna, 07 2025.
+\newblock Deposited with the ANMI media-supply release.
+
+\bibitem[Alexander and Seethaler(2026)]{ANMIFigshare2026}
+Michael Alexander and Josef Seethaler.
+\newblock {ANMI} media-supply release: {MediaLanguage} ({MDSL}) source package,
+  2026.
+\newblock URL \url{https://doi.org/10.6084/m9.figshare.31908523}.
+
+\end{thebibliography}

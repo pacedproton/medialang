@@ -1,0 +1,543 @@
+\documentclass[11pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xurl}
+\usepackage[numbers,sort&compress]{natbib}
+
+\title{A longitudinal dataset of Austrian news media outlet identities and their relations, 1780--2024, curated in the MediaLanguage domain-specific language}
+\author{Michael Alexander \and Josef Seethaler\\
+Austrian Academy of Sciences (OeAW)\\
+Institute for Comparative Media and Communication Studies, Austria\\
+\texttt{josef.seethaler@oeaw.ac.at}}
+\date{2026}
+
+\begin{document}
+\maketitle
+
+\noindent\textbf{Keywords:} Austrian media, longitudinal dataset, media outlet identity resolution, diachronic and synchronic relations, domain-specific language, media language, media market indicators, political information environment, media history, structured provenance
+
+\bigskip
+
+\begin{abstract}
+We describe the Austrian News Media Infrastructure (ANMI) media-supply release, a longitudinal dataset covering Austria's political information environment from 1780 to 2024. The release comprises 657 identity-resolved outlet records, 337 typed diachronic relations (succession, amalgamation, interruption, sector change, and five further types), 290 synchronic structural relations (umbrella, main-media-outlet, collaboration), 151 outlet-level annual data blocks linked to market indicators, and 51 structured source records drawn from six evidence families including Media-Analyse audience surveys (1993--2008), \"Osterreichische Webanalyse (\"OWA) web-traffic reports (2008--2022), \"Osterreichische Auflagenkontrolle (\"OAK) circulation audits (2021--2023), ORF annual reports, and Statistik Austria cultural statistics. Each outlet is defined jointly by title, period, primary distribution area, and media sector; identity-breaking transitions such as title changes, territorial redefinitions, and publication interruptions create new records linked through typed diachronic edges rather than being collapsed into a single nominal series. The dataset is curated and archived in MediaLanguage (MDSL), a purpose-built domain-specific language that represents outlet identities, typed relations, temporal intervals, provenance, and aggregation constraints as first-class constructs in human-readable, machine-validatable source files. The MDSL source files are the primary deposited objects; a Rust-based compiler validates the canonical source and can export it into relational and graph-oriented derivatives on demand. Together, the dataset and its curation language form a reusable package for longitudinal media-history research, market-structure analysis, and computational linkage workflows. The modular MDSL source package is publicly available on figshare (root file \texttt{anmi\_main.mdsl}; \url{https://doi.org/10.6084/m9.figshare.31908523}).
+\end{abstract}
+
+\section{Background \& Summary}
+
+Research on news media systems requires temporally resolved data that can represent continuity and change simultaneously. Media outlets persist under recognizable brands while changing titles, merging, splitting, migrating across sectors, and altering territorial scope. Empirical assessment of these transformations is constrained by fragmented reporting, unstable units of observation, and weakly documented transitions between titles, organizations, and market records. Digital research infrastructures have been recognized as essential for coordinating such fragmented scholarly data~\cite{Strippel2021}, yet nationally comprehensive, temporally deep media-supply datasets remain rare.
+
+The Austrian case makes these problems especially visible. The political information environment has been shaped by early nineteenth-century press expansion under Habsburg censorship, the proliferation of party-affiliated and commercial titles in the late imperial and First Republic periods, the suppression and restructuring of the press under Austrofascism (1934--1938) and National Socialism (1938--1945), the occupation-era licensing system of 1945--1955, the long post-war consolidation that reduced the number of daily newspapers from over sixty in the late 1940s to roughly a dozen independent titles by the 1980s, the commercialization of broadcasting from the 1990s onward, and the emergence of online and social-media news platforms in the 2000s and 2010s. These structural disruptions are reflected directly in the temporal distribution of outlet creation dates in the dataset: the 1940s account for 103 new outlet identities (the post-war licensing wave), the 1930s for 65 (the Austrofascist and early Nazi period), and the 1990s and 2000s each for 81 (commercialization and digitalization); the full decade-level distribution is given in Table~\ref{tab:decades}. A dataset that simply counts currently active brands or single-year organizations cannot capture these transformations.
+
+The Austrian News Media Infrastructure (ANMI) was conceived to address this gap. Its conceptual scope covers media and political public communication in Austria from the mid-nineteenth century to the present. The project distinguishes three analytical components: political and legal framework conditions, media supply, and media use. The present release concerns media supply: those media services whose principal purpose is the provision of news and current-affairs content under editorial responsibility, consistent with the concept of the political information environment used in comparative political communication research~\cite{VanAelst2017,WilliamsDelliCarpini2011}.
+
+The design premise of the ANMI media-supply release is that outlet identity must be made explicit and reproducible. A media outlet in ANMI is defined jointly by title, period, primary distribution area, and media sector. Title changes, amalgamations, territorial redefinitions, sector migrations, and publication interruptions beyond a defined threshold each trigger a new outlet record rather than being absorbed into a single nominal series. These distinct records are then connected through typed diachronic relations, while co-existing structural formations---umbrellas, editorial alliances, main-media-outlet hierarchies, and collaborations---are represented as synchronic relations.
+
+To illustrate the analytical difference this makes: the Neue Kronen Zeitung, Austria's highest-circulation daily, appears in the dataset not as a single record but as 13 distinct outlet identities---a Wien edition, regional editions for Ober\"osterreich, Salzburg, K\"arnten, Nieder\"osterreich, Steiermark, Tirol, Vorarlberg, and Burgenland, an ``Ausgabe f\"ur Nieder\"osterreich und Burgenland'', two successive Ober\"osterreich editions reflecting a territorial redefinition, and a national [[Dach/\"uberregional]] umbrella identity. These 13 records are connected to each other through synchronic umbrella and main-media-outlet relations, and to predecessor titles through diachronic succession links. A flat dataset that records ``Kronen Zeitung'' as a single row would collapse these analytically important distinctions.
+
+The compiled ANMI corpus contains 657 outlet identities with start dates ranging from 1780 (Wiener Zeitung) to 2024. Of these, 194 outlets carry end dates coded as ongoing (9999-01-01), representing outlets that were still active or had not yet been formally closed at the time of curation. The remaining 463 are historical outlet identities with documented end dates. The outlets are distributed across more than 40 Austrian locations, with Wien accounting for 285 outlets (43\%), followed by Linz (56, 9\%), Innsbruck (34, 5\%), Graz (34, 5\%), Salzburg (33, 5\%), and Klagenfurt (32, 5\%). Seventy-five outlets (11\%) have location coded as unknown. This geographic distribution reflects the historical dominance of Vienna in Austrian media alongside the persistent regional differentiation that the relation model was designed to capture.
+
+The outlet layer is connected to 337 diachronic relations and 290 synchronic relations, 151 outlet-level annual data blocks containing 1{,}613 outlet-year observations, and 51 structured source records drawn from six distinct evidence families (Table~\ref{tab:highlights}). A total of 263 outlet records carry substantive comments documenting curation decisions, historical context, or boundary-case adjudication; the remaining 394 are coded as ``KA'' (keine Angabe, no comment available).
+
+The release contributes a nationally comprehensive media-supply dataset that is distinctive in two respects. First, the data itself: 657 identity-resolved outlet records connected by 627 typed relations, with provenance-linked market observations spanning three decades of evidence---a combination of temporal depth, relational completeness, and source transparency that is not available for Austria in any existing public resource. Second, the curation and archival method: the dataset is maintained in MediaLanguage (MDSL), a purpose-built domain-specific language that encodes entity structure, typed relations, temporal intervals, provenance, date-precision fields, missing-value semantics, and aggregation constraints as first-class language constructs. These features are difficult to represent faithfully in flat tables or even in normalized relational schemas without losing semantic richness. By archiving the MDSL source files as the primary deposit---with a Rust-based compiler that can derive relational and graph-oriented views on demand---the release preserves the full data model rather than a lossy tabular projection of it.
+
+\begin{table}[t]
+  \centering
+  \small
+  \begin{tabular}{>{\raggedright\arraybackslash}p{0.30\linewidth}r>{\raggedright\arraybackslash}p{0.40\linewidth}}
+    \toprule
+    Component & Count & Description \\
+    \midrule
+    Outlet identities & 657 & Bounded media-outlet records defined by title, period, area, and sector (1780--2024); 194 ongoing, 463 historical \\
+    Diachronic relations & 337 & Typed temporal transitions: succession (194), new sector (48), offshoot (35), interruption (32), amalgamation (13), merger (9), new distribution area (5), split-off (1) \\
+    Synchronic relations & 290 & Co-existing structures: umbrella (148), main media outlet (95), collaboration (47) \\
+    Annual data blocks & 151 & Outlet-level market observations (1{,}613 outlet-year rows) linked to source records \\
+    Structured source records & 51 & Six evidence families covering 1993--2023 \\
+    Controlled vocabularies & 6 & Sector, mandate, relation type, date precision, additivity, region codes \\
+    \bottomrule
+  \end{tabular}
+  \caption{Summary of the ANMI media-supply release.}
+  \label{tab:highlights}
+\end{table}
+
+\begin{table}[t]
+  \centering
+  \small
+  \begin{tabular}{rr|rr|rr}
+    \toprule
+    Decade & Outlets & Decade & Outlets & Decade & Outlets \\
+    \midrule
+    1780s & 1  & 1900s & 23 & 1960s & 34 \\
+    1800s & 1  & 1910s & 21 & 1970s & 30 \\
+    1840s & 1  & 1920s & 23 & 1980s & 30 \\
+    1850s & 8  & 1930s & 65 & 1990s & 81 \\
+    1860s & 13 & 1940s & 103 & 2000s & 81 \\
+    1870s & 3  & 1950s & 46 & 2010s & 57 \\
+    1880s & 8  & & & 2020s & 12 \\
+    1890s & 16 & & & & \\
+    \bottomrule
+  \end{tabular}
+  \caption{Number of outlet identities by decade of creation (start date). The 1940s peak reflects the post-war licensing wave; the 1930s peak reflects the Austrofascist and early Nazi restructuring. The 1990s and 2000s peaks reflect broadcasting commercialization and digitalization.}
+  \label{tab:decades}
+\end{table}
+
+\section{Methods}
+
+\subsection{Scope, unit of observation, and identity rules}
+
+The release covers media outlets relevant to political communication in Austria within present-day borders from the mid-nineteenth century to the present. The base unit is a single media outlet distributed regularly and continuously under a specific title, in a specific period, primarily in a specific distribution area, and in a specific media sector. This definition is operational rather than merely descriptive: a record was created only when these four dimensions jointly defined a coherent observational unit.
+
+Sector captures analytical media type: daily newspaper (code 11), weekly newspaper (12), radio (20), television (30), online (40), and social media (50). Mandate captures organizational orientation: public service (1), private commercial (2), party-affiliated (3), association (4), state (5), occupying power (6), or other (7). Mandate is recorded as a separate dimension from sector because the same sector can include outlets with very different organizational orientations---for example, public-service and private commercial television---and mandate changes can occur without triggering a new outlet identity.
+
+New outlet identities were created by explicit transition rules derived from the ANMI concept document. A new outlet record was created when an outlet changed title, was amalgamated with one or more outlets into a new outlet, changed its primary distribution area, moved into another sector, or resumed publication after an interruption exceeding a tolerance threshold. For daily publications, interruptions shorter than one week were not treated as identity changes; for weekly publications, the threshold was one month. These rules distinguish identity change from relational linkage: the successor outlet receives a new identifier and the two units are linked diachronically. Table~\ref{tab:identityrules} summarizes the triggering conditions and the associated typed links.
+
+The practical importance of these rules can be illustrated with a concrete example. The newspaper ``Der Abend'' appears in the dataset as four distinct outlet identities: Abend, Der [1] (Wien, 1915-06-14 to 1917-02-20), Abend, Der [2] (Wien, 1917-03-07 to 1918-03-18), Abend, Der [3] (Wien, 1918-10-31 to 1934-02-16), and Abend, Der [4] (Wien, 1948-02-25 to 1956-09-29). The comments field documents the reasons for each identity break: the first outlet was ``aus Zensurgr\"unden nicht erschienen'' (suspended for censorship reasons) in February--March 1917, and was ``polizeilich verboten'' (banned by police) in March--May 1918. A flat dataset recording ``Der Abend'' as a single row would obscure these historically significant interruptions and the distinct editorial contexts of the First World War, the First Republic, and the post-1945 period.
+
+Primary distribution area follows a hierarchical scheme: federal states (Bundesl\"ander) for regional outlets, and ``\"uberregional'' for nationally distributed or umbrella-level units. \"Uberregional outlets were entered only for the period after 1945. Structural annotations use double-bracket notation: [[Dach]] for umbrella offers, [[Kombi]] for ad-placement combinations of single or umbrella outlets, and [[Gratis]] for free-print offers. When multiple federal states were equally primary by market evidence, the outlet was entered for each relevant state. The [[Kombi]] concept captures ad-buying units that are distinct from editorial umbrellas---an important distinction for market-structure analysis because advertising reach and editorial identity do not always coincide.
+
+\begin{table}[t]
+  \centering
+  \small
+  \begin{tabular}{>{\raggedright\arraybackslash}p{0.33\linewidth}>{\raggedright\arraybackslash}p{0.18\linewidth}>{\raggedright\arraybackslash}p{0.29\linewidth}}
+    \toprule
+    Triggering condition & New record & Typed link \\
+    \midrule
+    Title change & yes & succession \\
+    Amalgamation into a new outlet & yes & amalgamation \\
+    Change in primary distribution area & yes & new distribution area \\
+    Migration into another sector & yes & new sector \\
+    Interruption beyond threshold & yes & interruption \\
+    Split-off from an existing outlet & yes (split-off unit) & split-off \\
+    Offshoot in another territory or sector & yes (offshoot unit) & offshoot \\
+    Co-existing umbrella or collaboration & no & synchronic relation \\
+    \bottomrule
+  \end{tabular}
+  \caption{Operational rules for creating new outlet identities and the associated typed link.}
+  \label{tab:identityrules}
+\end{table}
+
+\subsection{Relation model}
+
+The release distinguishes diachronic from synchronic outlet relations. Diachronic relations encode temporally ordered transitions between distinct outlet identities. In the compiled corpus, 337 diachronic relations were assigned across eight types: succession (194 links), new sector (48), offshoot (35), interruption (32), amalgamation (13), merger (9), new distribution area (5), and split-off (1). The predominance of succession reflects the fact that title changes were the most frequent form of outlet identity transition in Austrian media history. The 48 new-sector links represent cross-sector migration, largely driven by established print titles launching online editions from the late 1990s onward. The 35 offshoot links capture cases where an existing outlet gave rise to a related outlet in another territory or sector without the original ceasing to exist.
+
+Synchronic relations encode co-existing structural formations. The corpus contains 290 synchronic relations across three types: umbrella (148 links), main media outlet (95), and collaboration (47). Umbrella relations are prominent because major Austrian newspaper groups operated regionally differentiated editions under a common brand. The Neue Kronen Zeitung case described above is representative: the 13 regional and umbrella outlet identities are connected by main-media-outlet relations (regional edition to parent) and umbrella relations (parent to [[Dach/\"uberregional]] brand). The ORF (\"Osterreichischer Rundfunk), Austria's public broadcaster, provides an analogous example in the broadcast sector: ORF 1, ORF 2, ORF 2 Europe, ORF III, ORF Sport+, and the ORF Radio [[Dach]] are each recorded as distinct outlet identities connected through synchronic relations within the ``ORF Media Group'' family grouping in the MDSL source.
+
+Synchronic relation periods are stored independently from outlet life spans because the duration of a structural arrangement can differ from the life span of the outlets it connects. A transitive-reduction rule was applied: only direct links were entered. If outlet A is subordinated to main medium B and B to umbrella C, no redundant A-to-C relation was added. Hierarchy is inferred transitively. This reduces redundant edges and prevents double counting when reconstructing nested structures from the relation tables. Table~\ref{tab:relations} lists all diachronic and synchronic relation types together with their frequencies in the compiled corpus.
+
+\begin{table}[t]
+  \centering
+  \small
+  \begin{tabular}{>{\raggedright\arraybackslash}p{0.22\linewidth}>{\raggedright\arraybackslash}p{0.22\linewidth}r>{\raggedright\arraybackslash}p{0.28\linewidth}}
+    \toprule
+    Family & Type & Count & Interpretation \\
+    \midrule
+    Diachronic & succession & 194 & Title change or direct continuation \\
+    Diachronic & new sector & 48 & Migration across media sectors \\
+    Diachronic & offshoot & 35 & Derivation in another territory or sector \\
+    Diachronic & interruption & 32 & Resumption after substantial pause \\
+    Diachronic & amalgamation & 13 & Absorption into a newly formed outlet \\
+    Diachronic & merger & 9 & Equal or near-equal fusion \\
+    Diachronic & new distr.\ area & 5 & Territorial redefinition \\
+    Diachronic & split-off & 1 & New outlet branches from existing one \\
+    Synchronic & umbrella & 148 & Brand-level aggregation of multiple outlets \\
+    Synchronic & main media outlet & 95 & Hierarchical relation to parent outlet \\
+    Synchronic & collaboration & 47 & Continuing co-operation \\
+    \bottomrule
+  \end{tabular}
+  \caption{Relation types and their frequencies in the compiled ANMI corpus.}
+  \label{tab:relations}
+\end{table}
+
+\subsection{Data sources and market observations}
+
+Annual market observations were compiled from six evidence families, each represented as structured source records in the dataset. The 51 source records in the current release were drawn from the following families:
+
+\begin{enumerate}
+\item \textbf{Media-Analyse} (1993--2008): Annual audience survey conducted by the Verein Arbeitsgemeinschaft Media-Analysen, providing national and regional reach and market-share data for print, radio, and television outlets. Sixteen annual reports were integrated, constituting the largest single evidence family in the release.
+
+\item \textbf{\"Osterreichische Webanalyse (\"OWA)} (2008--2022): Quarterly and annual web-traffic audits providing unique-user counts for Austrian online media. Fifteen reports were integrated, covering Q4 quarterly reports (2008--2019) and annual reports (2020--2022). The shift from quarterly to annual reporting is reflected in the source identifiers.
+
+\item \textbf{\"Osterreichische Auflagenkontrolle (\"OAK)} (2021--2023): Certified circulation audits providing verified print-run data for newspapers and magazines. Three annual reports were integrated.
+
+\item \textbf{ORF annual reports} (2012, 2022, 2023): Published reports of the Austrian public broadcaster providing audience and programme data for ORF radio and television channels.
+
+\item \textbf{Statistik Austria: Kulturstatistik} (2003--2021): Official cultural statistics of the Austrian federal statistical office, providing sector-level media indicators across print, broadcast, and online sectors. Ten reporting-year editions were integrated, with coverage gaps reflecting discontinuities in the publication series.
+
+\item \textbf{Massenmedien in \"Osterreich -- Medienbericht Bd.~4} (1993): A comprehensive media-system report providing historical baseline data for the early 1990s.
+\end{enumerate}
+
+The observation year was interpreted as a year of validity rather than simply the publication year of the cited source. The validity convention is anchored to 1 December of the given year. When the reporting year was not explicit in the source, the year before the publication year was used. This annualization rule is essential for longitudinal comparability because annual reports and audit publications often refer to the preceding year; without the convention, time-series analysis would be systematically biased by publication lag.
+
+Observations include circulation, unique users, national reach, regional reach, national market share, and regional market share, each linked to source identifiers. Missing data were encoded as distinct states (not applicable vs.\ not available) rather than as blanks or zeros. The distinction matters analytically: a circulation field coded as ``not applicable'' for a radio station is semantically different from a field coded as ``not available'' for a newspaper whose print run could not be determined from available sources.
+
+Additivity was explicitly encoded per observation because market indicators cannot always be safely aggregated across outlets. The model distinguishes five additivity levels: (1) never additive, (2) always additive, (3) additive only at the level of individual federal states, (4) additive at the level of federal states and Austria as a whole, and (5) additive only at the level of supraregional markets and Austria as a whole. Aggregation across federal states or across combinations of federal states and supraregional markets is never permitted, because outlet structures overlap territorially. The additivity field acts as a guardrail against double counting: if a publication belongs simultaneously to a regional structure and an umbrella-level market unit, its values may be analytically visible in both places but should enter aggregate calculations only once and only under the permitted territorial scope.
+
+\subsection{Curation and archival format: the MediaLanguage domain-specific language}
+
+The dataset required a curation format that could preserve entity structure, typed relations between outlets, temporal intervals, provenance, and aggregation constraints without the semantic loss that occurs when such features are flattened into tabular exports. To meet this requirement, the ANMI data model was implemented in MediaLanguage (MDSL), a purpose-built domain-specific language. The deposited MDSL source files serve as the canonical archival representation of the release. This section describes the language in sufficient detail for readers to understand the deposited files and, if needed, to write or extend MDSL files themselves. A full reference guide is provided separately~\cite{MDSLReference2025}.
+
+\subsubsection*{Why a domain-specific language?}
+
+The central challenge in curating the ANMI dataset was that its core analytical features---typed outlet relations, temporal intervals with precision qualifiers, source-linked observation blocks, and aggregation constraints---cannot be expressed as first-class objects in a single flat table. A tabular export preserves field values but loses the relational structure between outlets. A relational database can express these features but is not human-readable, not directly versionable, and not self-documenting. MDSL was developed to occupy the middle ground: a structured text format that can be read, reviewed, and versioned by domain experts while also being machine-parseable and exportable into both relational and graph-oriented targets.
+
+A practical consequence of this choice is that the relations between media offerings---the feature that distinguishes this dataset from a simple outlet registry---are explicit, typed, and directly visible in the deposited files. A diachronic succession between two outlets is a first-class \texttt{DIACHRONIC\_LINK} declaration, not a row in a join table. A synchronic umbrella structure is an explicit \texttt{SYNCHRONOUS\_LINK} with role annotations, not an implicit grouping inferred from naming conventions. Users can trace outlet histories and structural formations by reading or searching the source text, without requiring a database client or query language.
+
+\subsubsection*{Language constructs}
+
+The core constructs of MDSL are:
+
+\begin{itemize}
+\item \texttt{VOCABULARY}: Defines a controlled vocabulary as a named set of typed entries. Used for data sources, sector codes, mandate types, and other categorical domains.
+
+\item \texttt{UNIT}: Defines a typed entity with named fields. In the ANMI release, the primary unit is the media outlet, with fields for identity (name, location, language), lifecycle (status, start date, end date), and metadata (comments). Units can also define schema-level type declarations with field types and constraints.
+
+\item \texttt{FAMILY}: Groups related outlets into named hierarchical collections. The ANMI release uses two families: ``ORF Media Group'' and ``All Media Outlets''. Within a family block, outlets are declared with full identity, lifecycle, and characteristics blocks, preserving the logical grouping in the source file itself.
+
+\item \texttt{OUTLET}: Declares an individual outlet within a family, with sub-blocks for \texttt{identity} (id, title), \texttt{lifecycle} (status with temporal range and date precision), and \texttt{characteristics} (sector, mandate, distribution area, local flag).
+
+\item \texttt{DIACHRONIC\_LINK}: Declares a typed temporal relation between two outlet identifiers, with fields for predecessor, successor, and relationship type (succession, amalgamation, new\_sector, offshoot, interruption, merger, new\_distribution\_area, split\_off). This is the construct that makes outlet succession chains explicit and traversable.
+
+\item \texttt{SYNCHRONOUS\_LINK}: Declares a typed co-existence relation between two outlet identifiers, with fields for each outlet's id and role, the relationship type (umbrella, main\_media\_outlet, collaboration), and an optional temporal range. This is the construct that makes structural formations like regional-edition hierarchies and editorial alliances explicit.
+
+\item \texttt{DATA}: Declares an annual observation block for an outlet, containing year-keyed entries with market indicators and source references.
+
+\item \texttt{IMPORT}: References external MDSL files for modular organization. The ANMI release uses imports for common codes, media sectors, mandate types, and source references, keeping the main corpus file focused on outlet definitions and relations.
+
+\item \texttt{TEMPLATE} and \texttt{EXTENDS}: Support inheritance-based outlet definitions for outlets that share common characteristics, reducing repetition in large corpora.
+\end{itemize}
+
+\subsubsection*{Illustrative excerpts}
+
+Figure~\ref{fig:dsl_outlet} shows a real outlet record from the ANMI canonical source. The outlet ``Neue Kronen Zeitung [[Dach/\"uberregional]]'' is an umbrella-level identity for the Kronen Zeitung brand, active from 1972 to 2000. The double-bracket annotation [[Dach/\"uberregional]] is part of the title string and marks this outlet as an umbrella unit in the ANMI territorial scheme. The lifecycle block records start and end dates, while the metadata block carries a comment (here ``KA'' indicating no additional annotation).
+
+Figure~\ref{fig:dsl_links} shows diachronic and synchronic links from the compiled corpus. The diachronic link records a succession relation between outlet 100421 (predecessor) and outlet 100750 (successor), representing a title change. The synchronic link records a main-media-outlet relation between two outlets, with explicit role annotations (source and target). These link declarations make the relational structure between media offerings directly visible and reviewable in the source file.
+
+\begin{figure}[t]
+  \centering
+  \fbox{\parbox{0.92\linewidth}{
+  \small\ttfamily
+  UNIT Neue\_Kronen\_Zeitung\_\_\_Dach\"uberregional \{\\
+  \hspace*{1em}IDENTITY \{\\
+  \hspace*{2em}name: "Neue Kronen Zeitung [[Dach/\"uberregional]]"\\
+  \hspace*{2em}location: "Wien"\\
+  \hspace*{2em}language: "deutsch"\\
+  \hspace*{1em}\}\\
+  \hspace*{1em}LIFECYCLE \{\\
+  \hspace*{2em}status: "inactive"\\
+  \hspace*{2em}start\_date: "1972-09-01"\\
+  \hspace*{2em}end\_date: "2000-10-31"\\
+  \hspace*{1em}\}\\
+  \hspace*{1em}METADATA \{\\
+  \hspace*{2em}comment: "KA"\\
+  \hspace*{1em}\}\\
+  \}
+  }}
+  \caption{MDSL outlet record from the ANMI canonical source. The UNIT block encodes identity, lifecycle, and metadata as structured sub-blocks. The [[Dach/\"uberregional]] notation marks an umbrella-level outlet identity.}
+  \label{fig:dsl_outlet}
+\end{figure}
+
+\begin{figure}[t]
+  \centering
+  \fbox{\parbox{0.92\linewidth}{
+  \small\ttfamily
+  DIACHRONIC\_LINK evolution\_100421\_succession \{\\
+  \hspace*{1em}predecessor = 100421;\\
+  \hspace*{1em}successor = 100750;\\
+  \hspace*{1em}relationship\_type = "succession";\\
+  \};\\
+  \\
+  SYNCHRONOUS\_LINK link\_100421\_main\_media\_outlet \{\\
+  \hspace*{1em}outlet\_1 = \{\\
+  \hspace*{2em}id = 100421;\\
+  \hspace*{2em}role = "source";\\
+  \hspace*{1em}\};\\
+  \hspace*{1em}outlet\_2 = \{\\
+  \hspace*{2em}id = 100400;\\
+  \hspace*{2em}role = "target";\\
+  \hspace*{1em}\};\\
+  \hspace*{1em}relationship\_type = "main\_media\_outlet";\\
+  \};
+  }}
+  \caption{MDSL link declarations from the ANMI corpus. The diachronic link records a succession relation between two outlet identifiers. The synchronic link records a main-media-outlet hierarchy with explicit role assignments. Both are directly readable in the deposited source file.}
+  \label{fig:dsl_links}
+\end{figure}
+
+\subsubsection*{Compiler and validation}
+
+The MDSL compiler is implemented in Rust and follows a standard multi-phase architecture: lexical analysis (tokenization), parsing (recursive descent to an abstract syntax tree), semantic analysis (symbol table management, type checking, identifier validation), and code generation. The compiler supports four processing modes:
+
+\begin{enumerate}
+\item \textbf{Validation} (\texttt{cargo run -- validate <file.mdsl>}): Checks the canonical source for syntactic correctness, identifier uniqueness, referential integrity, temporal coherence, and vocabulary compliance. This is the mode used to validate the deposited release.
+
+\item \textbf{SQL export} (\texttt{cargo run --features sql-codegen -- sql <file.mdsl>}): Generates SQL DDL and DML statements for import into relational databases such as PostgreSQL.
+
+\item \textbf{Cypher export} (\texttt{cargo run --features cypher-codegen -- cypher <file.mdsl>}): Generates Cypher statements for import into the Neo4j graph database, where outlets become nodes and diachronic/synchronic relations become typed edges.
+
+\item \textbf{Database import} (\texttt{cargo run --features import --bin sql\_import -- generate}): Generates MDSL from an existing PostgreSQL database, enabling round-trip conversion between the relational database and the canonical MDSL representation.
+\end{enumerate}
+
+The compiler is feature-gated: the SQL and Cypher code generators and the database import module are compiled only when the corresponding Cargo feature flags are enabled. The core validation pipeline has minimal dependencies and can process the full ANMI corpus (29{,}271 lines) in under two seconds on commodity hardware.
+
+\subsection{Release construction workflow}
+
+The release was constructed through a five-stage workflow, summarized schematically in Figure~\ref{fig:pipeline}:
+
+\begin{enumerate}
+\item \textbf{Source collection}: Candidate outlet records were identified from archival records, official statistics, audience surveys, circulation audits, web-traffic reports, public broadcaster reports, and secondary media-history literature. For each candidate, the four defining dimensions (title, period, distribution area, sector) were assessed against available evidence.
+
+\item \textbf{Identity normalization}: Accepted cases were normalized into bounded outlet identities with stable six-digit identifiers and coded descriptors. The identifier scheme encodes media type in the first digit, structured entry position in digits two through five, and related-group marking in the sixth digit.
+
+\item \textbf{Relation assignment}: Diachronic and synchronic relations were assigned according to the operational rules described above. Each link was reviewed against the identity transition it represents, and the relationship type was selected from the controlled vocabulary.
+
+\item \textbf{Observation alignment}: Annual market observations were aligned to validity years (anchored to 1 December), linked to structured source records, and annotated with additivity flags. Source identifiers use a seven-digit scheme encoding source family, reporting period, and year.
+
+\item \textbf{Canonical encoding and validation}: All curated data were encoded in MDSL source files and validated using the Rust-based compiler. The compiler checked syntactic correctness, identifier uniqueness, referential integrity, temporal coherence, and vocabulary compliance. Validation errors were resolved before archival.
+\end{enumerate}
+
+The corpus exists in three forms. The \textbf{public deposit} is the modular package rooted at \texttt{anmi\_main.mdsl} (Figshare; see Data Availability). An outlet-focused compilation (\texttt{anmi\_\allowbreak generated\_\allowbreak sample.mdsl}, 16{,}942 lines) contains the 657 outlet identities as \texttt{UNIT} blocks with identity, lifecycle, and metadata, plus 33 outlet-level data blocks, but omits link declarations. The \textbf{monolithic compilation} (\texttt{complete\_\allowbreak anmi\_\allowbreak full.mdsl}, 29{,}271 lines) encodes the same logical corpus as the modular package in one file: all 337 diachronic links, 290 synchronic links, 151 data blocks, family groupings, vocabulary, and schema-level unit declaration, with four top-level imports for shared codes, sectors, mandates, and source references.
+
+\begin{figure}[t]
+  \centering
+  \fbox{\parbox{0.92\linewidth}{
+    \vspace{0.35em}
+    \noindent \textbf{1. Source materials} (archival records, official statistics, Media-Analyse, \"OWA, \"OAK, ORF reports, Statistik Austria)
+
+    \vspace{0.35em}
+    \noindent $\Downarrow$
+
+    \vspace{0.35em}
+    \noindent \textbf{2. ANMI relational database} (PostgreSQL: 657 outlets, 627 relations, 151 data blocks, 51 sources)
+
+    \vspace{0.35em}
+    \noindent $\Downarrow$
+
+    \vspace{0.35em}
+    \noindent \textbf{3. MediaLanguage canonical source} (validated MDSL: 29{,}271 lines, modular imports)
+
+    \vspace{0.35em}
+    \noindent $\Downarrow$ \hfill \textit{on demand via compiler}
+
+    \vspace{0.35em}
+    \noindent \textbf{4. Derived views} (SQL for PostgreSQL, Cypher for Neo4j, or other targets)
+    \vspace{0.35em}
+  }}
+  \caption{Data construction pipeline. The MDSL canonical source (stage 3) is the deposited archival object. Relational and graph-oriented views are derived on demand by the compiler.}
+  \label{fig:pipeline}
+\end{figure}
+
+\subsection{Generative artificial intelligence}
+
+Generative artificial intelligence (AI) tools were used as auxiliary instruments during development of the ANMI MediaLanguage (MDSL) toolchain, portions of the data-model design, and limited parts of the curation and documentation workflow. These tools assisted with code drafting and refactoring, exploration of schema and type-design alternatives, transformation and validation utilities, and limited drafting and restructuring of technical documentation and manuscript text.
+
+Generative AI tools were not treated as authoritative sources of factual, historical, or bibliographic information. All data records, curation decisions, relation assignments, schema elements, controlled vocabularies, and validation rules included in the released ANMI corpus were reviewed and approved by the authors. The released dataset was validated against the canonical MDSL source using the Rust compiler described above, and responsibility for the accuracy, legality, and integrity of the dataset, code, and manuscript rests entirely with the authors.
+\section{Data Records}
+
+\subsection{Repository structure}
+
+The ANMI media-supply release is deposited as a structured directory of MDSL source files with accompanying documentation. The repository is organized as follows:
+
+\begin{verbatim}
+anmi-media-supply-v1/
+  anmi_main.mdsl                 (root entry point: IMPORTs all modules)
+  anmi_common_codes.mdsl
+  anmi_media_sectors.mdsl
+  anmi_mandate_types.mdsl
+  anmi_source_references.mdsl
+  anmi_market_data_schemas.mdsl
+  Medienangebot.mdsl
+  Medienunternehmen.mdsl
+  MedienangeboteDiachroneBeziehungen.mdsl
+  MedienangeboteSynchroneBeziehungen.mdsl
+  MedienunternehmenSynchroneBeziehungenMitMedienangeboten.mdsl
+  MedienunternehmenDiachroneBeziehungen.mdsl
+  MedienunternehmenSynchroneBeziehungenMitAnderenUnternehmen.mdsl
+  sources.mdsl
+  docs/
+    codebook.pdf
+    MDSL_reference_guide.pdf
+  MANIFEST.json
+  README.md
+\end{verbatim}
+
+The MDSL files constitute the complete, self-contained dataset. Users who require relational or graph-oriented views can generate them from the MDSL source using the compiler (SQL for PostgreSQL, Cypher for Neo4j). The MDSL source was chosen as the archival format because the dataset's core value lies in the typed relations between outlets and the provenance-linked observations attached to them---features that would be partially lost in a flat tabular deposit. By archiving the source that preserves these features, the release ensures that downstream users can regenerate any tabular or graph projection they need without inheriting the semantic compromises of a particular export format.
+
+\subsection{MDSL source file contents}
+
+The public deposit is a modular MDSL package. The root file \texttt{anmi\_main.mdsl} imports shared vocabularies and schemas, outlet and undertaking modules, diachronic and synchronic relation modules, sources, and grouped outlet fragments under \texttt{media\_groups/}. A monolithic compilation, \texttt{complete\_anmi\_full.mdsl} (29{,}271 lines), was used during development for end-to-end compiler validation and encodes the same logical corpus in a single file. Table~\ref{tab:objects} summarizes MDSL constructs and counts for the full media-supply corpus (modular or monolithic).
+
+\begin{table}[t]
+  \centering
+  \small
+  \begin{tabular}{>{\raggedright\arraybackslash}p{0.28\linewidth}r>{\raggedright\arraybackslash}p{0.44\linewidth}}
+    \toprule
+    MDSL construct & Count & Content \\
+    \midrule
+    \texttt{VOCABULARY} & 1 & \texttt{DataSources}: 51 structured source-record entries across six evidence families \\
+    \texttt{UNIT} (schema) & 1 & \texttt{MediaOutlet}: schema-level field declarations (15 typed fields) \\
+    \texttt{FAMILY} & 2 & ``ORF Media Group'' and ``All Media Outlets'': hierarchical groupings containing all \texttt{OUTLET} blocks \\
+    \texttt{OUTLET} blocks & 657 & Full outlet definitions with \texttt{identity}, \texttt{lifecycle}, and \texttt{characteristics} sub-blocks \\
+    \texttt{DIACHRONIC\_LINK} & 337 & Typed temporal relations between outlet identifiers (8 relation types) \\
+    \texttt{SYNCHRONOUS\_LINK} & 290 & Typed co-existence relations between outlet identifiers (3 relation types) \\
+    \texttt{DATA} blocks & 151 & Annual observation blocks containing 1{,}613 outlet-year entries with market indicators \\
+    \texttt{IMPORT} & many & Modular deposit: chained from \texttt{anmi\_main.mdsl} across vocabularies, entities, relations, and \texttt{media\_groups/} \\
+    \bottomrule
+  \end{tabular}
+  \caption{MDSL constructs in the full ANMI media-supply corpus (single-file \texttt{complete\_anmi\_full.mdsl} or equivalent modular package from \texttt{anmi\_main.mdsl}).}
+  \label{tab:objects}
+\end{table}
+
+The outlet-focused compilation, \texttt{anmi\_generated\_sample.mdsl} (16{,}942 lines), provides an alternative entry point using the simpler \texttt{UNIT} block syntax. Each of the 657 outlets is represented as a \texttt{UNIT} block with \texttt{IDENTITY}, \texttt{LIFECYCLE}, and \texttt{METADATA} sub-blocks. This file was generated directly from the ANMI PostgreSQL database and serves as the human-readable reference for outlet-level data. It does not contain the diachronic and synchronic link declarations, which are present only in the complete compilation.
+
+\subsection{Outlet field descriptions}
+
+Each outlet record in the MDSL source contains the following fields:
+
+\begin{itemize}
+\item \texttt{id\_mo}: Six-digit outlet identifier. The first digit encodes media type, digits two through five encode structured entry position, and the sixth digit can mark closely related outlet groups.
+\item \texttt{mo\_title}: The name of the outlet as a string, including structural annotations in double brackets where applicable (e.g., ``Neue Kronen Zeitung [[Dach/\"uberregional]]'').
+\item \texttt{id\_sector}: Sector code (11 = daily newspaper, 12 = weekly, 20 = radio, 30 = television, 40 = online, 50 = social media).
+\item \texttt{mandate}: Mandate code (1 = public service, 2 = commercial, 3 = party, 4 = association, 5 = state, 6 = occupying power, 7 = other).
+\item \texttt{location}: City or town of the outlet's editorial seat (e.g., ``Wien'', ``Graz'', ``KA'' for unknown).
+\item \texttt{primary\_distr\_area}: Region code for the primary distribution area.
+\item \texttt{local}: Flag indicating whether the outlet serves a sub-regional local market.
+\item \texttt{language}: Language of publication (``deutsch'' for all outlets in the current release).
+\item \texttt{start\_date}: ISO 8601 date of first publication or broadcast (e.g., ``1780-01-01'').
+\item \texttt{start\_fake\_date}: Date-precision code for the start date (0 = exact, 1 = substituted day, 2 = substituted month, 3 = substituted year, or combined values).
+\item \texttt{end\_date}: ISO 8601 date of last publication or broadcast, or ``9999-01-01'' for ongoing outlets.
+\item \texttt{end\_fake\_date}: Date-precision code for the end date.
+\item \texttt{editorial\_line\_s}: Self-described editorial orientation, if available.
+\item \texttt{editorial\_line\_e}: Externally attributed editorial orientation with literature reference.
+\item \texttt{comments}: Free-text field documenting curation decisions, historical context, boundary-case adjudication, or cross-references to related outlets (e.g., ``Am 12.03.1938 von den Nationalsozialisten \"ubernommen''; ``Zusammenlegung mit > 104601 Das Kleine Volksblatt und > 104700 Kleine Volks-Zeitung'').
+\end{itemize}
+
+Date-precision fields deserve special attention. Historical dates are often known only approximately. In the ANMI model, the start and end date fields always contain a full ISO 8601 date, but the companion precision fields record whether the day, month, or year was substituted. This design preserves machine-readability (all date fields parse as dates) while retaining information about the degree of historical certainty.
+
+\subsection{Source record descriptions}
+
+Each of the 51 source records contains a structured identifier encoding source family, reporting period, and year. The six source families and their temporal coverage are summarized in Table~\ref{tab:sources}.
+
+\begin{table}[t]
+  \centering
+  \small
+  \begin{tabular}{>{\raggedright\arraybackslash}p{0.32\linewidth}>{\raggedright\arraybackslash}p{0.22\linewidth}r>{\raggedright\arraybackslash}p{0.22\linewidth}}
+    \toprule
+    Source family & Coverage & Reports & Indicators \\
+    \midrule
+    Media-Analyse & 1993--2008 & 16 & Reach, market share \\
+    \"OWA (Webanalyse) & 2008--2022 & 15 & Unique users \\
+    \"OAK (Auflagenkontrolle) & 2021--2023 & 3 & Circulation \\
+    ORF-Bericht & 2012, 2022--23 & 3 & Audience data \\
+    Statistik Austria & 2003--2021 & 10 & Sector indicators \\
+    Massenmedien in \"Ost. & 1993 & 1 & Historical baseline \\
+    \bottomrule
+  \end{tabular}
+  \caption{The six evidence families in the ANMI source table, with temporal coverage and number of integrated reports.}
+  \label{tab:sources}
+\end{table}
+
+\section{Technical Validation}
+
+Technical validation addressed whether the release is internally coherent, historically interpretable, and reusable as data. Validation combined automated checks performed by the MDSL compiler with manual adjudication of boundary cases.
+
+\subsection{Compiler-based automated validation}
+
+The Rust-based MDSL compiler was run in validation mode on the full corpus using the monolithic compilation (\texttt{complete\_anmi\_full.mdsl}, 29{,}271 lines), which is logically equivalent to the modular public package rooted at \texttt{anmi\_main.mdsl}. The following checks were performed and passed:
+
+\begin{itemize}
+\item \textbf{Lexical and syntactic validation}: The full source was tokenized and parsed without errors. All 657 outlet declarations, 337 diachronic link declarations, 290 synchronic link declarations, 151 data block declarations, 2 family groupings, and 1 vocabulary definition were syntactically correct.
+
+\item \textbf{Identifier uniqueness}: All six-digit outlet identifiers were verified to be unique within the release. All seven-digit source identifiers were verified to be unique and to conform to the documented coding pattern (source family + reporting period + year).
+
+\item \textbf{Referential integrity}: All 337 diachronic links were verified to resolve both predecessor and successor identifiers against the outlet table. All 290 synchronic links were verified to resolve both outlet identifiers. All source identifiers attached to annual observations in the 151 data blocks were verified to resolve against the 51-entry source table. Result: zero unresolved references.
+
+\item \textbf{Temporal coherence}: Start dates were verified to precede end dates in all 657 outlet records. All 194 ongoing outlets were verified to use the documented open-ended convention (end date = ``9999-01-01''). Diachronic relation dates were checked for consistency with linked outlet life spans: for succession links, the successor's start date was verified to follow the predecessor's end date; for interruption links, the interval was verified to bridge the gap between the earlier outlet's end and the later outlet's start.
+
+\item \textbf{Vocabulary compliance}: All coded fields were validated against the published lookup tables. Sector codes (11, 12, 20, 30, 40, 50), mandate codes (1--7), relation types (8 diachronic + 3 synchronic), date-precision codes, and additivity codes were all found to be valid. No unknown codes were present in any record.
+\end{itemize}
+
+\subsection{Missing-value and aggregation validation}
+
+Missing data in observation fields were validated to preserve the distinction between ``not applicable'' (the indicator does not apply to this outlet type; e.g., circulation for a radio station) and ``not available'' (the value exists in principle but could not be determined from available sources). Numeric fields use separate coded values for each state rather than null or zero. Text fields use the ``KA'' convention (keine Angabe) to indicate absence of information.
+
+Additivity flags were checked for logical compatibility with the structural embedding of each outlet. For outlets participating in umbrella or [[Kombi]] structures, the additivity field was verified to restrict aggregation to the documented territorial scope. This prevents double counting when reconstructing market totals from overlapping outlet formations.
+
+\subsection{Manual adjudication of boundary cases}
+
+Boundary cases inherent to historical media data were reviewed manually against the curation rules. Three categories of cases required particular attention:
+
+\textbf{Similar titles across historical periods.} The name ``Der Abend'' appears as four distinct outlet identities spanning 1915--1956, each with a different temporal range and editorial context. The identity breaks were verified against the interruption rule (publication gaps exceeding one week) and documented in comments with historical explanations (censorship, police ban, post-war relaunch).
+
+\textbf{Territorial variants of the same brand.} The Neue Kronen Zeitung appears as 13 distinct outlet identities representing regional editions and umbrella levels. Each identity was verified to have a distinct primary distribution area or structural role, and the synchronic relations connecting them were verified for consistency with the transitive-reduction rule.
+
+\textbf{Wartime and occupation-era disruptions.} Outlets in the 1930s and 1940s frequently carry comments documenting National Socialist takeover (``Am 12.03.1938 von den Nationalsozialisten \"ubernommen''), wartime amalgamation (``Zusammenlegung mit \ldots''), or occupation-era licensing. These cases were reviewed to ensure that identity breaks and diachronic links accurately reflect the documented historical sequence rather than imposing post-hoc continuity.
+
+All adjudication decisions were recorded in the comments field of the relevant outlet or relation record. The MDSL source preserves these comments as structured metadata fields rather than relegating them to external documentation.
+
+\section{Usage Notes}
+
+\subsection{Working with the MDSL source}
+
+The MDSL source files can be read and searched in any text editor. Because the relational structure between media offerings is encoded as explicit \texttt{DIACHRONIC\_LINK} and \texttt{SYNCHRONOUS\_LINK} declarations, users can trace outlet histories and structural formations by searching for outlet identifiers directly in the source text. Users who wish to validate or transform the data can install the Rust-based MDSL compiler and run:
+
+\begin{verbatim}
+cargo run -- validate anmi_main.mdsl
+cargo run --features sql-codegen -- sql anmi_main.mdsl
+cargo run --features cypher-codegen -- cypher anmi_main.mdsl
+\end{verbatim}
+\noindent Run these commands from the directory that contains \texttt{anmi\_main.mdsl} and its imported files (or use the monolithic \texttt{complete\_anmi\_full.mdsl} with the same subcommands).
+
+The first command validates the canonical source and reports any errors. The second generates SQL for import into a relational database. The third generates Cypher for import into Neo4j, where outlets become nodes and diachronic/synchronic relations become typed edges suitable for graph traversal and visualization.
+
+\subsection{Continuity and identity}
+
+The most important analytical choice for reusers concerns continuity. ANMI outlet identifiers represent bounded historical outlet identities, not timeless brands. Researchers interested in long-run continuity should reconstruct successor chains through the diachronic relation layer rather than assuming that repeated titles denote one uninterrupted unit. For example, tracing the full history of the Kronen Zeitung brand requires following the diachronic succession chain from the Illustrierte Kronen-Zeitung (1905--1941) through intervening identities to the Neue Kronen Zeitung and its post-1972 regional and umbrella editions---a chain that spans multiple outlet identifiers connected by typed \texttt{DIACHRONIC\_LINK} declarations.
+
+\subsection{Market indicators and aggregation}
+
+Users should distinguish structural hierarchy from organizational hierarchy. A title nested in an umbrella structure is not necessarily coextensive with an ownership relation. Market indicators should never be aggregated without reference to the additivity code and the relevant territorial scope. Values coded as not available or not applicable should not be recoded to zero.
+
+Source stratification is particularly important for multi-indicator analyses. Circulation data (from \"OAK), reach data (from Media-Analyse), and web traffic data (from \"OWA) originate in different institutional ecosystems with different methodologies. The source identifiers in the observation layer allow users to filter or stratify by evidence family rather than treating all numeric values as epistemically equivalent.
+
+\subsection{Comments and historical context}
+
+The comments field should not be ignored in advanced use. Of the 657 outlet records, 263 carry substantive comments documenting curation decisions, historical context, cross-references to related outlets, or boundary-case adjudication. For historically sensitive cases---wartime censorship, occupation-era licensing, politically motivated suppression---comments carry explanations that cannot be reduced to closed codes without loss of meaning.
+
+\section{Data Availability}
+
+The ANMI media-supply MediaLanguage (MDSL) source package is publicly available on figshare~\cite{ANMIFigshare2026}. The dataset entry point is the root file \texttt{anmi\_main.mdsl}, which imports modular files for outlets (\texttt{Medienangebot.mdsl}), undertakings (\texttt{Medienunternehmen.mdsl}), diachronic and synchronic outlet and undertaking relations, sources, market-data schemas, and grouped fragments under \texttt{media\_groups/}. The deposit includes accompanying documentation (codebook, MDSL reference guide, manifest, and readme) as released on the record. Persistent identifier: \url{https://doi.org/10.6084/m9.figshare.31908523}.
+
+\section{Code Availability}
+
+The MediaLanguage (MDSL) compiler used to validate the canonical source and to generate derived views is implemented in Rust. The compiler source code is available at \url{https://github.com/pacedproton/medialang}. It supports lexical analysis, parsing, semantic validation, SQL code generation (PostgreSQL), and Cypher code generation (Neo4j). 
+
+\section*{Acknowledgements}
+
+
+We thank Yelizaveta Andakulova for her work on the ANMI sub-project \emph{Multilingualism in the media}, and Eva Tamara Asboth, Maren B.~M.~Beaufort, Katharina Biringer, Gabriele Melischek, Andreas Schulz-Tomančok, Julian Wenger, Iman Elghonemi, and Sophie Wenkel for their contributions to the project.
+
+We are grateful to the members of the ANMI advisory board for their guidance: PD~Dr.\,in Astrid Blome (Institut f\"ur Zeitungsforschung, Dortmund); Ass.-Prof.~Dr.~Tobias Dienlin (Institut f\"ur Publizistik- und Kommunikationswissenschaft, Universit\"at Wien); Christiane Fritze, M.A.\ (Rathausbibliothek Wien); Jun.-Prof.\,in Dr.\,in Anna Sophie K\"umpel (Institut f\"ur Kommunikationswissenschaft, Technische Universit\"at Dresden); Prof.\,in Dr.\,in Maria L\"oblich (Institut f\"ur Publizistik- \& Kommunikationswissenschaft, Freie Universit\"at Berlin); Mag.a Michaela Mayr (\"Osterreichische Nationalbibliothek, Wien); Dr.\,in Katrin M\"oller (Historisches Datenzentrum Sachsen-Anhalt, Martin-Luther-Universit\"at Halle-Wittenberg); Mag.~Helmut Peissl (Community Medien Institut f\"ur Weiterbildung, Forschung und Beratung (COMMIT), Wien); Assoz.-Prof.\,in Mag.a Dr.\,in Eva Pfanzelter, MA (Institut f\"ur Zeitgeschichte, Universit\"at Innsbruck); Mag.~Dr.~Dimitri Prandner (Institut f\"ur Soziologie, Johannes Kepler Universit\"at Linz); Prof.~Dr.~Manuel Puppis (Departement f\"ur Kommunikationswissenschaft und Medienforschung, Universit\"at Fribourg); FH-Prof.~DI Dr.~Peter Salhofer (Wirtschaftsinformatik und Data Science, Joanneum Graz); and Prof.~Dr.~Gerhard Vowe (Kommunikations- und Medienwissenschaft, Heinrich-Heine-Universit\"at D\"usseldorf).
+
+\section*{Author Contributions}
+
+Michael Alexander led the conceptualization of the data descriptor, designed and implemented the MediaLanguage domain-specific language and compiler, designed the ANMI-ML data model, led the technical validation workflow, and co-drafted the manuscript. Josef Seethaler conceived and supervised the ANMI project, curated data, contributed to the conceptual framework and curation rules, contributed to the manuscript, and co-designed the ANMI data model.
+
+\section*{Funding}
+
+The Austrian News Media Infrastructure (ANMI) has benefited from long-term institutional support of the Austrian Academy of Sciences (\"OeAW) Division of Humanities and the Social Sciences (sub-project ``Multilingualism in the Media''). Michael Alexander and Josef Seethaler each invested substantial personal time in data curation, software development, computing infrastructure, and manuscript preparation beyond contracted or formally budgeted hours. Josef Seethaler additionally contributed personal funds to cover project-related expenses.
+
+
+\section*{Competing Interests}
+
+The authors declare no competing interests.
+
+\bibliographystyle{unsrtnat}
+\bibliography{references}
+
+\end{document}
