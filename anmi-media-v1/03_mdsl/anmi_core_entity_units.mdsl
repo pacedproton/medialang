@@ -1,0 +1,149 @@
+
+UNIT Medienangebot { 
+  id_mo: ID PRIMARY KEY,
+  mo_title: TEXT(120),
+  id_sector: NUMBER, // FK TO anmi_media_sectors
+  mandate: CATEGORY(
+  "Öffentlich-rechtlich",
+  "Privat-kommerziell",
+  "privat-nichtkommerziell",
+  "Partei",
+  "Verband",
+  "Amtlich",
+  "Besatzungsmacht",
+  "Sonstiges",
+  "n.v."
+  ),
+  location: TEXT(25), 
+  primary_distr_area: NUMBER, // FK TO anmi_common_codes.REGION_CODES
+  local_offering: BOOLEAN,
+  language: TEXT(50), // FK TO anmi_common_codes.LANGUAGE_CODES
+  start_day: NUMBER,  
+  start_month: NUMBER,
+  start_year: NUMBER,
+  start_fake_date_type: CATEGORY( 
+  "Tag substituiert", "Monat substituiert", "Jahr substituiert",
+  "Tag und Monat substituiert", "Tag und Jahr substituiert",
+  "Monat und Jahr substituiert", "Tag, Monat und Jahr substituiert", "n.a."
+  ),
+  end_day: NUMBER,
+  end_month: NUMBER,
+  end_year: NUMBER,
+  end_fake_date_type: CATEGORY( 
+  "Tag substituiert", "Monat substituiert", "Jahr substituiert",
+  "Tag und Monat substituiert", "Tag und Jahr substituiert",
+  "Monat und Jahr substituiert", "Tag, Monat und Jahr substituiert", "n.a."
+  ),
+  current_status_text: TEXT(50),
+  editorial_line_self_descr: TEXT(200),
+  editorial_line_external_attr: TEXT(200),
+  tags_csv: TEXT(255),
+  comments: TEXT(1000)
+}
+
+UNIT MedienangeboteDiachroneBeziehungen {
+  id_relationship: ID PRIMARY KEY,
+  id_mo_predecessor: ID, 
+  id_mo_successor: ID,  
+  RELATIONSHIP_TYPE: CATEGORY( 
+  "Nachfolge", "Fusionierung", "Neuer Sektor", "Neues Verbreitungsgebiet",
+  "Abspaltung", "Akquisition", "Unterbrechung"
+  ),
+  event_day: NUMBER, 
+  event_month: NUMBER,
+  event_year: NUMBER,
+  comments: TEXT(1000)
+}
+  UNIT MedienangeboteSynchroneBeziehungen {
+  id_relationship: ID PRIMARY KEY,
+  id_mo_1: ID, // FK TO Medienangebot.id_mo
+  id_mo_2: ID, // FK TO Medienangebot.id_mo
+  RELATIONSHIP_TYPE: CATEGORY( 
+  "Differenzierung", "Dach", "Ableger", "Kombination", "Kooperation"
+  ),
+  start_year: NUMBER, 
+  end_year: NUMBER, 
+  comments: TEXT(1000)
+}
+UNIT Medienunternehmen {
+  id_mu: ID PRIMARY KEY,
+  mu_title: TEXT(200),
+  foundation_year: NUMBER,
+  closing_year: NUMBER,
+  comments: TEXT(1000)
+}
+
+// add link TYPES related TO companies
+  UNIT MedienunternehmenSynchroneBeziehungenMitMedienangeboten {
+  id_relationship: ID PRIMARY KEY,
+  id_mu: ID, // FK TO Medienunternehmen.id_mu
+  id_mo: ID, // FK TO Medienangebot.id_mo
+  RELATIONSHIP_TYPE: CATEGORY( 
+  "Eigentum", "Betrieb", "Sonstiges" /
+  ),
+  start_year: NUMBER,
+  end_year: NUMBER,
+  comments: TEXT(1000)
+}
+
+UNIT MedienunternehmenDiachroneBeziehungen {
+  id_relationship: ID PRIMARY KEY,
+  id_mu_predecessor: ID, // FK TO Medienunternehmen.id_mu
+  id_mu_successor: ID,   // FK TO Medienunternehmen.id_mu
+  RELATIONSHIP_TYPE: CATEGORY( // FROM CompanyDiachronicRelationshipTypes VOCABULARY
+  "Fusionierung", "Akquisition", "Abspaltung", "Nachfolge" 
+  ),
+  event_year: NUMBER,
+  comments: TEXT(1000)
+}
+
+UNIT MedienunternehmenSynchroneBeziehungenMitAnderenUnternehmen {
+  id_relationship: ID PRIMARY KEY,
+  id_mu_1: ID, // FK TO Medienunternehmen.id_mu
+  id_mu_2: ID, // FK TO Medienunternehmen.id_mu
+  RELATIONSHIP_TYPE: CATEGORY(
+  "Partnerschaft", "Eigentumsbeteiligung", "Alleineigentümer", "Gesellschafter", "Sonstiges" 
+  ),
+  share_percentage: NUMBER, // NEW: Added as per refinement
+  start_year: NUMBER,
+  end_year: NUMBER,
+  comments: TEXT(1000)
+}
+
+// add missing
+VOCABULARY DiachronicRelationshipTypes {
+    TYPES {
+    1: "Nachfolge", 2: "Fusionierung", 3: "Neuer Sektor", 4: "Neues Verbreitungsgebiet",
+    5: "Abspaltung", 6: "Akquisition", 7: "Unterbrechung"
+  }
+}
+
+VOCABULARY SynchronicRelationshipTypes {
+  TYPES {
+  1: "Differenzierung", 2: "Dach", 3: "Ableger", 4: "Kombination", 5: "Kooperation"
+  }
+}
+
+VOCABULARY MO_MU_RelationshipTypes {
+  TYPES {
+    1: "Eigentum",
+    2: "Betrieb",
+    3: "Andere Geschäftsbeziehung",
+    4: "Sonstiges"
+  }
+}
+
+VOCABULARY CompanyDiachronicRelationshipTypes {
+  TYPES {
+    1: "Nachfolge", 2: "Fusionierung", 3: "Akquisition", 
+    4: "Abspaltung"
+  }
+}
+
+VOCABULARY CompanySynchronicRelationshipTypes {
+    TYPES {
+    1: "Alleineigentümer", 2: "Gesellschafter", 3: "Kommanditist", 4: "Komplementär",
+    5: "Split-off", 6: "Spin-off", 7: "Andere Geschäftsbeziehung", 8: "Partnerschaft",
+    9: "Eigentumsbeteiligung"
+  }
+}

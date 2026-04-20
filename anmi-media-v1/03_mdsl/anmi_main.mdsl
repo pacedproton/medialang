@@ -1,18 +1,4 @@
 // Canonical entry point for the ANMI MediaLanguage representation.
-//
-// This file imports the normative layer only:
-//   - vocabularies and code lists
-//   - core entity unit definitions (Medienangebot, Medienunternehmen)
-//   - relationship table schemas (diachronic, synchronous)
-//   - market-data schemas
-//   - the source/provenance catalog
-//
-// Bulk instance data (the ~657 outlets imported from the source database)
-// lives in the generated artifact anmi_full_export.mdsl and is intentionally
-// not imported here, so this entry point validates as a pure schema bundle.
-//
-// Curated, examples live alongside under media_groups/ and
-// are validated independently from this entry point.
 
 IMPORT "anmi_common_codes.mdsl";
 IMPORT "anmi_media_sectors.mdsl";

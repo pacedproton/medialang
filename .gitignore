@@ -122,3 +122,6 @@ paper/*.xdv
 
 mdsl-rs/mdsl_full_with_stubs.mdsl
 teamcomms-handover/
+
+# Release/deposit assembly directory (populated by scripts/build_release.sh)
+release/

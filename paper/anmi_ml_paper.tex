@@ -27,7 +27,7 @@ Institute for Comparative Media and Communication Studies, Austria\\
 \bigskip
 
 \begin{abstract}
-We describe the Austrian News Media Infrastructure (ANMI) media-supply release, a longitudinal dataset covering Austria's political information environment from 1780 to 2024. The release comprises 657 identity-resolved outlet records, 337 typed diachronic relations (succession, amalgamation, interruption, sector change, and five further types), 290 synchronic structural relations (umbrella, main-media-outlet, collaboration), 151 outlet-level annual data blocks linked to market indicators, and 51 structured source records drawn from six evidence families including Media-Analyse audience surveys (1993--2008), \"Osterreichische Webanalyse (\"OWA) web-traffic reports (2008--2022), \"Osterreichische Auflagenkontrolle (\"OAK) circulation audits (2021--2023), ORF annual reports, and Statistik Austria cultural statistics. Each outlet is defined jointly by title, period, primary distribution area, and media sector; identity-breaking transitions such as title changes, territorial redefinitions, and publication interruptions create new records linked through typed diachronic edges rather than being collapsed into a single nominal series. The dataset is curated and archived in MediaLanguage (MDSL), a purpose-built domain-specific language that represents outlet identities, typed relations, temporal intervals, provenance, and aggregation constraints as first-class constructs in human-readable, machine-validatable source files. The MDSL source files are the primary deposited objects; a Rust-based compiler validates the canonical source and can export it into relational and graph-oriented derivatives on demand. Together, the dataset and its curation language form a reusable package for longitudinal media-history research, market-structure analysis, and computational linkage workflows. The modular MDSL source package is publicly available on figshare (root file \texttt{anmi\_main.mdsl}; \url{https://doi.org/10.6084/m9.figshare.31908523}).
+We describe the Austrian News Media Infrastructure (ANMI) media-supply release, a longitudinal dataset covering Austria's political information environment from 1780 to 2024. The release comprises 657 identity-resolved outlet records, 337 typed diachronic relations (succession, amalgamation, interruption, sector change, and five further types), 290 synchronic structural relations (umbrella, main-media-outlet, collaboration), 151 outlet-level annual data blocks linked to market indicators, and 51 structured source records drawn from six evidence families including Media-Analyse audience surveys (1993--2008), \"Osterreichische Webanalyse (\"OWA) web-traffic reports (2008--2022), \"Osterreichische Auflagenkontrolle (\"OAK) circulation audits (2021--2023), ORF annual reports, and Statistik Austria cultural statistics. Each outlet is defined jointly by title, period, primary distribution area, and media sector; identity-breaking transitions such as title changes, territorial redefinitions, and publication interruptions create new records linked through typed diachronic edges rather than being collapsed into a single nominal series. The dataset is curated and archived in MediaLanguage (MDSL), a purpose-built domain-specific language that represents outlet identities, typed relations, temporal intervals, provenance, and aggregation constraints as first-class constructs in human-readable, machine-validatable source files. The MDSL source files are the primary deposited objects; a Rust-based compiler validates the canonical source and can export it into relational and graph-oriented derivatives on demand. Together, the dataset and its curation language form a reusable package for longitudinal media-history research, market-structure analysis, and computational linkage workflows. The release is publicly available on figshare as a three-layer deposit that bundles the canonical MDSL source package (root file \texttt{anmi\_main.mdsl}) with a PostgreSQL dump of the source database and per-table CSV exports, so that users may adopt whichever representation best matches their tooling (\url{https://doi.org/10.6084/m9.figshare.31908523}).
 \end{abstract}
 
 \section{Background \& Summary}
@@ -341,36 +341,56 @@ Generative AI tools were not treated as authoritative sources of factual, histor
 
 \subsection{Repository structure}
 
-The ANMI media-supply release is deposited as a structured directory of MDSL source files with accompanying documentation. The repository is organized as follows:
+The ANMI media-supply release is deposited as a single figshare item organized into three complementary representations of the same logical corpus, accompanied by documentation. The repository is organized as follows:
 
 \begin{verbatim}
-anmi-media-supply-v1/
-  anmi_main.mdsl                 (root entry point: IMPORTs all modules)
-  anmi_common_codes.mdsl
-  anmi_media_sectors.mdsl
-  anmi_mandate_types.mdsl
-  anmi_source_references.mdsl
-  anmi_market_data_schemas.mdsl
-  Medienangebot.mdsl
-  Medienunternehmen.mdsl
-  MedienangeboteDiachroneBeziehungen.mdsl
-  MedienangeboteSynchroneBeziehungen.mdsl
-  MedienunternehmenSynchroneBeziehungenMitMedienangeboten.mdsl
-  MedienunternehmenDiachroneBeziehungen.mdsl
-  MedienunternehmenSynchroneBeziehungenMitAnderenUnternehmen.mdsl
-  sources.mdsl
-  docs/
-    codebook.pdf
-    MDSL_reference_guide.pdf
-  MANIFEST.json
-  README.md
+anmi-media-v1/
+  01_relational/                      (PostgreSQL source views)
+    pg_dump_graphv3_full.sql            schema + data, restorable via psql
+    pg_dump_graphv3_full_schema.sql     DDL only (human-readable)
+  02_csv_tables/                      (flat per-table exports, UTF-8)
+    mo_constant.csv                     657 outlet constant attributes
+    mo_year.csv                         outlet-year market observations
+    sources_names.csv                   51 structured source records
+    nd_company.csv, nd_person.csv,
+    nd_ownership.csv, nd_crawl_log.csv  ownership and provenance tables
+    11_succession.csv, 12_amalgamation.csv,
+    13_new_distribution_area.csv,
+    14_new_sector.csv, 19_interruption.csv,
+    21_split_off.csv, 22_offshoot.csv,
+    23_merger.csv                       8 diachronic relation tables
+    31_main_media_outlet.csv,
+    33_umbrella.csv, 34_collaboration.csv   3 synchronic relation tables
+  03_mdsl/                            (canonical MDSL source package)
+    anmi_main.mdsl                      root entry point: IMPORTs all modules
+    anmi_common_codes.mdsl
+    anmi_media_sectors.mdsl
+    anmi_mandate_types.mdsl
+    anmi_source_references.mdsl
+    anmi_market_data_schemas.mdsl
+    anmi_core_entity_units.mdsl
+    Medienangebot.mdsl
+    Medienunternehmen.mdsl
+    MedienangeboteDiachroneBeziehungen.mdsl
+    MedienangeboteSynchroneBeziehungen.mdsl
+    MedienunternehmenSynchroneBeziehungenMitMedienangeboten.mdsl
+    MedienunternehmenDiachroneBeziehungen.mdsl
+    MedienunternehmenSynchroneBeziehungenMitAnderenUnternehmen.mdsl
+    sources.mdsl
+    anmi_full_export.mdsl               bulk export of all 657 outlets with
+                                        identity, lifecycle, and metadata
+    kronenzeitung/                      curated hand-authored example family
+      kronen_zeitung_freeze3.mdsl
+      beziehungen.mdsl
 \end{verbatim}
 
-The MDSL files constitute the complete, self-contained dataset. Users who require relational or graph-oriented views can generate them from the MDSL source using the compiler (SQL for PostgreSQL, Cypher for Neo4j). The MDSL source was chosen as the archival format because the dataset's core value lies in the typed relations between outlets and the provenance-linked observations attached to them---features that would be partially lost in a flat tabular deposit. By archiving the source that preserves these features, the release ensures that downstream users can regenerate any tabular or graph projection they need without inheriting the semantic compromises of a particular export format.
+The three representations are equivalent in substantive content but differ in affordances. The \textbf{relational} layer (\texttt{01\_relational/}) is a direct \texttt{pg\_dump} of the ANMI PostgreSQL source schema and is the most faithful to the operational record: it preserves all tables, indexes, and constraints in their native form. The \textbf{tabular} layer (\texttt{02\_csv\_tables/}) provides each table as a UTF-8 CSV with a header row, enabling direct use in R, Python, DuckDB, or spreadsheet tools without a database. The \textbf{MDSL} layer (\texttt{03\_mdsl/}) is the canonical archival form: it encodes typed relations, temporal intervals, provenance, date precision, and aggregation constraints as first-class language constructs that cannot be represented faithfully in flat tables or even in a normalized relational schema without semantic loss. The MDSL layer is the authoritative source against which the relational and tabular layers are validated.
+
+Publishing all three forms simultaneously serves the FAIR principles of Interoperability and Reusability directly: readers can choose the representation that matches their tooling and research question rather than being forced to install a compiler or a database to work with the data. At the same time, the MDSL source ensures that analysts who need the full relational semantics---typed diachronic and synchronic link declarations, provenance-linked observation blocks, vocabulary-controlled fields---can work with the complete data model without relying on lossy derivative views.
 
 \subsection{MDSL source file contents}
 
-The public deposit is a modular MDSL package. The root file \texttt{anmi\_main.mdsl} imports shared vocabularies and schemas, outlet and undertaking modules, diachronic and synchronic relation modules, sources, and grouped outlet fragments under \texttt{media\_groups/}. A monolithic compilation, \texttt{complete\_anmi\_full.mdsl} (29{,}271 lines), was used during development for end-to-end compiler validation and encodes the same logical corpus in a single file. Table~\ref{tab:objects} summarizes MDSL constructs and counts for the full media-supply corpus (modular or monolithic).
+The MDSL layer of the deposit has two entry points. The \textbf{modular package} is rooted at \texttt{anmi\_main.mdsl}, which chains \texttt{IMPORT} declarations across shared vocabularies (\texttt{anmi\_common\_codes}, \texttt{anmi\_media\_sectors}, \texttt{anmi\_mandate\_types}, \texttt{anmi\_source\_references}), market-data and core-entity schemas, outlet and undertaking unit definitions, four diachronic and synchronic relation modules, and the source catalog. This is the recommended entry point for readers and for compiler validation. The \textbf{bulk export}, \texttt{anmi\_full\_export.mdsl} (25{,}247 lines), is a single-file compilation generated directly from the ANMI PostgreSQL source by the compiler's \texttt{sql\_import} stage; it contains all 657 outlets as \texttt{UNIT} blocks with \texttt{IDENTITY}, \texttt{LIFECYCLE}, and \texttt{METADATA} sub-blocks, plus outlet-level data blocks, and serves as a human-readable counterpart to the relational dump in \texttt{01\_relational/}. A curated example family under \texttt{kronenzeitung/} demonstrates hand-authored MDSL including explicit synchronic link declarations between related outlets; it is not imported by the root but is validated independently. Table~\ref{tab:objects} summarizes MDSL constructs and counts for the full media-supply corpus.
 
 \begin{table}[t]
   \centering
@@ -386,14 +406,14 @@ The public deposit is a modular MDSL package. The root file \texttt{anmi\_main.m
     \texttt{DIACHRONIC\_LINK} & 337 & Typed temporal relations between outlet identifiers (8 relation types) \\
     \texttt{SYNCHRONOUS\_LINK} & 290 & Typed co-existence relations between outlet identifiers (3 relation types) \\
     \texttt{DATA} blocks & 151 & Annual observation blocks containing 1{,}613 outlet-year entries with market indicators \\
-    \texttt{IMPORT} & many & Modular deposit: chained from \texttt{anmi\_main.mdsl} across vocabularies, entities, relations, and \texttt{media\_groups/} \\
+    \texttt{IMPORT} & 13 & Chained from \texttt{anmi\_main.mdsl} across vocabularies, entity unit definitions, diachronic and synchronic relation schemas, and the source catalog \\
     \bottomrule
   \end{tabular}
-  \caption{MDSL constructs in the full ANMI media-supply corpus (single-file \texttt{complete\_anmi\_full.mdsl} or equivalent modular package from \texttt{anmi\_main.mdsl}).}
+  \caption{MDSL constructs in the full ANMI media-supply corpus as expressed in the modular package rooted at \texttt{anmi\_main.mdsl}.}
   \label{tab:objects}
 \end{table}
 
-The outlet-focused compilation, \texttt{anmi\_generated\_sample.mdsl} (16{,}942 lines), provides an alternative entry point using the simpler \texttt{UNIT} block syntax. Each of the 657 outlets is represented as a \texttt{UNIT} block with \texttt{IDENTITY}, \texttt{LIFECYCLE}, and \texttt{METADATA} sub-blocks. This file was generated directly from the ANMI PostgreSQL database and serves as the human-readable reference for outlet-level data. It does not contain the diachronic and synchronic link declarations, which are present only in the complete compilation.
+The diachronic and synchronic link declarations live in the four dedicated relation modules (\texttt{MedienangeboteDiachroneBeziehungen.mdsl}, \texttt{MedienangeboteSynchroneBeziehungen.mdsl}, and the two analogous undertaking-relation modules), not in the bulk outlet export. Readers who need the complete corpus including all typed relations should therefore start from the modular entry point \texttt{anmi\_main.mdsl}; the bulk \texttt{anmi\_full\_export.mdsl} is intended as a convenient reference for outlet-level attributes only.
 
 \subsection{Outlet field descriptions}
 
@@ -511,7 +531,7 @@ The comments field should not be ignored in advanced use. Of the 657 outlet reco
 
 \section{Data Availability}
 
-The ANMI media-supply MediaLanguage (MDSL) source package is publicly available on figshare~\cite{ANMIFigshare2026}. The dataset entry point is the root file \texttt{anmi\_main.mdsl}, which imports modular files for outlets (\texttt{Medienangebot.mdsl}), undertakings (\texttt{Medienunternehmen.mdsl}), diachronic and synchronic outlet and undertaking relations, sources, market-data schemas, and grouped fragments under \texttt{media\_groups/}. The deposit includes accompanying documentation (codebook, MDSL reference guide, manifest, and readme) as released on the record. Persistent identifier: \url{https://doi.org/10.6084/m9.figshare.31908523}.
+The ANMI media-supply dataset is publicly available on figshare~\cite{ANMIFigshare2026} as a single item organized into three complementary representations of the same corpus: a relational layer (\texttt{01\_relational/}) containing a full PostgreSQL dump of the source database (schema and data) together with a human-readable schema-only DDL file; a tabular layer (\texttt{02\_csv\_tables/}) containing each table as a UTF-8 CSV with a header row, directly usable in R, Python, DuckDB, or spreadsheet tools without any database software; and the canonical MDSL source package (\texttt{03\_mdsl/}), rooted at the entry point \texttt{anmi\_main.mdsl}, which imports modular files for outlets (\texttt{Medienangebot.mdsl}), undertakings (\texttt{Medienunternehmen.mdsl}), diachronic and synchronic outlet and undertaking relations, sources, and market-data and core-entity schemas, and additionally includes a bulk single-file export (\texttt{anmi\_full\_export.mdsl}) of all 657 outlets with their identity, lifecycle, and metadata sub-blocks. A curated example family under \texttt{kronenzeitung/} demonstrates hand-authored MDSL. The deposit includes accompanying documentation (codebook, MDSL reference guide, manifest, and readme) as released on the record. Persistent identifier: \url{https://doi.org/10.6084/m9.figshare.31908523}.
 
 \section{Code Availability}
 

@@ -1,0 +1,9 @@
+id,url,company_name,slice_id,nodes_found,edges_found,svg_bytes,success,error_msg,duration_ms,crawled_at
+1,https://www.northdata.de/Abendzeitung+M%C3%BCnchen+Verlags-GmbH%2C+M%C3%BCnchen/HRB+202573,,print-southern-de,0,0,0,f,No SVG returned,57521,2026-03-11 00:44:27.883082
+2,https://www.northdata.de/S%C3%BCddeutsche+Zeitung+GmbH%2C+M%C3%BCnchen/HRB+73185,,print-southern-de,0,0,0,f,No SVG returned,56946,2026-03-11 00:45:27.868304
+3,https://www.northdata.de/IPPEN%C2%B7MEDIA+GmbH+%26+Co%C2%B7+KG%2C+M%C3%BCnchen/HRB+204807,,print-southern-de,0,0,0,f,No SVG returned,57388,2026-03-11 00:46:28.287343
+4,https://www.northdata.de/Mediengruppe+Pressedruck+GmbH+%26+Co%C2%B7+KG%2C+Augsburg/HRB+8002,,print-southern-de,0,0,0,f,No SVG returned,56982,2026-03-11 00:47:28.299509
+5,https://www.northdata.de/Passauer+Neue+Presse+GmbH%2C+Passau/HRB+271,,print-southern-de,0,0,0,f,No SVG returned,56911,2026-03-11 00:48:28.242739
+6,https://www.northdata.de/N%C3%BCrnberger+Nachrichten+GmbH%2C+N%C3%BCrnberg/HRB+5165,,print-southern-de,0,0,0,f,No SVG returned,56997,2026-03-11 00:49:28.274848
+7,https://www.northdata.de/Cl%C2%B7+Attenkofer%27sche+Buch-+und+Kunstdruckerei+GmbH+%26+Co%C2%B7+KG%2C+Straubing/HRA+2022,,print-southern-de,0,0,0,f,No SVG returned,57052,2026-03-11 00:50:28.359989
+8,https://www.northdata.de/Schw%C3%A4bisch+Media+GmbH+%26+Co%C2%B7+KG%2C+Ravensburg/HRA+1551,,print-southern-de,0,0,0,f,No SVG returned,57344,2026-03-11 00:51:28.710242

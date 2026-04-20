@@ -1,0 +1,53 @@
+IMPORT "anmi_common_codes.mdsl";
+IMPORT "anmi_media_sectors.mdsl";
+IMPORT "anmi_mandate_types.mdsl";
+
+UNIT Medienangebot {
+  id_mo: ID PRIMARY KEY,
+  mo_title: TEXT(120),
+  id_sector: NUMBER,
+  mandate: CATEGORY(
+    "Öffentlich-rechtlich",
+    "Privat-kommerziell",
+    "privat-nichtkommerziell",
+    "Partei",
+    "Verband",
+    "Amtlich",
+    "Besatzungsmacht",
+    "Sonstiges",
+    "n.v."
+  ),
+  location: TEXT(25),
+  primary_distr_area: NUMBER,
+  local_offering: BOOLEAN,
+  language: TEXT(50),
+  start_day: NUMBER,
+  start_month: NUMBER,
+  start_year: NUMBER,
+  start_fake_date_type: CATEGORY(
+    "Tag substituiert",
+    "Monat substituiert",
+    "Jahr substituiert",
+    "Tag und Monat substituiert",
+    "Tag und Jahr substituiert",
+    "Monat und Jahr substituiert",
+    "Tag, Monat und Jahr substituiert",
+    "n.a."
+  ),
+  end_day: NUMBER,
+  end_month: NUMBER,
+  end_year: NUMBER,
+  end_fake_date_type: CATEGORY(
+    "Tag substituiert",
+    "Monat substituiert",
+    "Jahr substituiert",
+    "Tag und Monat substituiert",
+    "Tag und Jahr substituiert",
+    "Monat und Jahr substituiert",
+    "Tag, Monat und Jahr substituiert",
+    "n.a."
+  ),
+  editorial_line_self_descr: TEXT(200),
+  editorial_line_external_attr: TEXT(200),
+  comments: TEXT(1000)
+}

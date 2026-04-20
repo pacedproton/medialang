@@ -1,6 +1,6 @@
 // Generated MDSL from ANMI SQL database
 // Database: 100.77.115.86:5432/cmc
-// Generated at: 2026-04-15 23:16:47 UTC
+// Generated at: 2025-07-31 19:32:00 UTC
 
 IMPORT "anmi_common_codes.mdsl";
 IMPORT "anmi_media_sectors.mdsl";

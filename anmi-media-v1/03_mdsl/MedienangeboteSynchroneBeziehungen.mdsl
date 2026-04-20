@@ -1,0 +1,15 @@
+UNIT MedienangeboteSynchroneBeziehungen {
+  id_relationship: ID PRIMARY KEY,
+  id_mo_1: ID,
+  id_mo_2: ID,
+  RELATIONSHIP_TYPE: CATEGORY(
+    "Differenzierung",
+    "Dach",
+    "Ableger",
+    "Kombination",
+    "Kooperation"
+  ),
+  start_year: NUMBER,
+  end_year: NUMBER,
+  comments: TEXT(1000)
+}
