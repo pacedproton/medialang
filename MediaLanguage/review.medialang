@@ -1,0 +1,7 @@
+# import_vocabularies <anmi_common_codes.mdsl>
+# import_vocabularies <anmi_media_sectors.mdsl>
+# import_vocabularies <anmi_mandate_types.mdsl>
+# import_vocabularies <anmi_source_references.mdsl>
+# import_schemas <anmi_market_data_schemas.mdsl>
+
+

@@ -1,0 +1,32 @@
+IMPORT "anmi_source_references.mdsl";
+
+catalog sources {
+  source "oeak" { // simplified
+    // add composites
+    anmi_source_id_components {
+    type_code = 15; // ÖAK FROM anmi_source_references ( mapping)
+  }
+  source_title_key = "Österreichische Auflagenkontrolle (ÖAK)"; // KEY FROM anmi_source_references
+  display_name = "ÖAK"; // von: name
+  full_name = "Österreichische Auflagenkontrolle";
+  description = "Official Austrian circulation audit bureau";
+  @maps_to_table "Quellen"; // delta explicit,
+}
+source "media_analyse" {
+  anmi_source_id_components { type_code = 12; } // Media-Analyse
+  source_title_key = "Media-Analyse";
+  display_name = "Media-Analyse";
+  full_name = "Österreichische Media-Analyse";
+  description = "Austrian media consumption study";
+  @maps_to_table "Quellen";
+}
+
+source "owa" {
+  anmi_source_id_components { type_code = 13; } // ÖWA
+  source_title_key = "Österreichische Webanalyse (ÖWA)";
+  display_name = "ÖWA";
+  full_name = "Österreichische Webanalyse";
+  description = "Austrian web analytics";
+  @maps_to_table "Quellen";
+}
+}

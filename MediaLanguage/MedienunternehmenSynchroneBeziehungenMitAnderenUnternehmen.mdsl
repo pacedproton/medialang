@@ -1,0 +1,13 @@
+UNIT MedienunternehmenSynchroneBeziehungenMitAnderenUnternehmen {
+  id_relationship: ID PRIMARY KEY,
+  id_mu_1: ID,
+  id_mu_2: ID,
+  RELATIONSHIP_TYPE: CATEGORY(
+    "Partnerschaft",
+    "Eigentumsbeteiligung",
+    "Sonstiges"
+  ),
+  start_year: NUMBER,
+  end_year: NUMBER,
+  comments: TEXT(1000)
+}

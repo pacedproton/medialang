@@ -1,0 +1,228 @@
+(* MediaLanguage DSL Grammar - EBNF Specification *)
+
+program = { statement } ;
+
+statement = import_statement
+          | variable_declaration
+          | unit_declaration
+          | vocabulary_declaration
+          | family_declaration
+          | template_declaration
+          | data_declaration
+          | relationship_declaration
+          | event_declaration
+          | comment ;
+
+(* Import System *)
+import_statement = ("import" | "IMPORT") string_literal ";" ;
+
+(* Variable Declarations *)
+variable_declaration = ("let" | "LET") identifier "=" expression ";" ;
+
+(* Unit Declarations - Table/Entity Definitions *)
+unit_declaration = ("unit" | "UNIT") identifier "{" { field_declaration } "}" ;
+
+field_declaration = identifier ":" field_type [ "PRIMARY" "KEY" ] [ "," ] [ comment ] ;
+
+field_type = "ID"
+           | "TEXT" "(" number ")"
+           | "NUMBER"
+           | "BOOLEAN"
+           | category_type ;
+
+category_type = "CATEGORY" "(" string_list ")" ;
+
+string_list = string_literal { "," string_literal } ;
+
+(* Vocabulary Declarations - Enumerations *)
+vocabulary_declaration = ("vocabulary" | "VOCABULARY") identifier "{" vocabulary_body "}" ;
+
+vocabulary_body = identifier "{" { vocabulary_entry } "}" ;
+
+vocabulary_entry = ( number | identifier ) ":" string_literal [ "," ] ;
+
+(* Family Declarations - Media Outlet Families *)
+family_declaration = ("family" | "FAMILY") string_literal "{" { family_member } "}" ;
+
+family_member = outlet_declaration
+              | outlet_reference
+              | data_declaration
+              | relationship_declaration
+              | comment ;
+
+(* Outlet Declarations *)
+outlet_declaration = ("outlet" | "OUTLET") string_literal [ inheritance_clause ] "{" { outlet_block } "}" ;
+
+inheritance_clause = ("extends" | "EXTENDS") ("template" | "TEMPLATE") string_literal
+                   | ("based_on" | "BASED_ON") number ;
+
+outlet_block = identity_block
+             | lifecycle_block
+             | characteristics_block
+             | metadata_block
+             | comment ;
+
+(* Template Declarations *)
+template_declaration = ("template" | "TEMPLATE") ("outlet" | "OUTLET") string_literal "{" { outlet_block } "}" ;
+
+(* Block Definitions *)
+identity_block = "identity" "{" { identity_field } "}" ;
+
+identity_field = identifier "=" expression ";"
+               | identifier "=" "[" { object_literal } "]" ";"
+               | comment ;
+
+(* Lifecycle blocks model temporal status changes of media outlets *)
+lifecycle_block = "lifecycle" "{" { lifecycle_entry } "}" ;
+
+lifecycle_entry = "status" string_literal ("from" | "FROM") date_expression [ ("to" | "TO") date_expression ] "{" { lifecycle_attribute } "}" ;
+
+lifecycle_attribute = identifier "=" expression ";"
+                     | annotation
+                     | comment ;
+
+characteristics_block = "characteristics" "{" { characteristic_field } "}" ;
+
+characteristic_field = identifier "=" expression ";"
+                     | identifier "=" "{" { nested_field } "}" ";"
+                     | comment ;
+
+metadata_block = "metadata" "{" { metadata_field } "}" ;
+
+metadata_field = identifier "=" expression ";"
+               | comment ;
+
+(* Data Declarations *)
+data_declaration = ("data" | "DATA") ("for" | "FOR") number "{" { data_block } "}" ;
+
+data_block = annotation
+           | aggregation_declaration
+           | year_declaration
+           | comment ;
+
+aggregation_declaration = "aggregation" "=" "{" { aggregation_field } "}" ";" ;
+
+aggregation_field = identifier "=" string_literal ;
+
+year_declaration = ("year" | "YEAR") number "{" { year_block } "}" ;
+
+year_block = metrics_block
+           | "comment" "=" string_literal ";"
+           | comment ;
+
+metrics_block = "metrics" "{" { metric_field } "}" ";" ;
+
+metric_field = identifier "=" "{" { metric_attribute } "}" ";" ;
+
+metric_attribute = identifier "=" ( number | string_literal ) ";" ;
+
+(* Relationship Declarations *)
+relationship_declaration = diachronic_link | synchronous_link ;
+
+diachronic_link = ("diachronic_link" | "DIACHRONIC_LINK") identifier "{" { diachronic_field } "}" ;
+
+synchronous_link = ("synchronous_link" | "SYNCHRONOUS_LINK") identifier "{" { synchronous_field } "}" ;
+
+diachronic_field = "predecessor" "=" number ";"
+                 | "successor" "=" number ";"
+                 | "event_date" "=" date_range ";"
+                 | "relationship_type" "=" string_literal ";"
+                 | "triggered_by_event" "=" identifier ";"
+                 | annotation
+                 | comment ;
+
+synchronous_field = "outlet_1" "=" "{" { outlet_spec } "}" ";"
+                  | "outlet_2" "=" "{" { outlet_spec } "}" ";"
+                  | "relationship_type" "=" string_literal ";"
+                  | "period" "=" date_range ";"
+                  | "details" "=" string_literal ";"
+                  | "created_by_event" "=" identifier ";"
+                  | annotation
+                  | comment ;
+
+outlet_spec = "id" "=" number ";"
+            | "role" "=" string_literal ";" ;
+
+(* Event Declarations *)
+event_declaration = ("event" | "EVENT") identifier "{" { event_field } "}" ;
+
+event_field = "type" "=" string_literal ";"
+            | "date" "=" date_expression ";"
+            | "entities" "=" "{" { event_entity } "}" ";"
+            | "impact" "=" "{" { impact_field } "}" ";"
+            | "metadata" "=" "{" { metadata_field } "}" ";"
+            | "status" "=" string_literal ";"
+            | annotation
+            | comment ;
+
+event_entity = identifier "=" "{" { entity_role } "}" ";" ;
+
+entity_role = "id" "=" number ";"
+            | "role" "=" string_literal ";"
+            | "stake_before" "=" number ";"
+            | "stake_after" "=" number ";" ;
+
+impact_field = identifier "=" ( number | string_literal ) ";" ;
+
+(* Common Constructs *)
+object_literal = "{" { object_field } "}" ;
+
+object_field = identifier "=" expression ";"
+             | "period" "=" date_range ";" ;
+
+nested_field = identifier "=" expression ";"
+             | comment ;
+
+date_expression = date_literal | date_range | "current" | "CURRENT" ;
+
+date_range = date_expression [ ("to" | "TO") date_expression ] ;
+
+date_literal = string_literal | iso_date | partial_date ;
+
+iso_date = string_literal ;  (* Format: "YYYY-MM-DD" or "YYYY-MM-DD HH:MM:SS" *)
+
+partial_date = year_date | year_month_date ;
+
+year_date = number ;  (* Just year: 2010 *)
+
+year_month_date = number "-" number ;  (* Year-month: 2010-03 *)
+
+expression = variable_reference
+           | string_literal
+           | number
+           | boolean
+           | object_literal ;
+
+variable_reference = "$" identifier ;
+
+(* Annotations and Comments *)
+annotation = "@" identifier [ string_literal ] ;
+
+comment = "//" { any_character } newline
+        | "/*" { any_character } "*/" ;
+
+(* Literals *)
+string_literal = '"' { string_character } '"' ;
+
+number = [ "-" ] digit { digit } [ "." digit { digit } ] ;
+
+boolean = "true" | "false" ;
+
+identifier = letter { letter | digit | "_" } ;
+
+(* Basic Character Classes *)
+letter = "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "j" | "k" | "l" | "m" |
+         "n" | "o" | "p" | "q" | "r" | "s" | "t" | "u" | "v" | "w" | "x" | "y" | "z" |
+         "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" | "K" | "L" | "M" |
+         "N" | "O" | "P" | "Q" | "R" | "S" | "T" | "U" | "V" | "W" | "X" | "Y" | "Z" ;
+
+digit = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" ;
+
+string_character = any_character - '"' - newline ;
+
+any_character = ? any Unicode character ? ;
+
+newline = "\n" | "\r\n" | "\r" ;
+
+(* Whitespace (ignored) *)
+whitespace = " " | "\t" | newline ; 

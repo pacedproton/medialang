@@ -1,0 +1,15 @@
+UNIT MedienangeboteSynchroneBeziehungen {
+  id_relationship: ID PRIMARY KEY,           // Unique identifier FOR the relationship
+  id_mo_1: ID,                               // ID of the first media OUTLET (references Medienangebot.id_mo)
+  id_mo_2: ID,                               // ID of the second media OUTLET (references Medienangebot.id_mo)
+  RELATIONSHIP_TYPE: CATEGORY(               // Type of synchronous relationship
+    "Differenzierung",                       // Regional or format differentiation (e.g., main vs. sub-edition)
+    "Dach",                                  // Umbrella/brand structure (e.g., cross-media brand)
+    "Ableger",                               // Offshoot in another sector (e.g., online version)
+    "Kombination",                           // Advertising combination UNIT (e.g., oe24 and Österreich)
+    "Kooperation"                            // Collaboration (e.g., shared services)
+  ),
+  start_year: NUMBER,                        // Start YEAR of the relationship (e.g., 2000, 99 FOR n.v.)
+  end_year: NUMBER,                          // End YEAR of the relationship (e.g., 2025, 99 FOR n.v.)
+  comments: TEXT(1000)                       // Additional notes (e.g., nature of collaboration)
+}

@@ -1,0 +1,129 @@
+# Rust build artifacts
+/target/
+target/
+**/*.rs.bk
+
+# IDE/Editor files
+*.code-workspace
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Generated files
+.generated/
+/model/
+
+# Build outputs
+*.o
+*.so
+*.dylib
+*.dll
+*.exe
+
+# Logs
+*.log
+
+# Environment files
+.env
+.env.local
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+
+# Configuration files (if they contain secrets)
+provider-github.yaml
+
+# Documentation
+/doc/
+
+# Dependency directories
+.cargo/
+MediaLanguage/deprecated
+standardize_mdsl.py
+mdsl-rs/presentations
+/aml/
+
+# Generated files (session artifacts)
+*.sql
+*.cypher
+*.sh
+*.diff
+*.txt
+test_*.mdsl
+test_*.rs
+*_debug
+*_debug.rs
+
+# Generated MDSL files (keep source MDSL in MediaLanguage/ directory)
+complete_anmi_full.mdsl
+*_complete_network.mdsl
+syntax_corrected.mdsl
+mdsl-rs/gui_generated/
+
+# Analysis and comparison files
+*_analysis_report.md
+*_comparison.*
+graph_analysis_report.md
+full_conversion_report.md
+full_database_summary.md
+
+# Generated executables
+test_ir_debug
+sql_comparison.diff
+original_results.txt
+generated_results.txt
+
+# Output directories with generated content
+output/
+scripts/test_*.sh
+
+# Database comparison and validation files
+validate_*.sql
+*_validation.*
+*_equivalence.*
+
+
+
+
+# Manuscript sources, drafts, reviews and submission packages.
+# The compiler repository carries source only; the paper and dataset are
+# published separately (see README).
+paper/
+paper_final/
+paper-amendment*/
+paper-amendment*.zip
+reviews/
+
+# Design and concept documents (internal working material)
+konzeption/
+*.docx
+*.doc
+*.odt
+anmi_ownership_model_graph_er.jsx
+
+# Dataset deposit. Published separately on figshare; not carried in the
+# compiler repository (see README).
+anmi-media-v1/
+anmi-media-v1.zip
+
+
+# other
+
+mdsl-rs/mdsl_full_with_stubs.mdsl
+teamcomms-handover/
+
+# Release/deposit assembly directory (populated by scripts/build_release.sh)
+release/

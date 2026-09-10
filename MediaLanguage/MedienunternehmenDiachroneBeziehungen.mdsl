@@ -1,0 +1,12 @@
+UNIT MedienunternehmenDiachroneBeziehungen {
+id_relationship: ID PRIMARY KEY,
+id_mu_predecessor: ID,
+id_mu_successor: ID,
+RELATIONSHIP_TYPE: CATEGORY(
+"Fusionierung",
+"Akquisition",
+"Abspaltung"
+),
+event_year: NUMBER,
+comments: TEXT(1000)
+}

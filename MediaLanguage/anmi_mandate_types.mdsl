@@ -1,0 +1,13 @@
+VOCABULARY anmi_mandate_types {
+  MANDATE_CODES {
+    1: "Öffentlich-rechtlich",
+    2: "Privat-kommerziell",
+    3: "privat-nichtkommerziell",
+    4: "Partei",
+    5: "Verband",
+    6: "Amtlich",
+    7: "Besatzungsmacht",
+    8: "Sonstiges",
+    99: "n.v."
+  }
+}

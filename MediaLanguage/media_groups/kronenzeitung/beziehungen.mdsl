@@ -1,0 +1,7 @@
+ links combination {
+    from = 200001; // Kronen Zeitung
+    to = 300001; // Express
+    period = "1972-01-01 to 1980-12-31";
+    details = "Express as part of Kronen Zeitung's advertising unit";
+    @maps_to "MedienangeboteSynchroneBeziehungen"
+  }

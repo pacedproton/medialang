@@ -1,0 +1,42 @@
+// Test file to debug 1811 vs 1961 issue
+VOCABULARY SECTOR {
+    TYPES {
+        30: "Television"
+    }
+}
+
+FAMILY "Debug TV" {
+    OUTLET "ORF Fernsehen Debug" {
+        identity {
+            id = 300010;
+            title = "Österreichischer Rundfunk - ORF Fernsehen [[Dach]]";
+        };
+        lifecycle {
+            status "active" FROM "1961-09-11" TO CURRENT {
+                precision_start = "known";
+                precision_end = "known";
+            };
+        };
+        characteristics {
+            sector = 30;  // Numeric sector
+            mandate = 1;
+        };
+    };
+    
+    OUTLET "ORF Fernsehen String Sector" {
+        identity {
+            id = 300011;
+            title = "ORF TV String Sector Test";
+        };
+        lifecycle {
+            status "active" FROM "1961-09-11" TO CURRENT {
+                precision_start = "known";
+                precision_end = "known";
+            };
+        };
+        characteristics {
+            sector = "30";  // String sector (like in existing file)
+            mandate = 1;
+        };
+    };
+}
