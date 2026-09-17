@@ -162,8 +162,8 @@ Code and data are licensed separately.
 See [mdsl-rs/LICENSE](mdsl-rs/LICENSE).
 
 **Data** — the MDSL corpus and specification files under `MediaLanguage/`, and the
-figshare deposit, are released under Creative Commons Attribution-ShareAlike 4.0
-International (CC BY-SA 4.0). See [LICENSE](LICENSE).
+figshare deposit, are released under Creative Commons Attribution 4.0
+International (CC BY 4.0). See [LICENSE](LICENSE).
 
 Output produced by running the compiler is a derivative of its input, not of the
 compiler, and so carries the license of the input data.

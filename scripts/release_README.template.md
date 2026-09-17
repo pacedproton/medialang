@@ -5,7 +5,7 @@ companies, and their temporal relationships, accompanied by the MDSL
 domain-specific language and reference compiler used to model and validate it.
 
 - **Snapshot date:** {{DATE}}
-- **License (data):** CC BY-SA 4.0
+- **License (data):** CC BY 4.0
 - **License (code):** MIT
 - **DOI:** https://doi.org/10.6084/m9.figshare.31908523
 - **Compiler source:** https://github.com/pacedproton/medialang
